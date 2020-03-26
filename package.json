@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/daniele3b/Progetto-Diana/issues"
   },
-  "homepage": "https://github.com/daniele3b/Progetto-Diana#readme"
+  "homepage": "https://github.com/daniele3b/Progetto-Diana#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
