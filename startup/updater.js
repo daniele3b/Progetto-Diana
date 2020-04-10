@@ -44,6 +44,8 @@ function getStationsName()
 });
 }
 
+
+//https://api.waqi.info/feed/@idx/?token=x
 function getData(id,nameStation)
 {
     return new Promise(function(resolve,reject){
