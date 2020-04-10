@@ -5,6 +5,25 @@ const request = require('request')
 
 require('dotenv').config()
 
+/**
+ * @swagger
+ * tags:
+ *   name: Traffic
+ *   description: Traffic management APIs
+ */ 
+
+
+/**
+* @swagger 
+* /traffic/address:
+*  get:
+*    tags: [Traffic]
+*    description: Use to request all current data about traffic into an area specified by a given address(latest available)
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*/
+
 let pick_point_end_url = config.get('pick_point_end');
 
 router.get('/:address', (req, res) => {
