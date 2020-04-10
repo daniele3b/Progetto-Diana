@@ -3,7 +3,27 @@ const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
 const router = express.Router()
 
 
-//should return all current data (latest available)
+/**
+ * @swagger
+ * tags:
+ *   name: Chemical_Agents
+ *   description: Chemical Agents management APIs
+ */ 
+
+
+/**
+* @swagger 
+* /chemical_agents:
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all current data by the sensor in the city (latest available)
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*       '404':
+*         description: No data available
+*/
+
 router.get('/' , async (req,res) => {
 
     const max_date= await Chemical_Agent.findOne()
@@ -13,11 +33,32 @@ router.get('/' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
     .select("sensor uid -_id types value")
 
-
-    res.send(result)
+    if(!result)
+    res.status(404).send('No data available')
+    else
+    res.status(200).send(result)
 })
 
-//should return all current data of a station
+
+/** 
+* @swagger
+* /chemical_agents/current/:station_id :
+*  get:
+*    tags: [Chemical_Agents]
+*    parameters:
+*       - name: station_id
+*         description: String that represents the uid of the sensor used by the aqi api
+*         in: formData
+*         required: true
+*         type: String
+*    description: Use to get all current data from a station (latest available)
+*    responses:
+*       '200':
+*         description: A successful response
+*       '400' :
+*         description: Bad request
+*/
+
 router.get('/current/:station_id' , async (req,res) => {
     let par=req.params.station_id
 
@@ -33,7 +74,32 @@ router.get('/current/:station_id' , async (req,res) => {
     res.status(200).send(result)
 })
 
-//should return all data of station filtered by date date format must be YYYY/MM/DD
+
+/** 
+* @swagger
+* /chemical_agents/filter/date/:date_start/:date_end :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data from all sensor registred in a day between date_start and date_end
+*    parameters:
+*       - name: date_start
+*         description: upper date bound format must be YYYY/MM/DD
+*         in: formData
+*         required: true
+*         type: date
+*       - name: date_end
+*         description: lower date bound format must be YYYY/MM/DD
+*         in: formData
+*         required: true
+*         type: date
+*    responses:
+*       '200':
+*         description: A successful response
+*       '400' :
+*         description: Bad request
+*/
+
+
 router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 
     const date_start = new Date(req.params.date_start)
@@ -46,17 +112,53 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 })
 
 
+/** 
+* @swagger
+* /chemical_agents/history :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data from all sensor 
+*
+*    responses:
+*       '200':
+*         description: A successful response
+*       '400' :
+*         description: Bad request
+*/
+
 //should return history of all data 
 router.get('/history', async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
  .select("reg_date sensor uid types value -_id")
-
- res.send(result)
+if(!result) 
+    res.status(400).send("Data not available")
+else
+ res.statu(200).send(result)
 })
 
 
-//should return history of one type of chemical agent
+/** 
+* @swagger
+* /chemical_agents/history/:type :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data about an agent from all sensor 
+*    parameters:
+*       - name: type
+*         description: Represents the type of the chemical agent tha you are looking for it must be ['O3','NO','NO2','NOX','PM10','PM25','BENZENE','CO','SO2']
+*         in: formData
+*         required: true
+*         type: String
+*  
+*    responses:
+*       '200':
+*         description: A successful response
+*       '400' :
+*         description: Bad request
+*/
+
+
 router.get('/history/:type', async (req,res) => {
     let par=req.params.type.toUpperCase()
     let ind=Object.values(Agents).indexOf(par)
@@ -73,7 +175,26 @@ router.get('/history/:type', async (req,res) => {
    })
 
 
-// should return history data of one station
+/** 
+* @swagger
+* /chemical_agents/history/station/:station_id :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data from a station 
+*    parameters:
+*       - name: station_id
+*         description: String that represents the uid of the sensor used by the aqi api
+*         in: formData
+*         required: true
+*         type: String
+*  
+*    responses:
+*       '200':
+*         description: A successful response
+*       '404' :
+*         description: Not found
+*/
+
    router.get('/history/station/:station_id', async (req,res) => {
     let par=req.params.station_id
 
@@ -87,6 +208,35 @@ router.get('/history/:type', async (req,res) => {
         res.status(200).send(result)
    })
 
+
+   /** 
+* @swagger
+* /chemical_agents/history/station/:station_id/:type :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data about an agent from a station 
+*    parameters:
+*       - name: station_id
+*         description: String that represents the uid of the sensor used by the aqi api
+*         in: formData
+*         required: true
+*         type: String
+*          
+*       - name: type
+*         description: Represents the type of the chemical agent tha you are looking for it must be ['O3','NO','NO2','NOX','PM10','PM25','BENZENE','CO','SO2']
+*         in: formData
+*         required: true
+*         type: String
+    
+*  
+*    responses:
+*       '200':
+*         description: A successful response
+*       '404' :
+*         description: Not found
+*       '400':
+*         description: Bad Request 
+*/
    //return history data of an station id and of a kind of data
    router.get('/history/station/:station_id/:type', async (req,res) => {
     let par1=req.params.station_id
