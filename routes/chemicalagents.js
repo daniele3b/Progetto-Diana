@@ -13,13 +13,17 @@ router.get('/' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
     .select("sensor uid -_id types value")
 
-    console.log(result)
+
     res.send(result)
 })
 
 //should return history of all data
 router.get('/history', async (req,res) => {
- 
+ const result=await Chemical_Agent.find()
+ .sort("-reg_date")
+ .select("reg_date sensor uid types value -_id")
+
+ res.send(result)
 })
 
 
