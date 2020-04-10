@@ -1,5 +1,7 @@
 {
     "db" : "mongodb://localhost/Diana",
     "aqi_end": "https://api.waqi.info",
-    "aqi_loc":"Rome,Lazio"
+    "aqi_loc":"Rome,Lazio",
+    "aqi_time_int":	"60000",
+    "aqi_prov":"Roma"
 }

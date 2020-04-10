@@ -29,7 +29,7 @@ function getStationsName()
             var obj = stations[i];
             let n=obj.station.name
             
-            if(n.indexOf("Roma")!=-1)
+            if(n.indexOf(config.get("aqi_prov"))!=-1)
             {
                 stations_name.push(obj.station.name);
                 stations_id.push(obj.uid)
@@ -116,6 +116,7 @@ function LogError(errore){
 //https://api.waqi.info/search/?keyword=Rome, Lazio&token=x
 function  updateChemicalAgents()
 {
+    stations_id=[]
     getStationsName()
     .then(function(result){getDataFromStations(result)})
     .catch(function(errore){LogError(errore)})
