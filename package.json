@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest"
   },
-  "jest" : {
-    "testURL" : "http://localhost/",
+  "jest": {
+    "testURL": "http://localhost/",
     "testEnvironment": "node"
   },
   "repository": {
