@@ -1,6 +1,8 @@
 const config = require('config')
 const request=require('request')
+const moment=require('moment')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
+
 require('dotenv').config()
 
 let aqi_url=config.get('aqi_end');
@@ -115,11 +117,11 @@ function LogError(errore){
     console.log(errore)
 }
 
-//https://api.waqi.info/search/?keyword=Rome, Lazio&token=x
+//https://api.waqi.info/search/?keyword=Rome,Lazio&token=x
 function  updateChemicalAgents()
 {
     stations_id=[]
-    timedata=Date.now()
+    timedata=moment().format();
     getStationsName()
     .then(function(result){getDataFromStations(result)})
     .catch(function(errore){LogError(errore)})
