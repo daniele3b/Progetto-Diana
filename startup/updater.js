@@ -71,8 +71,7 @@ function getData(id,nameStation)
                 saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id)
             if(chemical_comp.o3!=undefined)
                 saveData(nameStation,Agents.O3,chemical_comp.o3.v,id)
-            if(chemical_comp.so2!=undefined)
-                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id)
+            
             resolve(true)
            }
 });
@@ -116,7 +115,7 @@ function getDataFromStations(stations){
 function LogError(errore){
     console.log(errore)
 }
-
+//T14:12:34.000+00:00
 //https://api.waqi.info/search/?keyword=Rome,Lazio&token=x
 function  updateChemicalAgents()
 {
