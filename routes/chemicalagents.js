@@ -33,7 +33,20 @@ router.get('/current/:station_id' , async (req,res) => {
     res.status(200).send(result)
 })
 
-//should return history of all data
+//should return all data of station filtered by date date format must be YYYY/MM/DD
+router.get('/filter/date/:date_start/:date_end', async (req,res) => {
+
+    const date_start = new Date(req.params.date_start)
+    const date_stop = new Date(req.params.date_end)
+    const result = await Chemical_Agent.find({reg_date: {'$gte': date_start, '$lt': date_stop}})
+    .select("sensor uid -_id value types")
+    .sort("uid")
+    if (!result) return res.status(404).send('No chemical data match the given criteria')
+    res.status(200).send(result)
+})
+
+
+//should return history of all data 
 router.get('/history', async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
