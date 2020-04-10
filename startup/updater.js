@@ -11,7 +11,7 @@ let timedata;
 
 function getStationsName()
 {
-    timedata=Date.now()
+   
     return new Promise(function(resolve,reject){
 
     request(aqi_url+"/search/?keyword="+config.get('aqi_loc')+"&token="+process.env.AQI_TOKEN, function (error, response, body) {
@@ -95,8 +95,8 @@ async function saveData (names,agents,values,ids)
 
 
 function getDataFromStations(stations){
-    console.log(stations)
-    console.log(stations_id)
+    //console.log(stations)
+    //console.log(stations_id)
 
     for(var i=0;i<stations_id.length;i++)
     {
@@ -119,6 +119,7 @@ function LogError(errore){
 function  updateChemicalAgents()
 {
     stations_id=[]
+    timedata=Date.now()
     getStationsName()
     .then(function(result){getDataFromStations(result)})
     .catch(function(errore){LogError(errore)})
