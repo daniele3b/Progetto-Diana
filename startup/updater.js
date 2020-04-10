@@ -60,28 +60,29 @@ function getData(id,nameStation)
             let chemical_comp=json.data.iaqi
             //if there isn't a value the field is undefined 
             if(chemical_comp.so2!=undefined)
-                saveData(nameStation,Agents.SO2,chemical_comp.so2.v)
+                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id)
             if(chemical_comp.pm10!=undefined)
-                saveData(nameStation,Agents.PM10,chemical_comp.pm10.v)
+                saveData(nameStation,Agents.PM10,chemical_comp.pm10.v,id)
             if(chemical_comp.pm25!=undefined)
-                saveData(nameStation,Agents.PM25,chemical_comp.pm25.v)
+                saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id)
             if(chemical_comp.o3!=undefined)
-                saveData(nameStation,Agents.O3,chemical_comp.o3.v)
+                saveData(nameStation,Agents.O3,chemical_comp.o3.v,id)
             if(chemical_comp.so2!=undefined)
-                saveData(nameStation,Agents.SO2,chemical_comp.so2.v)
+                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id)
             resolve(true)
            }
 });
 });
 }
 
-async function saveData (names,agents,values)
+async function saveData (names,agents,values,ids)
 {
    let chemical_agent=new Chemical_Agent({
         reg_date: timedata,
         value: values,
         types: agents,
-        sensor:names
+        sensor:names,
+        uid:ids
    });
 
    await chemical_agent.save()
