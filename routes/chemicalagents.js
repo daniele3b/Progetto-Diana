@@ -27,6 +27,39 @@ router.get('/history', async (req,res) => {
 })
 
 
+//should return history of one type of chemical agent
+router.get('/history/:type', async (req,res) => {
+    let par=req.params.type.toUpperCase()
+    console.log(par)
+    let ind=Object.values(Agents).indexOf(par)
+    if(ind>-1)
+    {
+    const result=await Chemical_Agent.find({types:par})
+    .sort("-reg_date")
+    .select("reg_date sensor uid types value -_id")
+    res.status(200).send(result)
+    }else{
+
+        res.status(400).send("Bad request")
+    }
+   })
+
+// should return history data of one station
+   router.get('/history/station/:station_id', async (req,res) => {
+    let par=req.params.station_id
+    console.log(par)
+    
+    const result=await Chemical_Agent.find({uid:par})
+    .sort("-reg_date")
+    .select("reg_date sensor uid types value -_id")
+    res.status(200).send(result)
+    
+    if(!result)
+        res.status(404).send("NOT FOUND")
+    else
+        res.status(200).send(result)
+   })
+
 
 
 module.exports = router
