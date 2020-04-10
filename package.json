@@ -4,7 +4,11 @@
   "description": "Progetto universitario per il monitoring di agenti inquinanti nei comuni italiani, con supporto di segnalazioni da parte dei cittadini.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest" : {
+    "testURL" : "http://localhost/",
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -27,6 +31,8 @@
     "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.3"
+    "jest": "^22.2.2",
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
   }
 }
