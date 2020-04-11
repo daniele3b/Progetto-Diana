@@ -1,5 +1,6 @@
 const express = require('express')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
+const moment=require('moment')
 const router = express.Router()
 
 
@@ -260,6 +261,38 @@ router.get('/history/:type', async (req,res) => {
    
    })
 
+/*
+   //should return data between hour_start and hour_end in a day
+   router.get('/filter/hour/:date/:hour_start/:hour_end', async (req,res) => {
+
+    if(req.params.hour_start>24 || req.params.hour_start<0 ||req.params.hour_end>24 || req.params.hour_end<0 )
+        {
+            res.status(400).send('Bad Request')
+        }
+    else{
+
+    let date_start = new Date(req.params.date)
+    let date_stop= new Date(req.params.date)
+    date_start.setHours(req.params.hour_start)
+    date_stop.setHours(req.params.hour_end)
+    let ds=date_start.toUTCString()
+    let de=date_stop.toUTCString()
+
+    let dsf=new Date(ds)
+    let def=new Date(de)
+  
+    console.log(dsf+ '-> '+def)
+    const result = await Chemical_Agent.find({reg_date: {'$gte': date_start, '$lte': date_stop}})
+    .select("sensor uid -_id value types reg_date")
+    .sort("uid")
+    if (!result) return res.status(404).send('No chemical data match the given criteria')
+    res.status(200).send(result)
+    }
+})
+
+*/
+
+    
 
 
 

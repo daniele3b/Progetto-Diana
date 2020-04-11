@@ -2,7 +2,7 @@
     "db" : "mongodb://localhost/Diana",
     "aqi_end": "https://api.waqi.info",
     "aqi_loc":"Rome,Lazio",
-    "aqi_time_int":	"60000",
+    "aqi_time_int":	"600000",
     "aqi_prov":"Roma",
     "pick_point_end": "https://api.pickpoint.io/v1/forward",
     "tom_tom_end": "https://api.tomtom.com/traffic/services"
