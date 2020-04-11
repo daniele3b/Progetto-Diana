@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const config=require('config')
 const {updateChemicalAgents}=require('./startup/updater')
+const {updateMeteo}=require('./startup/updater_meteo')
 
 const port = process.env.PORT || 8080
 
@@ -12,5 +13,8 @@ const server = app.listen(8080, () =>  { console.log("Server listening on port :
 
 
 setInterval(updateChemicalAgents,config.get('aqi_time_int'))
+
+setInterval(updateMeteo, config.get('timer_meteo')) //15 seconds
+
 module.exports = server
 
