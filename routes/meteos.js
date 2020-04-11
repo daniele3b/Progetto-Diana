@@ -3,6 +3,28 @@ const express = require('express')
 const router = express.Router()
 const {Meteo,validate}=require('../models/meteo')
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Meteo
+ *   description: Meteo management APIs
+ */ 
+
+
+/**
+* @swagger 
+* /meteo/last:
+*  get:
+*    tags: [Meteo]
+*    description: Use to request the last update of weather forecast.
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*       '404':
+*         description: No data available
+*/
+
 router.get('/last' , async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
@@ -23,6 +45,10 @@ router.get('/last' , async (req,res) => {
         res.send(tosend)
     }
 });
+/*
+router.get('/7dayforecast' , async (req,res) => {
+    
+});*/
 
 
 module.exports = router
