@@ -157,6 +157,8 @@ else
 *         description: A successful response
 *       '400' :
 *         description: Bad request
+*       '404' :
+*         description: No data available
 */
 
 
