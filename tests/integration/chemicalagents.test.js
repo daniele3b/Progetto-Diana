@@ -40,6 +40,7 @@ describe('/chemical_agents', () => {
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
         })
+
     })
 
 
@@ -81,5 +82,86 @@ describe('/chemical_agents', () => {
         })
     })
 
+    describe('GET /history', () => {
+        it('should return the list of all data of all stations ', async () => {
+            const res = await request(server).get('/chemical_agents/history')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+        })
+
+    })
+
+    describe('GET /history', () => {
+        it('should return the list of all data of all stations ', async () => {
+            const res = await request(server).get('/chemical_agents/history')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+        })
+
+    }) 
+    
+    describe('GET /history:type', () => {
+        it('should return the list of all data of all stations of a kind of agent', async () => {
+            const res = await request(server).get('/chemical_agents/history/SO2')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+
+        it('should return 400 if type of agent dont exist', async () => {
+            const res = await request(server).get('/chemical_agents/history/test')
+            expect(res.status).toBe(400)
+            
+        })
+
+        it('should return 404 if type of agent exist but there arent values', async () => {
+            const res = await request(server).get('/chemical_agents/history/BENZENE')
+            expect(res.status).toBe(404)
+            
+        })
+    })
+
+
+    describe('GET /history/station/:station_id', () => {
+
+        it('should return the list of all data of a station', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/id_prova')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+        })
+
+        it('should return 404 if the data arent available or station id dont exist', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/nonesiste')
+            expect(res.status).toBe(404)
+            
+        })
+
+    
+    })
+
+    describe('GET /history/station/:station_id/:type', () => {
+
+        it('should return the list of all data of a station of a kinf of agent', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/id_prova/CO')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+
+        it('should return 404 if station id dont exist', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/nonesiste/CO')
+            expect(res.status).toBe(404)
+        })
+
+        it('should return 404 if station id exist but there arent data', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/id_prova/BENZENE')
+            expect(res.status).toBe(404)
+        })
+
+        it('should return 400 if the type of agent dont exist', async () => {
+            const res = await request(server).get('/chemical_agents/history/station/id_prova/nonesiste')
+            expect(res.status).toBe(400)
+        })
+
+    
+    })
 
 }) 

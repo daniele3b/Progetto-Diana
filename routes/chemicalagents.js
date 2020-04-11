@@ -34,7 +34,7 @@ router.get('/' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
     .select("sensor uid -_id types value")
 
-    if(!result)
+    if(!result.length)
     res.status(404).send('No data available')
     else
     res.status(200).send(result)
@@ -132,10 +132,10 @@ router.get('/history', async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
  .select("reg_date sensor uid types value -_id")
-if(!result) 
+if(!result.length) 
     res.status(400).send("Data not available")
 else
- res.statu(200).send(result)
+    res.status(200).send(result)
 })
 
 
@@ -168,7 +168,11 @@ router.get('/history/:type', async (req,res) => {
     const result=await Chemical_Agent.find({types:par})
     .sort("-reg_date")
     .select("reg_date sensor uid types value -_id")
-    res.status(200).send(result)
+
+    if(!result.length)
+        res.status(404).send('No data available')
+    else
+     res.status(200).send(result)
     }else{
 
         res.status(400).send("Bad request")
@@ -203,8 +207,8 @@ router.get('/history/:type', async (req,res) => {
     const result=await Chemical_Agent.find({uid:par})
     .sort("-reg_date")
     .select("reg_date sensor uid types value -_id")  
-    if(!result)
-        res.status(404).send("NOT FOUND")
+    if(!result.length)
+        res.status(404).send("Data not available")
     else
         res.status(200).send(result)
    })
@@ -249,7 +253,7 @@ router.get('/history/:type', async (req,res) => {
         const result=await Chemical_Agent.find({uid:par1,types:par2})
         .sort("-reg_date")
         .select("reg_date sensor uid types value -_id")  
-        if(!result)
+        if(!result.length)
             res.status(404).send("NOT FOUND")
         else
             res.status(200).send(result)
