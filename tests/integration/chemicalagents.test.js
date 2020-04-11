@@ -81,36 +81,5 @@ describe('/chemical_agents', () => {
         })
     })
 
-/*
-    describe('POST /', () => {
 
-        let CF
-        let start 
-        let end 
-        let description
-
-        const exec = async () => {
-            return await request(server).post('/announcements').send({CF,start,end,description})
-        }
-
-        it('should save the announcement if it is valid' , async() => {
-            CF = '1111111111111111'
-            start = "April 2020 , 30 13:00"
-            end = "April 2020 , 31 14:00"
-            description = "This is a test of the post endpoint"
-
-            const res = await exec()
-
-            expect(res.status).toBe(200)
-            expect(res.body).toHaveProperty('description','This is a test of the post endpoint')
-        })
-
-        it('should return 400 if the request is not valid', async() => {
-            CF = 'a'
-
-            const res = await exec()
-            
-            expect(res.status).toBe(400)
-        })
-    })*/
 }) 
