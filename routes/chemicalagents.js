@@ -70,7 +70,7 @@ router.get('/current/:station_id' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date,uid:par})
     .select("sensor uid -_id types value")
 
-    if(!result) result.status(400).send("Bad request")
+    if(!result.length) res.status(404).send("No data with the given criteria")
     else
     res.status(200).send(result)
 })
@@ -108,8 +108,8 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
     const result = await Chemical_Agent.find({reg_date: {'$gte': date_start, '$lt': date_stop}})
     .select("sensor uid -_id value types")
     .sort("uid")
-    if (!result) return res.status(404).send('No chemical data match the given criteria')
-    res.status(200).send(result)
+    if(!result.length) res.status(404).send("No data with the given criteria")
+   else res.status(200).send(result)
 })
 
 
