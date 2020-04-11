@@ -79,7 +79,7 @@ router.get('/:address', (req, res) => {
                         currentTravelTime: parsed_body.flowSegmentData.currentTravelTime
                     }
 
-                    res.send(resp)
+                    res.status(200).send(resp)
                 }   
             })
         }
