@@ -28,7 +28,7 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 router.get('/last' , async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
-    if(!result) res.send("404 Not found.")
+    if(!result) res.status(404).send("Not found.")
     else{
         var tosend = {
             "data": result.data,
@@ -42,7 +42,7 @@ router.get('/last' , async (req,res) => {
             "wind": result.wind  
             } 
 
-        res.send(tosend)
+        res.status(200).send(tosend)
     }
 });
 
@@ -153,7 +153,7 @@ router.get('/7daysforecast' , async (req,res) => {
 
 
             //REMINDER: devo decidere se è necessario salvare sul database
-            res.send(meteo7days)/*
+            res.status(200).send(meteo7days)/*
             try{
                 const result = await meteo7days.save();
             }catch(ex){
@@ -163,9 +163,55 @@ router.get('/7daysforecast' , async (req,res) => {
 
         creaMeteo();
         
-        }else console.log("fallito")
+        }else res.status(404).send("Not found.")
     });
 });
 
+/**
+* @swagger 
+* /weather/history/:date:
+*  get:
+*    tags: [Weather]
+*    description: Use to request a weather report on a single day in history.
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*       '404':
+*         description: No data available    
+*    parameters:
+*       - name: date
+*         description: date choosen, regex pattern
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'
+*    
+*/
+
+router.get('/history/:date' , async (req,res) => {
+    var par = req.params.date // yyyy-mm-dd
+    var miadata = new Date();
+    miadata.setDate(parseInt(par.substr(8,2)));
+    miadata.setMonth(parseInt(par.substr(5,2))-1);
+    miadata.setYear(parseInt(par.substr(0,4)));
+    var tomorrow = new Date(miadata)
+    tomorrow.setDate(tomorrow.getDate()+1)
+    var par1 = miadata.toISOString().substr(0,10) 
+    var par2 = tomorrow.toISOString().substr(0,10) 
+
+    var lin = 'http://api.weatherbit.io/v2.0/history/daily?&city=Rome,it&start_date='+par1+'&end_date='+par2+'&tz=local&key='+ process.env.METEO_HISTORY_KEY;
+    request.get(lin, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            var info = JSON.parse(body)
+            var tosend = {
+                    'date': info.data[0].datetime,
+                    't_min' : info.data[0].min_temp,
+                    't_max' : info.data[0].max_temp,
+                    'wind': info.data[0].wind_spd,
+                    'humidity': info.data[0].rh
+                }
+            res.status(200).send(tosend)
+        }else res.status(404).send('Not found.')
+    });
+});
 
 module.exports = router
