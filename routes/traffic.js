@@ -30,8 +30,10 @@ require('dotenv').config()
 let pick_point_end_url = config.get('pick_point_end');
 
 router.get('/:address', (req, res) => {
-
+   
     const address = req.params.address
+    if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
+
     const size = address.length
     let parsed = ''
     for(let i=0;i<size;i++){
@@ -103,8 +105,10 @@ router.get('/:address', (req, res) => {
 */
 
 router.get('/:address/sensor', (req, res) => {
-    
+
     const address = req.params.address
+    if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
+
     const size = address.length
     let parsed = ''
     for(let i=0;i<size;i++){
@@ -212,5 +216,13 @@ function search (arr, elem) {
     return false
 }
 
+function addressOK (str) {
+    const dim = str.length
+    let i
+    for(i=0;i<dim;i++) {
+        if(!isNaN(parseInt(str[i]))) return false
+    }
+    return true
+}
 
 module.exports = router
