@@ -68,7 +68,7 @@ router.get('/current/:station_id' , async (req,res) => {
     .sort("-reg_date")
     .select("reg_date")
 
-    if(!max_date) return res.status(404).send('No data available')
+    if(!max_date)  res.status(404).send('No data available')
 
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date,uid:par})
     .select("sensor uid -_id types value lat long")
@@ -113,6 +113,69 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
     .sort("uid")
     if(!result.length) res.status(404).send("No data with the given criteria")
    else res.status(200).send(result)
+})
+
+
+/** 
+* @swagger
+* /chemical_agents/filter/avg/:station_id/:type :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request the average of an agents of a sensor
+*    parameters:
+*       - name: station_id
+*         description: id of the station
+*         in: formData
+*         required: true
+*         type: String
+*       - name: type
+*         description: Represents the type of the chemical agent tha you are looking for it must be ['O3','NO','NO2','NOX','PM10','PM25','BENZENE','CO','SO2']
+*         in: formData
+*         required: true
+*         type: String
+*    responses:
+*       '200':
+*         description: A successful response
+*       '400' :
+*         description: Bad request
+*       '404' :
+*         description: No data available
+*/
+
+router.get('/filter/avg/:station_id/:type', async (req,res) => {
+    
+    let par1=req.params.station_id
+    let par2=req.params.type.toUpperCase()
+  
+    let ind=Object.values(Agents).indexOf(par2)
+    if(ind>-1)
+    {
+        const result=await Chemical_Agent.find({uid:par1,types:par2})
+        .sort("-reg_date")
+        if(!result.length)
+            res.status(404).send("NOT FOUND")
+        else{
+            let i=0;
+            let sum=0;
+            for(i=0;i<result.length;i++)
+            {
+               // console.log(result[i].value)
+                sum+=result[i].value
+                
+            }
+            //console.log(sum)
+            let avg=(sum/result.length)
+            
+            let obj={value:avg}
+            res.status(200).send(obj)
+        }
+            
+        
+    }else
+    
+    res.status(400).send("Bad Request")
+    
+   
 })
 
 

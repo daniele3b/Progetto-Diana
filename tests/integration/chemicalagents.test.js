@@ -168,4 +168,24 @@ describe('/chemical_agents', () => {
     
     })
 
+
+    describe('GET /filter/avg/:station_id/:type', () => {
+        it('should return the avg of all data of a kind of agent of a station', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/CO')
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('value', 100)
+        })
+
+        it('should return 400 if type of agent dont exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/nonesiste')
+            expect(res.status).toBe(400)
+            
+        })
+
+        it('should return 404 if type of agent exist but there arent values', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/BENZENE')
+            expect(res.status).toBe(404)
+            
+        })
+    })
 }) 
