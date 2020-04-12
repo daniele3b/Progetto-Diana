@@ -22,6 +22,24 @@ function addressOK (str) {
     return true
 }
 
+function radiusOK (str) {
+    const dim = str.length
+    let i = 0
+    counter = 0
+    if(str[0] == '-') i = 1
+    for(;i<dim;i++) {
+        if((str[i] == '.' || str[i] == ',') && counter == 1){
+            return false
+        }
+        if( (str[i] == '.' || str[i] == ',') && counter == 0){
+            counter += 1
+            continue
+        } 
+        if(isNaN(parseInt(str[i]))) return false
+    }
+    return true
+}
+
 function getLatLong (address) {
     
     // I return a Promise because in the traffic route i make a call to this function, which executes an HTTP request,
@@ -117,6 +135,7 @@ function getResultsAndDestinationsForDistances(coordinates, lat, lon) {
 
 exports.search = search
 exports.addressOK = addressOK
+exports.radiusOK = radiusOK
 exports.getLatLong = getLatLong
 exports.getSensorsInfo = getSensorsInfo
 exports.getResultsAndDestinationsForDistances = getResultsAndDestinationsForDistances
