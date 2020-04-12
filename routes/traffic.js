@@ -3,8 +3,8 @@ const router = express.Router()
 const config = require('config')
 const request = require('request')
 const mongoose = require('mongoose')
-//const {ChemicalAgent} = require('../models/chemical_agents')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
+const {search, addressOK} = require('../traffic_helper')
 
 require('dotenv').config()
 
@@ -105,7 +105,7 @@ router.get('/:address', (req, res) => {
 *       '400':
 *         description: An invalid address has been passed
 *       '404':
-*         description: No data available
+*         description: No chemical agents available in the database
 */
 
 router.get('/:address/sensor', (req, res) => {
@@ -144,7 +144,7 @@ router.get('/:address/sensor', (req, res) => {
                 let coordinates = []
 
                 let i
-                for(i=0;i<dim;i++){
+                for(i=0 ;i<dim;i++){
                     if(!search(uids, result[i].uid)){
                         uids.push(result[i].uid)
                         sensors.push(result[i].sensor)
@@ -210,23 +210,5 @@ router.get('/:address/sensor', (req, res) => {
     })
 
 })
-
-function search (arr, elem) {
-    let i
-    const dim = arr.length
-    for(i=0;i<dim;i++){
-        if(arr[i] == elem) return true
-    }
-    return false
-}
-
-function addressOK (str) {
-    const dim = str.length
-    let i
-    for(i=0;i<dim;i++) {
-        if(!isNaN(parseInt(str[i]))) return false
-    }
-    return true
-}
 
 module.exports = router
