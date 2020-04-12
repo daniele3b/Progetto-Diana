@@ -2,6 +2,8 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate}=require('../../models/chemical_agents')
 
+jest.setTimeout(50000)
+
 let server
 
 describe('/traffic', () => {
@@ -32,7 +34,7 @@ describe('/traffic', () => {
 
     })
     afterEach(async () => {
-        await Chemical_Agent.remove({})
+        await Chemical_Agent.deleteMany({})
         await server.close()
     })
 
@@ -58,7 +60,7 @@ describe('/traffic', () => {
         })
 
         it('should return 404 if no chemical agents are stored in the database', async () => {
-            await Chemical_Agent.remove({})
+            await Chemical_Agent.deleteMany({})
             
             const res = await request(server).get('/traffic/Via Tiburtina/sensor');
             expect(res.status).toBe(404);
@@ -71,5 +73,43 @@ describe('/traffic', () => {
         })
         
     })
+
+    describe('/GET/:address/sensor/:radius', () => {
+
+        it('should return 400 if invalid address is passed', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina 543/sensor/45');
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 400 if invalid radius is passed', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina/sensor/invalid_radius');
+            expect(res.status).toBe(400);
+        })
+        
+        it('should return 400 if 0 or a negative number is passed', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina/sensor/-1');
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 404 if no chemical agents are stored in the database', async () => {
+            await Chemical_Agent.deleteMany({})
+            
+            const res = await request(server).get('/traffic/Via Tiburtina/sensor/10');
+            expect(res.status).toBe(404);
+        })
+
+        it('should return 404 if there are no sensors within the specified radius', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina/sensor/1');
+            expect(res.status).toBe(404);    
+        })
+
+        it('should return all sensors close to a specified address within a certain specified radius', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina/sensor/100');
+            
+            expect(res.status).toBe(200);
+            expect(res.body.length).toBeGreaterThan(0)
+        })
+        
+    })  
 
 })
