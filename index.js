@@ -1,11 +1,14 @@
 const express = require('express')
 const winston=require('winston')
 const {logger}=require('./startup/logging')
+var cors = require('cors')
 const app = express()
+
 const config=require('config')
 const {updateChemicalAgents}=require('./startup/updater')
 const {updateMeteo}=require('./startup/updater_meteo')
 
+app.use(cors())
 const port = process.env.PORT || 8080 
 
 require('./startup/db')()
