@@ -82,7 +82,7 @@ router.get('/:address', (req, res) => {
                         currentTravelTime: parsed_body.flowSegmentData.currentTravelTime
                     }
 
-                    res.status(200).send(resp)
+                    res.status(200).send([resp])
                 }   
             })
         }
@@ -182,7 +182,7 @@ router.get('/:address/sensor', (req, res) => {
                                 ind_min = results[i].destinationIndex
                             }
                         }
-                        res.status(200).send({
+                        res.status(200).send([{
                             sensor: sensors[ind_min],
                             uid: uids[ind_min],
                             coordinates: {
@@ -190,7 +190,7 @@ router.get('/:address/sensor', (req, res) => {
                                 lon: coordinates[ind_min].lon
                             },
                             distance: dist_min
-                        })
+                        }])
                     }
                 })
             }
