@@ -14,7 +14,7 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 
 /**
 * @swagger 
-* /weather/last:
+* /weather/report/last:
 *  get:
 *    tags: [Weather]
 *    description: Use to request the last report of weather forecast in the city.
@@ -25,7 +25,7 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 *         description: No data available
 */
 
-router.get('/last' , async (req,res) => {
+router.get('/report/last' , async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
     if(!result) res.status(404).send("Not found.")
@@ -49,7 +49,7 @@ router.get('/last' , async (req,res) => {
 
 /**
 * @swagger 
-* /weather/7daysforecast:
+* /weather/report/7daysforecast:
 *  get:
 *    tags: [Weather]
 *    description: Use to request up to 7 days weather forecast.
@@ -59,7 +59,7 @@ router.get('/last' , async (req,res) => {
 *       '404':
 *         description: No data available
 */
-router.get('/7daysforecast' , async (req,res) => {
+router.get('/report/7daysforecast' , async (req,res) => {
     var lin = 'https://api.openweathermap.org/data/2.5/onecall?lat=41.89&lon=12.48&appid='+ process.env.METEO_KEY;
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
@@ -169,7 +169,7 @@ router.get('/7daysforecast' , async (req,res) => {
 
 /**
 * @swagger 
-* /weather/history/:date:
+* /weather/report/history/:date:
 *  get:
 *    tags: [Weather]
 *    description: Use to request a weather report on a single day in history.
@@ -187,7 +187,7 @@ router.get('/7daysforecast' , async (req,res) => {
 *    
 */
 
-router.get('/history/:date' , async (req,res) => {
+router.get('/report/history/:date' , async (req,res) => {
     var par = req.params.date // yyyy-mm-dd
     var miadata = new Date();
     miadata.setDate(parseInt(par.substr(8,2)));
@@ -212,6 +212,100 @@ router.get('/history/:date' , async (req,res) => {
             res.status(200).send(tosend)
         }else res.status(404).send('Not found.')
     });
+});
+
+/**
+* @swagger 
+* /weather/uv/now:
+*  get:
+*    tags: [Weather]
+*    description: Use to request the level of uv rays.
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*       '404':
+*         description: No data available
+*/
+
+router.get('/uv/now', async (req,res) =>{
+
+    var options = { method: 'GET',
+        url: 'https://api.openuv.io/api/v1/uv',
+        qs: { lat: '41.89', lng: '12.48'},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    'uv_value' : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'ux_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
+});
+
+/**
+* @swagger 
+* /weather/uv/:date:
+*  get:
+*    tags: [Weather]
+*    description: Use to request a uv values on a single day in history.
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*       '404':
+*         description: No data available    
+*    parameters:
+*       - name: date
+*         description: date choosen, regex pattern
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'   
+*/
+
+router.get('/uv/:date', async (req,res) =>{
+    var par1 = req.params.date + 'T11:00:00.000Z'
+    var options = { method: 'GET',
+        url: 'https://api.openuv.io/api/v1/uv',
+        qs: { lat: '41.89', lng: '12.48', dt: par1},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    'uv_value' : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'ux_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,/*
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time*/
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
 });
 
 module.exports = router
