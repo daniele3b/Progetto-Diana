@@ -125,6 +125,7 @@ function LogError(errore){
 function  updateChemicalAgents()
 {
     stations_id=[]
+    stations_geo=[]
     timedata=moment().format();
     getStationsName()
     .then(function(result){getDataFromStations(result)})

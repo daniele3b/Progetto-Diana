@@ -30,6 +30,7 @@ router.get('/' , async (req,res) => {
     const max_date= await Chemical_Agent.findOne()
     .sort("-reg_date")
     .select("reg_date")
+    if(!max_date.length) return res.status(404).send('No data available')
 
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
     .select("sensor uid -_id types value lat long")
@@ -66,6 +67,8 @@ router.get('/current/:station_id' , async (req,res) => {
     const max_date= await Chemical_Agent.findOne()
     .sort("-reg_date")
     .select("reg_date")
+    
+    if(!max_date.length) return res.status(404).send('No data available')
 
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date,uid:par})
     .select("sensor uid -_id types value lat long")
