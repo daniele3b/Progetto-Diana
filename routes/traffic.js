@@ -21,6 +21,12 @@ require('dotenv').config()
 * /traffic/:address:
 *  get:
 *    tags: [Traffic]
+*    parameters:
+*       - name: address
+*         description: String that represents the address used by the tom tom api
+*         in: formData
+*         required: true
+*         type: String
 *    description: Used to request all current data about traffic into an area specified by a given address(latest available)
 *    responses:
 *       '200':
@@ -70,6 +76,12 @@ router.get('/:address', async (req, res) => {
 * /traffic/:address/sensor:
 *  get:
 *    tags: [Traffic]
+*    parameters:
+*       - name: address
+*         description: String that represents the address used by the tom tom api
+*         in: formData
+*         required: true
+*         type: String
 *    description: Used to request the nearest sensor for a specified address(latest available)
 *    responses:
 *       '200':
@@ -133,7 +145,31 @@ router.get('/:address/sensor', async (req, res) => {
     }
 })
 
-
+/**
+ * @swagger
+ * /traffic/:address/sensor/:radius:
+*  get:
+*    tags: [Traffic]
+*    parameters:
+*       - name: address
+*         description: String that represents the address used by the tom tom api
+*         in: formData
+*         required: true
+*         type: String
+*       - name: radius
+*         description: String that represents the radius specified by the operator for knowing all sensor within this radius
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to request the closest sensors for a specified address within a certain radius(latest available)
+*    responses:
+*       '200':
+*        description: A successful response, data available 
+*       '400':
+*        description: Invalid address has been passed/Invalis radius has been passed/0 or a negative radius has been passed
+*       '404':
+*        description: No chemical agents available in the database/No sensors within the specified radius
+ */
 
 router.get('/:address/sensor/:radius', async (req, res) => {
     const address = req.params.address
