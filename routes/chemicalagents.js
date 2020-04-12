@@ -32,7 +32,7 @@ router.get('/' , async (req,res) => {
     .select("reg_date")
 
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
-    .select("sensor uid -_id types value")
+    .select("sensor uid -_id types value lat long")
 
     if(!result.length)
     res.status(404).send('No data available')
@@ -68,7 +68,7 @@ router.get('/current/:station_id' , async (req,res) => {
     .select("reg_date")
 
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date,uid:par})
-    .select("sensor uid -_id types value")
+    .select("sensor uid -_id types value lat long")
 
     if(!result.length) res.status(404).send("No data with the given criteria")
     else
@@ -106,7 +106,7 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
     const result = await Chemical_Agent.find({reg_date: {'$gte': date_start, '$lt': date_stop}})
-    .select("sensor uid -_id value types")
+    .select("sensor uid -_id value types lat long")
     .sort("uid")
     if(!result.length) res.status(404).send("No data with the given criteria")
    else res.status(200).send(result)
@@ -131,7 +131,7 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 router.get('/history', async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
- .select("reg_date sensor uid types value -_id")
+ .select("reg_date sensor uid types value -_id lat long")
 if(!result.length) 
     res.status(400).send("Data not available")
 else
@@ -169,7 +169,7 @@ router.get('/history/:type', async (req,res) => {
     {
     const result=await Chemical_Agent.find({types:par})
     .sort("-reg_date")
-    .select("reg_date sensor uid types value -_id")
+    .select("reg_date sensor uid types value -_id lat long")
 
     if(!result.length)
         res.status(404).send('No data available')
@@ -208,7 +208,7 @@ router.get('/history/:type', async (req,res) => {
     
     const result=await Chemical_Agent.find({uid:par})
     .sort("-reg_date")
-    .select("reg_date sensor uid types value -_id")  
+    .select("reg_date sensor uid types value -_id lat long")  
     if(!result.length)
         res.status(404).send("Data not available")
     else
@@ -254,7 +254,7 @@ router.get('/history/:type', async (req,res) => {
     {
         const result=await Chemical_Agent.find({uid:par1,types:par2})
         .sort("-reg_date")
-        .select("reg_date sensor uid types value -_id")  
+        .select("reg_date sensor uid types value -_id lat long")  
         if(!result.length)
             res.status(404).send("NOT FOUND")
         else

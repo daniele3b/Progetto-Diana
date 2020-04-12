@@ -13,7 +13,9 @@ describe('/chemical_agents', () => {
             value: 100,
             types: Agents.CO,
             sensor:"prova",
-            uid:"id_prova"
+            uid:"id_prova",
+            lat:"666",
+            long:"666"
         })
         await chemical_agent.save()
 
@@ -22,7 +24,9 @@ describe('/chemical_agents', () => {
             value: 100,
             types: Agents.SO2,
             sensor:"prova",
-            uid:"id_prova"
+            uid:"id_prova",
+            lat:"666",
+            long:"666"
         })
         await chemical_agent2.save()
     })

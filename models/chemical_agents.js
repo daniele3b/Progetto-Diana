@@ -40,6 +40,19 @@ const chemical_agentSchema = new mongoose.Schema({
         required:true,
         minlength:1,
         maxlenght:15
+    },
+    lat:{
+        type:String,
+        required:true,
+        minlength:1,
+        maxlenght:15
+    },
+
+    long:{
+            type:String,
+            required:true,
+            minlength:1,
+            maxlenght:15
     }
 });
 
@@ -53,7 +66,10 @@ function validateChemicalAgent(chemical_agent) {
         value: Joi.number().required(),
         types:Joi.string().valid('O3','NO', 'NO2','NOX','PM10','PM25','BENZENE','CO','SO2'),
         sensor:Joi.string().min(10).max(70).required(),
-        uid:Joi.string.min(1).maxlenght(15).required()
+        uid:Joi.string.min(1).maxlenght(15).required(),
+        lat:Joi.string.min(1).maxlenght(15).required(),
+        long:Joi.string.min(1).maxlenght(15).required()
+        
     }
     return Joi.validate(chemical_agent,schema)
 }
