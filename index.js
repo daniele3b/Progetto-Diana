@@ -16,9 +16,11 @@ require('./startup/routes')(app)
 
 const server = app.listen(8080, () =>  { console.log("Server listening on port : " , port)})
 
+if(process.env.NODE_ENV!="test"){
 setInterval(updateChemicalAgents,config.get('aqi_time_int')) //1 minute
 
 setInterval(updateMeteo, config.get('timer_meteo')) //15 seconds
+}
 
 module.exports = server
 
