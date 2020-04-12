@@ -4,7 +4,7 @@ const config = require('config')
 const request = require('request')
 const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate} = require('../models/chemical_agents')
-const {search, addressOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} = require('../helper/traffic_helper')
+const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} = require('../helper/traffic_helper')
 
 require('dotenv').config()
 
@@ -32,7 +32,7 @@ require('dotenv').config()
 router.get('/:address', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
-
+    
     const latLon = await getLatLong(address)
     const lat = latLon[0]
     const lon = latLon[1]
@@ -126,6 +126,69 @@ router.get('/:address/sensor', async (req, res) => {
         },
             distance: dist_min
         }])
+    }
+
+    else {
+        return res.status(404).send('No data available')
+    }
+})
+
+
+
+router.get('/:address/sensor/:radius', async (req, res) => {
+    const address = req.params.address
+    const radius = req.params.radius
+    if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
+    if(!radiusOK(radius)) return res.status(400).send("Invalid radius...")
+    if(radius <= 0) return res.status(400).send("Invalid radius...It must be a positive number!")
+
+    
+
+    const latLon = await getLatLong(req.params.address)
+    const lat = latLon[0]
+    const lon = latLon[1]
+
+    let result = await Chemical_Agent.find().select('sensor uid lat long -_id')
+    const dim = result.length
+    if(dim > 0) {
+
+        const sensorsInfo = await getSensorsInfo(result)
+                
+        let sensors = sensorsInfo.sensors
+        let uids = sensorsInfo.uids
+        let coordinates = sensorsInfo.coordinates
+
+        //console.log(sensors)
+        //console.log(uids)
+        //console.log(coordinates)
+
+        const resDests = await getResultsAndDestinationsForDistances(coordinates, lat, lon)
+        const results = resDests.results
+        const destinations = resDests.destinations
+        //console.log(results)
+        
+        const dim = results.length
+        let finalArray = []
+        for(i=0;i<dim;i++) {
+            if(results[i].travelDistance <= radius) {
+                finalArray.push({
+                    sensor: sensors[i],
+                    uid: uids[i],
+                    coordinates: {
+                        lat: coordinates[i].lat,
+                        lon: coordinates[i].lon
+                    },
+                    distance: results[i].travelDistance
+                })
+            }
+        }
+        
+        if(finalArray.length <= 0) {
+            res.status(404).send('There are no sensors within the specified radius')
+        }
+        
+        else
+            res.status(200).send(finalArray)
     }
 
     else {
