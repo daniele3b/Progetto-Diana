@@ -7,8 +7,8 @@ const meteoSchema = new mongoose.Schema({
     datastamp: {type:Number, required: true},
     descrizione: {type:String, required: true},
     t_att: {type:Number, required: true},
-    t_min: {type:Number, required: true},
-    t_max: {type:Number, required: true},
+    //t_min: {type:Number, required: true},
+    //t_max: {type:Number, required: true},
     humidity: {type:Number, required: true},
     wind: {type:Number, required: true}
 });
