@@ -40,7 +40,7 @@ router.get('/last' , async (req,res) => {
             "t_max": result.t_max,
             "humidity": result.humidity,
             "wind": result.wind  
-            }
+            } 
 
         res.send(tosend)
     }

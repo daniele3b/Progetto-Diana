@@ -23,7 +23,7 @@ const meteo7daysSchema = new mongoose.Schema({
         humidity: {type:Number, required: true},
         wind: {type:Number,required: true}
     }]
-});
+}); 
 
 
 function validateMeteo(meteo) {
