@@ -196,7 +196,7 @@ router.get('/:address/sensor', (req, res) => {
             }
 
             else {
-                return res.status(400).send('No data available')
+                return res.status(404).send('No data available')
             }
         }
     })
