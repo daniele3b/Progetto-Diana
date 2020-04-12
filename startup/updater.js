@@ -8,6 +8,7 @@ require('dotenv').config()
 let aqi_url=config.get('aqi_end');
 let stations_id=[] //used to req data from stations
 let timedata;
+let stations_geo=[];
 
 
 
@@ -35,6 +36,8 @@ function getStationsName()
             {
                 stations_name.push(obj.station.name);
                 stations_id.push(obj.uid)
+                stations_geo.push(obj.station.geo)
+                
             }
          
           
@@ -48,7 +51,7 @@ function getStationsName()
 
 
 //https://api.waqi.info/feed/@idx/?token=x
-function getData(id,nameStation)
+function getData(id,nameStation,coords)
 {
     return new Promise(function(resolve,reject){
 
@@ -64,13 +67,13 @@ function getData(id,nameStation)
             let chemical_comp=json.data.iaqi
             //if there isn't a value the field is undefined 
             if(chemical_comp.so2!=undefined)
-                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id)
+                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id,coords)
             if(chemical_comp.pm10!=undefined)
-                saveData(nameStation,Agents.PM10,chemical_comp.pm10.v,id)
+                saveData(nameStation,Agents.PM10,chemical_comp.pm10.v,id,coords)
             if(chemical_comp.pm25!=undefined)
-                saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id)
+                saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id,coords)
             if(chemical_comp.o3!=undefined)
-                saveData(nameStation,Agents.O3,chemical_comp.o3.v,id)
+                saveData(nameStation,Agents.O3,chemical_comp.o3.v,id,coords)
             
             resolve(true)
            }
@@ -78,14 +81,16 @@ function getData(id,nameStation)
 });
 }
 
-async function saveData (names,agents,values,ids)
+async function saveData (names,agents,values,ids,coords)
 {
    let chemical_agent=new Chemical_Agent({
         reg_date: timedata,
         value: values,
         types: agents,
         sensor:names,
-        uid:ids
+        uid:ids,
+        lat:coords[0],
+        long:coords[1]
    });
 
    await chemical_agent.save()
@@ -101,7 +106,7 @@ function getDataFromStations(stations){
 
     for(var i=0;i<stations_id.length;i++)
     {
-        getData(stations_id[i],stations[i])
+        getData(stations_id[i],stations[i],stations_geo[i])
         .then(function(res){console.log("DATA OK")})
         .catch(function(error){console.log(error)})
 
