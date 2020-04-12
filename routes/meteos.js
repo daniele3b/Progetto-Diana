@@ -8,16 +8,16 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
  * @swagger
  * tags:
  *   name: Weather
- *   description: Weather management APIs
+ *   description: Weather forecast management APIs
  */ 
 
 
 /**
 * @swagger 
-* /meteo/last:
+* /weather/last:
 *  get:
 *    tags: [Weather]
-*    description: Use to request the last report of weather forecast.
+*    description: Use to request the last report of weather forecast in the city.
 *    responses:
 *       '200':
 *         description: A successful response, data available
@@ -36,8 +36,8 @@ router.get('/last' , async (req,res) => {
             "datastamp": result.datastamp,
             "descrizione": result.descrizione,
             "t_att": result.t_att,
-            "t_min": result.t_min,
-            "t_max": result.t_max,
+            //"t_min": result.t_min,
+            //"t_max": result.t_max,
             "humidity": result.humidity,
             "wind": result.wind  
             } 
@@ -49,7 +49,7 @@ router.get('/last' , async (req,res) => {
 
 /**
 * @swagger 
-* /meteo/7daysforecast:
+* /weather/7daysforecast:
 *  get:
 *    tags: [Weather]
 *    description: Use to request up to 7 days weather forecast.
@@ -81,7 +81,11 @@ router.get('/7daysforecast' , async (req,res) => {
                 
                 
                 var d = new Date(datastamp[i]*1000);
-                data[i] = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear(); 
+                var day = d.getDate().toString(); 
+                if(day.length==1) day = '0'+day
+                var month = (d.getMonth()+1).toString();
+                if(month.length==1) month = '0'+month
+                data[i] = day + '/' + month + '/' + d.getFullYear(); 
             }   
             
             //const Meteo = mongoose.model('Meteo', meteoSchema);
@@ -149,12 +153,12 @@ router.get('/7daysforecast' , async (req,res) => {
 
 
             //REMINDER: devo decidere se è necessario salvare sul database
+            res.send(meteo7days)/*
             try{
                 const result = await meteo7days.save();
-                res.send(meteo7days)
             }catch(ex){
                 console.log(ex);
-            }
+            }*/
             };
 
         creaMeteo();

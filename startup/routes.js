@@ -12,5 +12,5 @@ module.exports = function(app) {
     app.use('/diana-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))   // ADDED
     app.use('/chemical_agents',chemicalagent)
     app.use('/traffic', traffic)
-    app.use('/meteo', meteo)
+    app.use('/weather', meteo)
 }
