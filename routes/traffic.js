@@ -25,6 +25,8 @@ require('dotenv').config()
 *    responses:
 *       '200':
 *         description: A successful response, data available
+*       '400':
+*         description: An invalid address has been passed
 */
 
 let pick_point_end_url = config.get('pick_point_end');
@@ -100,6 +102,8 @@ router.get('/:address', (req, res) => {
 *    responses:
 *       '200':
 *         description: A successful response, data available
+*       '400':
+*         description: An invalid address has been passed
 *       '404':
 *         description: No data available
 */
