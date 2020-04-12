@@ -27,8 +27,9 @@ function getStationsName()
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         let json= JSON.parse(body);
         let stations=json.data;
+        let len_s=stations.length
 
-        for(var i = 0; i < stations.length; i++) {
+        for(var i = 0; i <len_s ; i++) {
             var obj = stations[i];
             let n=obj.station.name
             
@@ -104,7 +105,8 @@ function getDataFromStations(stations){
     //console.log(stations)
     //console.log(stations_id)
 
-    for(var i=0;i<stations_id.length;i++)
+    let len_sd=stations_id.length
+    for(var i=0;i<len_sd;i++)
     {
         getData(stations_id[i],stations[i],stations_geo[i])
         .then(function(res){console.log("DATA OK")})

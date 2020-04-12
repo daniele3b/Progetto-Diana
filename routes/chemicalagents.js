@@ -157,7 +157,8 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
         else{
             let i=0;
             let sum=0;
-            for(i=0;i<result.length;i++)
+            let len=result.length
+            for(i=0;i<len;i++)
             {
                // console.log(result[i].value)
                 sum+=result[i].value

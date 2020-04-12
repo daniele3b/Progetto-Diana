@@ -162,7 +162,7 @@ describe('/chemical_agents', () => {
 
         it('should return 400 if the type of agent dont exist', async () => {
             const res = await request(server).get('/chemical_agents/history/station/id_prova/nonesiste')
-            expect(res.status).toBe(400)
+            expect(res.status).toBe(400)  
         })
 
     
