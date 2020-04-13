@@ -182,6 +182,99 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
 
 /** 
 * @swagger
+* /chemical_agents/filter/avg/:station_id:
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request the average of all agents of a sensor (history)
+*    parameters:
+*       - name: station_id
+*         description: id of the station
+*         in: formData
+*         required: true
+*         type: String
+*    responses:
+*       '200':
+*         description: A successful response
+*       '404' :
+*         description: No data available
+*/
+
+router.get('/filter/avg/:station_id', async (req,res) => {
+    let par1=req.params.station_id
+    const result=await Chemical_Agent.find({uid:par1})
+    .sort("-reg_date")
+    if(!result.length)
+        res.status(404).send("NOT FOUND")
+    else{
+            let i=0;
+            let sum=[0.0,0.0,0.0,0.0,0.0,0.0]
+            let cont=[0,0,0,0,0,0]
+            let len=result.length
+            for(i=0;i<len;i++)
+            {
+               // console.log(result[i].types+ "->"+result[i].value)
+                if(result[i].types==Agents.CO){
+                    sum[0]+=result[i].value
+                    cont[0]+=1
+                }
+                if(result[i].types==Agents.SO2)
+                {
+                    sum[1]+=result[i].value
+                    cont[1]+=1
+                }
+
+                if(result[i].types==Agents.PM10)
+                {
+                    sum[2]+=result[i].value
+                    cont[2]+=1
+                }
+
+                if(result[i].types==Agents.PM25)
+                {
+                    sum[3]+=result[i].value
+                    cont[3]+=1
+                }
+                if(result[i].types==Agents.O3)
+                {
+                    sum[4]+=result[i].value
+                    cont[4]+=1
+                }
+            }
+
+            let obj=[
+           {
+            type:"CO",
+            avg:(sum[0]/cont[0])
+           },
+           {
+            type:"SO2",
+            avg: (sum[1]/cont[1])
+           },
+           {
+            type:"PM10",
+            avg:(sum[2]/cont[2])
+           },
+           {
+            type:"PM25",
+            avg:(sum[3]/cont[3])
+           },
+           {
+            type:"O3",
+            avg:(sum[4]/cont[4])
+           }
+           
+            ]
+                
+            //console.log(obj)
+            
+           
+            res.status(200).send(obj)
+        }  
+   
+})
+
+/** 
+* @swagger
 * /chemical_agents/history :
 *  get:
 *    tags: [Chemical_Agents]

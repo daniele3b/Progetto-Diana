@@ -182,8 +182,32 @@ describe('/chemical_agents', () => {
             
         })
 
+        it('should return 400 if the station doesnt exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/nonesiste/CO')
+            expect(res.status).toBe(404)
+            
+        })
+
         it('should return 404 if type of agent exist but there arent values', async () => {
             const res = await request(server).get('/chemical_agents/filter/avg/id_prova/BENZENE')
+            expect(res.status).toBe(404)
+            
+        })
+    })
+
+
+    describe('GET /filter/avg/:station_id/', () => {
+        it('should return the avg of all data of a station', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/')
+            expect(res.status).toBe(200)
+            
+            expect(res.body[0].avg).toBe(100)
+            expect(res.body[1].avg).toBe(100)
+        })
+
+
+        it('should return 404 if station_id doesent exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
             expect(res.status).toBe(404)
             
         })
