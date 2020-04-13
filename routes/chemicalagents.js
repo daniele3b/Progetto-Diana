@@ -20,7 +20,39 @@ const router = express.Router()
 *    description: Use to request all current data by the sensor in the city (latest available)
 *    responses:
 *       '200':
-*         description: A successful response, data available
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
+*                                  
 *       '404':
 *         description: No data available
 */
@@ -56,7 +88,38 @@ router.get('/' , async (req,res) => {
 *    description: Use to get all current data from a station (latest available)
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '400' :
 *         description: Bad request
 */
@@ -98,7 +161,38 @@ router.get('/current/:station_id' , async (req,res) => {
 *         type: date
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '400' :
 *         description: Bad request
 */
@@ -135,7 +229,15 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 *         type: String
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an object
+*         schema:
+*           type: object
+*           properties:
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 27.3
+*               type: object
 *       '400' :
 *         description: Bad request
 *       '404' :
@@ -194,7 +296,28 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
 *         type: String
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               
+*               type: object
 *       '404' :
 *         description: No data available
 */
@@ -243,23 +366,23 @@ router.get('/filter/avg/:station_id', async (req,res) => {
 
             let obj=[
            {
-            type:"CO",
+            types:"CO",
             avg:(sum[0]/cont[0])
            },
            {
-            type:"SO2",
+            types:"SO2",
             avg: (sum[1]/cont[1])
            },
            {
-            type:"PM10",
+            types:"PM10",
             avg:(sum[2]/cont[2])
            },
            {
-            type:"PM25",
+            types:"PM25",
             avg:(sum[3]/cont[3])
            },
            {
-            type:"O3",
+            types:"O3",
             avg:(sum[4]/cont[4])
            }
            
@@ -282,7 +405,38 @@ router.get('/filter/avg/:station_id', async (req,res) => {
 *
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '400' :
 *         description: Bad request
 */
@@ -314,7 +468,38 @@ else
 *  
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '400' :
 *         description: Bad request
 *       '404' :
@@ -357,7 +542,38 @@ router.get('/history/:type', async (req,res) => {
 *  
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '404' :
 *         description: Not found
 */
@@ -398,7 +614,38 @@ router.get('/history/:type', async (req,res) => {
 *  
 *    responses:
 *       '200':
-*         description: A successful response
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
 *       '404' :
 *         description: Not found
 *       '400':
