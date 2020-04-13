@@ -11,6 +11,151 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
  *   description: Weather forecast & UV Rays management APIs
  */ 
 
+ /**
+* @swagger 
+* /weather/uv/now:
+*  get:
+*    tags: [Weather Report & UV Rays]
+*    description: Use to request the last UV rays' data in the city.
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"uv_value" float which represent the UV rays's value now,
+*               <br>"uv_value_time" string which represent the time of UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"uv_max" float which represent the maximum UV rays's value of the day,
+*               <br>"uv_max_time" string which represent the time of maximum UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"ozone_value" float which represent the ozone's value ,
+*               <br>"ozone_time" string which represent the time of ozone's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*         schema:
+*           type: object
+*           properties:
+*               uv_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_value_time:
+*                   type: string
+*                   format: date-time
+*               uv_max:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_max_time:
+*                   type: string
+*                   format: date-time
+*               ozone_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               ozone_time:
+*                   type: string
+*                   format: date-time  
+*       '500':
+*         description: Internal server error  
+*/
+
+router.get('/uv/now', async (req,res) =>{
+
+    var options = { method: 'GET',
+        url: 'https://api.openuv.io/api/v1/uv',
+        qs: { lat: '41.89', lng: '12.48'},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': process.env.UVRAYS_KEY } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    'uv_value' : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'uv_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
+});
+
+/**
+* @swagger 
+* /weather/uv/:date:
+*  get:
+*    tags: [Weather Report & UV Rays]
+*    description: Use to request the last UV rays' data in the city.
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"uv_value" float which represent the UV rays's value of the day choosen,
+*               <br>"uv_value_time" string which represent the time of UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"uv_max" float which represent the maximum UV rays's value of the day,
+*               <br>"uv_max_time" string which represent the time of maximum UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ)
+*         schema:
+*           type: object
+*           properties:
+*               uv_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_value_time:
+*                   type: string
+*                   format: date-time
+*               uv_max:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_max_time:
+*                   type: string
+*                   format: date-time
+*       '500':
+*         description: Internal server error
+*    parameters:
+*       - name: date
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
+*/
+
+router.get('/uv/:date', async (req,res) =>{
+    var par1 = req.params.date + 'T11:00:00.000Z'
+    var options = { method: 'GET',
+        url: 'https://api.openuv.io/api/v1/uv',
+        qs: { lat: '41.89', lng: '12.48', dt: par1},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': process.env.UVRAYS_KEY } };
+
+    request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    'uv_value' : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'ux_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,/*
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time*/
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
+});
 
 /**
 * @swagger 
@@ -37,14 +182,18 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 *                   type: string
 *               datastamp:
 *                   type: integer
+*                   example: 1234
 *               descrizione:
 *                   type: string
 *               t_att:
 *                   type: integer
+*                   example: 1234
 *               humidity:
 *                   type: integer
+*                   example: 1234
 *               wind:
 *                   type: integer
+*                   example: 1234
 *               
 *       '500':
 *         description: Internal server error
@@ -100,16 +249,21 @@ router.get('/report/last' , async (req,res) => {
 *                           type: string 
 *                       datastamp:
 *                           type: number 
+*                           example: 1234
 *                       descrizione:
 *                           type: string 
 *                       t_min:
 *                           type: number 
+*                           example: 1234
 *                       t_max:
 *                           type: number 
+*                           example: 1234
 *                       humidity:
 *                           type: number 
+*                           example: 1234
 *                       wind:
 *                           type: number 
+*                           example: 1.234
 *                                
 *       '500':
 *         description: Internal server error
@@ -231,8 +385,8 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response, data available
-*       '404':
-*         description: No data available    
+*       '500':
+*         description: Internal service error    
 *    parameters:
 *       - name: date
 *         description: date choosen, regex pattern
@@ -267,100 +421,6 @@ router.get('/report/history/:date' , async (req,res) => {
             res.status(200).send(tosend)
         }else res.status(404).send('Not found.')
     });
-});
-
-/**
-* @swagger 
-* /weather/uv/now:
-*  get:
-*    tags: [Weather Report & UV Rays]
-*    description: Use to request the level of uv rays.
-*    responses:
-*       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available
-*/
-
-router.get('/uv/now', async (req,res) =>{
-
-    var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48'},
-        headers: 
-        { 'content-type': 'application/json',
-            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
-
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        else{
-            var info = JSON.parse(body)
-
-            var tosend = {
-                    'uv_value' : info.result.uv,
-                    'uv_value_time' : info.result.uv_time,
-                    'ux_max' : info.result.uv_max,
-                    'uv_max_time' : info.result.uv_max_time,
-                    'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time
-                }
-
-            res.status(200).send(tosend);
-
-        }
-    });
-
-
-});
-
-/**
-* @swagger 
-* /weather/uv/:date:
-*  get:
-*    tags: [Weather Report & UV Rays]
-*    description: Use to request a uv values on a single day in history.
-*    responses:
-*       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available    
-*    parameters:
-*       - name: date
-*         description: date choosen, regex pattern
-*         required: true
-*         type: String
-*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'   
-*/
-
-router.get('/uv/:date', async (req,res) =>{
-    var par1 = req.params.date + 'T11:00:00.000Z'
-    var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48', dt: par1},
-        headers: 
-        { 'content-type': 'application/json',
-            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
-
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        else{
-            var info = JSON.parse(body)
-
-            var tosend = {
-                    'uv_value' : info.result.uv,
-                    'uv_value_time' : info.result.uv_time,
-                    'ux_max' : info.result.uv_max,
-                    'uv_max_time' : info.result.uv_max_time,/*
-                    'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time*/
-                }
-
-            res.status(200).send(tosend);
-
-        }
-    });
-
-
 });
 
 module.exports = router
