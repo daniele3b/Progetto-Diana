@@ -67,6 +67,7 @@ function getLatLong (address) {
         request(url_addr, function(error, response, body) {
             if(error){
                 console.error('error:', error);
+                //reject(NaN) 
                 reject(error)
             }
             else{

@@ -39,10 +39,15 @@ describe('/traffic', () => {
     })
 
     describe('/GET/:address', () => {
-        it('should return 400 if invalid address is passed', async () => {
-            const res = await request(server).get('/traffic/Via Tiburtina 543/sensor');
+        it('should return 400 if invalid address is passed(it contains numbers)', async () => {
+            const res = await request(server).get('/traffic/Via Tiburtina 543');
             expect(res.status).toBe(400);
         })
+
+        /*it("should return 400 if address doesn't exist", async () => {
+            const res = await request(server).get('/traffic/xxxxxxxx');
+            expect(res.status).toBe(400);
+        })*/
         
         it('should return all current data about traffic into an area specified by a given address', async () => {
             const res = await request(server).get('/traffic/Via Tiburtina');
@@ -58,6 +63,11 @@ describe('/traffic', () => {
             const res = await request(server).get('/traffic/Via Tiburtina 543/sensor');
             expect(res.status).toBe(400);
         })
+
+       /* it("should return 400 if address doesn't exist", async () => {
+            const res = await request(server).get('/traffic/xxxxxxxx/sensor');
+            expect(res.status).toBe(400);
+        })*/
 
         it('should return 404 if no chemical agents are stored in the database', async () => {
             await Chemical_Agent.deleteMany({})
@@ -81,9 +91,23 @@ describe('/traffic', () => {
             expect(res.status).toBe(400);
         })
 
+        /*it("should return 400 if address doesn't exist", async () => {
+            const res = await request(server).get('/traffic/xxxxxxxx/sensor/100');
+            expect(res.status).toBe(400);
+        })*/
+
         it('should return 400 if invalid radius is passed', async () => {
             const res = await request(server).get('/traffic/Via Tiburtina/sensor/invalid_radius');
             expect(res.status).toBe(400);
+
+            const res1 = await request(server).get('/traffic/Via Tiburtina/sensor/8.9,1');
+            expect(res1.status).toBe(400);
+
+            const res2 = await request(server).get('/traffic/Via Tiburtina/sensor/.7');
+            expect(res2.status).toBe(400);
+        
+            const res3 = await request(server).get('/traffic/Via Tiburtina/sensor/7.');
+            expect(res3.status).toBe(400);
         })
         
         it('should return 400 if 0 or a negative number is passed', async () => {

@@ -51,19 +51,21 @@ require('dotenv').config()
 *                   format: float
 *                   example: 36
 *       '400':
-*         description: An invalid address has been passed
+*         description: An invalid address has been passed(it contains numbers), or the address doesn't exist
 */
 
 router.get('/:address', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
-    const latLon = await getLatLong(address)
+    const latLon = await getLatLong(address, res)
+    //if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
+    
     const lat = latLon[0]
     const lon = latLon[1]
             
     // https://api.tomtom.com/traffic/services/4/flowSegmentData/
-    // relative/10/json?point=41.900112%2C12.4808036&unit=KMPH&openLr=false&key=*****
+    // relative/10/json?point=41.900112%2C12.4808036&unit=KMPH&key=*****
 
     let tom_tom_end_url = config.get('tom_tom_end');
     const url_info = tom_tom_end_url+'/4/flowSegmentData/absolute/10/json?point='
@@ -131,7 +133,7 @@ router.get('/:address', async (req, res) => {
 *                   format: float
 *                   example: 10.68
 *       '400':
-*         description: An invalid address has been passed
+*         description: An invalid address has been passed(it contains numbers), or the address doesn't exist
 *       '404':
 *         description: No chemical agents available in the database
 */
@@ -141,6 +143,8 @@ router.get('/:address/sensor', async (req, res) => {
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
     const latLon = await getLatLong(req.params.address)
+   // if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
+
     const lat = latLon[0]
     const lon = latLon[1]
 
@@ -235,7 +239,7 @@ router.get('/:address/sensor', async (req, res) => {
 *                   format: float
 *                   example: 10.68
 *       '400':
-*        description: Invalid address has been passed/Invalis radius has been passed/0 or a negative radius has been passed
+*        description: Invalid address has been passed(it contains numbers), or the address doesn't exist/Invalis radius has been passed/0 or a negative radius has been passed
 *       '404':
 *        description: No chemical agents available in the database/No sensors within the specified radius
 */
@@ -250,6 +254,8 @@ router.get('/:address/sensor/:radius', async (req, res) => {
     
 
     const latLon = await getLatLong(req.params.address)
+    //if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
+
     const lat = latLon[0]
     const lon = latLon[1]
 
