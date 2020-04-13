@@ -7,8 +7,8 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 /**
  * @swagger
  * tags:
- *   name: Weather
- *   description: Weather forecast management APIs
+ *   name: Weather Report & UV Rays
+ *   description: Weather forecast & UV Rays management APIs
  */ 
 
 
@@ -16,19 +16,44 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 * @swagger 
 * /weather/report/last:
 *  get:
-*    tags: [Weather]
+*    tags: [Weather Report & UV Rays]
 *    description: Use to request the last report of weather forecast in the city.
 *    responses:
 *       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available
+*         description: A successful response, data available in JSON format, 
+*               <br>"data" is a String object which represent the date (dd/mm/yyyy) of the last report,
+*               <br>"orario" is a String object which represent the time (hh:mm:ss) of the last report,
+*               <br>"datastamp" is a Number object which represent the UNIX datastamp of the last report,
+*               <br>"description" is a String object which represent a general description of the weather,
+*               <br>"t_att" is a Number object which represent the current temperature,
+*               <br>"humidity" is a Number object which represent the current humidity,
+*               <br>"wind" is a Number object which represent the current wind speed
+*         schema:
+*           type: object
+*           properties:
+*               data:
+*                   type: string
+*               orario:
+*                   type: string
+*               datastamp:
+*                   type: integer
+*               descrizione:
+*                   type: string
+*               t_att:
+*                   type: integer
+*               humidity:
+*                   type: integer
+*               wind:
+*                   type: integer
+*               
+*       '500':
+*         description: Internal server error
 */
 
 router.get('/report/last' , async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
-    if(!result) res.status(404).send("Not found.")
+    if(!result) res.status(500).send("Internal server error.")
     else{
         var tosend = {
             "data": result.data,
@@ -36,8 +61,6 @@ router.get('/report/last' , async (req,res) => {
             "datastamp": result.datastamp,
             "descrizione": result.descrizione,
             "t_att": result.t_att,
-            //"t_min": result.t_min,
-            //"t_max": result.t_max,
             "humidity": result.humidity,
             "wind": result.wind  
             } 
@@ -51,13 +74,45 @@ router.get('/report/last' , async (req,res) => {
 * @swagger 
 * /weather/report/7daysforecast:
 *  get:
-*    tags: [Weather]
+*    tags: [Weather Report & UV Rays]
 *    description: Use to request up to 7 days weather forecast.
 *    responses:
 *       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available
+*         description: A successful response, data available in JSON format,
+*               <br>each field of the array represents a day 
+*               <br>"id" is a String object which is used as identifier
+*               <br>"data" is a String object which represent the date (dd/mm/yyyy) of the forecast's day,
+*               <br>"datastamp" is a Number object which represent the UNIX datastamp of the day's forecast,
+*               <br>"descrizione" is a String object which represent a general description of the weather's forecast,
+*               <br>"t_min" is a Number object which represent the day's minimum temperature,
+*               <br>"t_max" is a Number object which represent the day's maximum temperature,
+*               <br>"humidity" is a Number object which represent the day's average humidity,
+*               <br>"wind" is a Number object which represent the day's average wind speed
+*         schema:
+*           type: object
+*           properties:
+*               array:
+*                   type: object
+*                   properties: 
+*                       id:
+*                           type: string
+*                       data:
+*                           type: string 
+*                       datastamp:
+*                           type: number 
+*                       descrizione:
+*                           type: string 
+*                       t_min:
+*                           type: number 
+*                       t_max:
+*                           type: number 
+*                       humidity:
+*                           type: number 
+*                       wind:
+*                           type: number 
+*                                
+*       '500':
+*         description: Internal server error
 */
 router.get('/report/7daysforecast' , async (req,res) => {
     var lin = 'https://api.openweathermap.org/data/2.5/onecall?lat=41.89&lon=12.48&appid='+ process.env.METEO_KEY;
@@ -171,7 +226,7 @@ router.get('/report/7daysforecast' , async (req,res) => {
 * @swagger 
 * /weather/report/history/:date:
 *  get:
-*    tags: [Weather]
+*    tags: [Weather Report & UV Rays]
 *    description: Use to request a weather report on a single day in history.
 *    responses:
 *       '200':
@@ -218,7 +273,7 @@ router.get('/report/history/:date' , async (req,res) => {
 * @swagger 
 * /weather/uv/now:
 *  get:
-*    tags: [Weather]
+*    tags: [Weather Report & UV Rays]
 *    description: Use to request the level of uv rays.
 *    responses:
 *       '200':
@@ -262,7 +317,7 @@ router.get('/uv/now', async (req,res) =>{
 * @swagger 
 * /weather/uv/:date:
 *  get:
-*    tags: [Weather]
+*    tags: [Weather Report & UV Rays]
 *    description: Use to request a uv values on a single day in history.
 *    responses:
 *       '200':
