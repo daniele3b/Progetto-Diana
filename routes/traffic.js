@@ -31,6 +31,25 @@ require('dotenv').config()
 *    responses:
 *       '200':
 *         description: A successful response, data available
+*         schema:
+*           type: object
+*           properties:
+*               currentSpeed:
+*                   type: number
+*                   format: float
+*                   example: 45
+*               freeFlowSpeed:
+*                   type: number
+*                   format: float
+*                   example: 45
+*               confidence:
+*                   type: number
+*                   format: float
+*                   example: 0.95045677
+*               currentTravelTime:
+*                   type: number
+*                   format: float
+*                   example: 36
 *       '400':
 *         description: An invalid address has been passed
 */
@@ -86,6 +105,31 @@ router.get('/:address', async (req, res) => {
 *    responses:
 *       '200':
 *         description: A successful response, data available
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: String
+*                   example: "Cinecitta', Roma, Lazio, Italy"
+*               uid:
+*                   type: number
+*                   format: integer
+*                   example: 9343
+*               coordinates:
+*                   type: object
+*                   properties:
+*                       lat:
+*                        type: number
+*                        format: float
+*                        example: 41.8482263
+*                       lon:
+*                        type: number
+*                        format: float
+*                        example: 12.5759027      
+*               distance:
+*                   type: number
+*                   format: float
+*                   example: 10.68
 *       '400':
 *         description: An invalid address has been passed
 *       '404':
@@ -165,11 +209,36 @@ router.get('/:address/sensor', async (req, res) => {
 *    responses:
 *       '200':
 *        description: A successful response, data available 
+*        schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: String
+*                   example: "Cinecitta', Roma, Lazio, Italy"
+*               uid:
+*                   type: number
+*                   format: integer
+*                   example: 9343
+*               coordinates:
+*                   type: object
+*                   properties:
+*                       lat:
+*                        type: number
+*                        format: float
+*                        example: 41.8482263
+*                       lon:
+*                        type: number
+*                        format: float
+*                        example: 12.5759027      
+*               distance:
+*                   type: number
+*                   format: float
+*                   example: 10.68
 *       '400':
 *        description: Invalid address has been passed/Invalis radius has been passed/0 or a negative radius has been passed
 *       '404':
 *        description: No chemical agents available in the database/No sensors within the specified radius
- */
+*/
 
 router.get('/:address/sensor/:radius', async (req, res) => {
     const address = req.params.address
