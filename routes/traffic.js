@@ -58,7 +58,7 @@ router.get('/:address', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
-    const latLon = await getLatLong(address, res)
+    const latLon = await getLatLong(address)
     //if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
     
     const lat = latLon[0]
@@ -142,7 +142,7 @@ router.get('/:address/sensor', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
-    const latLon = await getLatLong(req.params.address)
+    const latLon = await getLatLong(address)
    // if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
 
     const lat = latLon[0]
@@ -253,7 +253,7 @@ router.get('/:address/sensor/:radius', async (req, res) => {
 
     
 
-    const latLon = await getLatLong(req.params.address)
+    const latLon = await getLatLong(address)
     //if(isNaN(latLon)) return res.status(400).send("This address doesn't exist")
 
     const lat = latLon[0]
