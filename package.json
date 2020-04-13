@@ -4,7 +4,7 @@
   "description": "Progetto universitario per il monitoring di agenti inquinanti nei comuni italiani, con supporto di segnalazioni da parte dei cittadini.",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest  --verbose --watchAll --maxWorkers=1"
   },
   "jest": {
     "testURL": "http://localhost/",
