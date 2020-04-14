@@ -1,5 +1,6 @@
 const express = require('express')
 var request = require('request')
+const config = require('config')
 const router = express.Router()
 const {Meteo, Meteo7days, validate}=require('../models/meteo')
 
@@ -11,6 +12,165 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
  *   description: Weather forecast & UV Rays management APIs
  */ 
 
+ /**
+* @swagger 
+* /weather/uv/now:
+*  get:
+*    tags: [Weather Report & UV Rays]
+*    description: Use to request the last UV rays' data in the city.
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"uv_value" float which represents the UV rays's value now,
+*               <br>"uv_value_time" string which represents the time of UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"uv_max" float which represents the maximum UV rays's value of the day,
+*               <br>"uv_max_time" string which represents the time of maximum UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"ozone_value" float which represents the ozone's value ,
+*               <br>"ozone_time" string which represents the time of ozone's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*         schema:
+*           type: object
+*           properties:
+*               uv_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_value_time:
+*                   type: string
+*                   format: date-time
+*               uv_max:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_max_time:
+*                   type: string
+*                   format: date-time
+*               ozone_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               ozone_time:
+*                   type: string
+*                   format: date-time  
+*       '500':
+*         description: Internal server error  
+*/
+
+router.get('/uv/now', async (req,res) =>{
+
+    var options = { method: 'GET',
+        url: config.get('apiuv_url') ,
+        qs: { lat: config.get('Rome_lat'), lng: config.get('Rome_lon')},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': process.env.UVRAYS_KEY } };
+
+    request(options, function (error, response, body) {
+        if (error /*|| typeof body.result.uv == "undefined"*/){ 
+            res.status(500).send('Internal server error.');
+            return
+        }
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    "uv_value" : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'uv_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
+});
+
+/**
+* @swagger 
+* /weather/uv/:date:
+*  get:
+*    tags: [Weather Report & UV Rays]
+*    description: Use to request the last UV rays' data in the city.
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"uv_value" float which represents the UV rays's value of the day choosen,
+*               <br>"uv_value_time" string which represents the time of UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
+*               <br>"uv_max" float which represents the maximum UV rays's value of the day,
+*               <br>"uv_max_time" string which represents the time of maximum UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ)
+*         schema:
+*           type: object
+*           properties:
+*               uv_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_value_time:
+*                   type: string
+*                   format: date-time
+*               uv_max:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               uv_max_time:
+*                   type: string
+*                   format: date-time
+*       '400':
+*         description: Bad request
+*       '404':
+*         description: Not found
+*       '500':
+*         description: Internal server error
+*    parameters:
+*       - name: date
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
+*/
+
+router.get('/uv/:date', async (req,res) =>{
+    if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    var par1 = req.params.date + 'T11:00:00.000Z'
+    var options = { method: 'GET',
+        url: config.get('apiuv_url'),
+        qs: { lat: config.get('Rome_lat'), lng: config.get('Rome_lon'), dt: par1},
+        headers: 
+        { 'content-type': 'application/json',
+            'x-access-token': process.env.UVRAYS_KEY } };
+
+    request(options, function (error, response, body) {
+        if (error /*|| typeof body.result === "undefined"*/){ 
+            res.status(500).send('Internal server error.');
+            return
+        }
+        else{
+            var info = JSON.parse(body)
+
+            var tosend = {
+                    'uv_value' : info.result.uv,
+                    'uv_value_time' : info.result.uv_time,
+                    'uv_max' : info.result.uv_max,
+                    'uv_max_time' : info.result.uv_max_time,/*
+                    'ozone_value' : info.result.ozone,
+                    'ozone_time' : info.result.ozone_time*/
+                }
+
+            res.status(200).send(tosend);
+
+        }
+    });
+
+
+});
 
 /**
 * @swagger 
@@ -21,13 +181,13 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
-*               <br>"data" is a String object which represent the date (dd/mm/yyyy) of the last report,
-*               <br>"orario" is a String object which represent the time (hh:mm:ss) of the last report,
-*               <br>"datastamp" is a Number object which represent the UNIX datastamp of the last report,
-*               <br>"description" is a String object which represent a general description of the weather,
-*               <br>"t_att" is a Number object which represent the current temperature,
-*               <br>"humidity" is a Number object which represent the current humidity,
-*               <br>"wind" is a Number object which represent the current wind speed
+*               <br>"data" is a String object which represents the date (dd/mm/yyyy) of the last report,
+*               <br>"orario" is a String object which represents the time (hh:mm:ss) of the last report,
+*               <br>"datastamp" is a Number object which represents the UNIX datastamp of the last report,
+*               <br>"description" is a String object which represents a general description of the weather,
+*               <br>"t_att" is a Number object which represents the current temperature,
+*               <br>"humidity" is a Number object which represents the current humidity,
+*               <br>"wind" is a Number object which represents the current wind speed
 *         schema:
 *           type: object
 *           properties:
@@ -37,14 +197,18 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 *                   type: string
 *               datastamp:
 *                   type: integer
+*                   example: 1234
 *               descrizione:
 *                   type: string
 *               t_att:
 *                   type: integer
+*                   example: 1234
 *               humidity:
 *                   type: integer
+*                   example: 1234
 *               wind:
 *                   type: integer
+*                   example: 1234
 *               
 *       '500':
 *         description: Internal server error
@@ -80,42 +244,47 @@ router.get('/report/last' , async (req,res) => {
 *       '200':
 *         description: A successful response, data available in JSON format,
 *               <br>each field of the array represents a day 
-*               <br>"id" is a String object which is used as identifier
-*               <br>"data" is a String object which represent the date (dd/mm/yyyy) of the forecast's day,
-*               <br>"datastamp" is a Number object which represent the UNIX datastamp of the day's forecast,
-*               <br>"descrizione" is a String object which represent a general description of the weather's forecast,
-*               <br>"t_min" is a Number object which represent the day's minimum temperature,
-*               <br>"t_max" is a Number object which represent the day's maximum temperature,
-*               <br>"humidity" is a Number object which represent the day's average humidity,
-*               <br>"wind" is a Number object which represent the day's average wind speed
+*               <br>"_id" is a String object which is used as identifier
+*               <br>"data" is a String object which represents the date (dd/mm/yyyy) of the forecast's day,
+*               <br>"datastamp" is a Number object which represents the UNIX datastamp of the day's forecast,
+*               <br>"descrizione" is a String object which represents a general description of the weather's forecast,
+*               <br>"t_min" is a Number object which represents the day's minimum temperature,
+*               <br>"t_max" is a Number object which represents the day's maximum temperature,
+*               <br>"humidity" is a Number object which represents the day's average humidity,
+*               <br>"wind" is a Number object which represents the day's average wind speed
 *         schema:
 *           type: object
 *           properties:
 *               array:
 *                   type: object
 *                   properties: 
-*                       id:
+*                       _id:
 *                           type: string
 *                       data:
 *                           type: string 
 *                       datastamp:
 *                           type: number 
+*                           example: 1234
 *                       descrizione:
 *                           type: string 
 *                       t_min:
 *                           type: number 
+*                           example: 1234
 *                       t_max:
 *                           type: number 
+*                           example: 1234
 *                       humidity:
 *                           type: number 
+*                           example: 1234
 *                       wind:
 *                           type: number 
+*                           example: 1.234
 *                                
 *       '500':
 *         description: Internal server error
 */
 router.get('/report/7daysforecast' , async (req,res) => {
-    var lin = 'https://api.openweathermap.org/data/2.5/onecall?lat=41.89&lon=12.48&appid='+ process.env.METEO_KEY;
+    var lin = config.get('weather_report_url') + process.env.METEO_KEY;
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 
@@ -218,7 +387,7 @@ router.get('/report/7daysforecast' , async (req,res) => {
 
         creaMeteo();
         
-        }else res.status(404).send("Not found.")
+        }else res.status(500).send("Internal server error.")
     });
 });
 
@@ -230,12 +399,41 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *    description: Use to request a weather report on a single day in history.
 *    responses:
 *       '200':
-*         description: A successful response, data available
+*         description: A successful response, data available in JSON format, 
+*               <br>"date" string which represents the report's day,
+*               <br>"t_min" number which represents minimum temperature in the choosen's day,
+*               <br>"t_max" number which represents maximum temperature in the choosen's day,
+*               <br> "wind" number which represents the average wind's speed  
+*               <br> "humidity" number which represents the average humidity
+*         schema:
+*           type: object
+*           properties:
+*               date:
+*                   type: string
+*               t_min:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               t_max:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               wind:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               humidity:
+*                   type: number
+*                   format: float
+*                   example: 1.234                   
+*       '400':
+*         description: Bad request
 *       '404':
-*         description: No data available    
+*         description: Not found   
 *    parameters:
 *       - name: date
-*         description: date choosen, regex pattern
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
 *         required: true
 *         type: String
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'
@@ -243,6 +441,10 @@ router.get('/report/7daysforecast' , async (req,res) => {
 */
 
 router.get('/report/history/:date' , async (req,res) => {
+    if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
     var par = req.params.date // yyyy-mm-dd
     var miadata = new Date();
     miadata.setDate(parseInt(par.substr(8,2)));
@@ -267,100 +469,6 @@ router.get('/report/history/:date' , async (req,res) => {
             res.status(200).send(tosend)
         }else res.status(404).send('Not found.')
     });
-});
-
-/**
-* @swagger 
-* /weather/uv/now:
-*  get:
-*    tags: [Weather Report & UV Rays]
-*    description: Use to request the level of uv rays.
-*    responses:
-*       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available
-*/
-
-router.get('/uv/now', async (req,res) =>{
-
-    var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48'},
-        headers: 
-        { 'content-type': 'application/json',
-            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
-
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        else{
-            var info = JSON.parse(body)
-
-            var tosend = {
-                    'uv_value' : info.result.uv,
-                    'uv_value_time' : info.result.uv_time,
-                    'ux_max' : info.result.uv_max,
-                    'uv_max_time' : info.result.uv_max_time,
-                    'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time
-                }
-
-            res.status(200).send(tosend);
-
-        }
-    });
-
-
-});
-
-/**
-* @swagger 
-* /weather/uv/:date:
-*  get:
-*    tags: [Weather Report & UV Rays]
-*    description: Use to request a uv values on a single day in history.
-*    responses:
-*       '200':
-*         description: A successful response, data available
-*       '404':
-*         description: No data available    
-*    parameters:
-*       - name: date
-*         description: date choosen, regex pattern
-*         required: true
-*         type: String
-*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'   
-*/
-
-router.get('/uv/:date', async (req,res) =>{
-    var par1 = req.params.date + 'T11:00:00.000Z'
-    var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48', dt: par1},
-        headers: 
-        { 'content-type': 'application/json',
-            'x-access-token': 'a26faf325603ad5f6bf411f75d4f874c' } };
-
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        else{
-            var info = JSON.parse(body)
-
-            var tosend = {
-                    'uv_value' : info.result.uv,
-                    'uv_value_time' : info.result.uv_time,
-                    'ux_max' : info.result.uv_max,
-                    'uv_max_time' : info.result.uv_max_time,/*
-                    'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time*/
-                }
-
-            res.status(200).send(tosend);
-
-        }
-    });
-
-
 });
 
 module.exports = router

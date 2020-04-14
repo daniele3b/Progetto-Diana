@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
 var request = require('request')
+const config = require('config')
 require('dotenv').config()
 const {Meteo,validate}=require('../models/meteo')
 
 function updateMeteo(){
-    var lin = 'http://api.openweathermap.org/data/2.5/weather?q=rome,it&appid='+ process.env.METEO_KEY;
+    var lin = config.get('weather_report_updater') + process.env.METEO_KEY;
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 

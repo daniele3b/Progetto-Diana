@@ -84,6 +84,14 @@ describe('/chemical_agents', () => {
 
             expect(res.status).toBe(404)
         })
+
+
+        it('should return 400 if data doesnt exist', async() => {
+
+            const res = await request(server).get('/chemical_agents/filter/date/nonesiste/noonesiste')
+
+            expect(res.status).toBe(400)
+        })
     })
 
     describe('GET /history', () => {
@@ -198,7 +206,7 @@ describe('/chemical_agents', () => {
 
     describe('GET /filter/avg/:station_id/', () => {
         it('should return the avg of all data of a station', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/')
+            const res = await request(server).get('/chemical_agents/filter/avg/id_prova')
             expect(res.status).toBe(200)
             
             expect(res.body[0].avg).toBe(100)
@@ -206,10 +214,37 @@ describe('/chemical_agents', () => {
         })
 
 
-        it('should return 404 if station_id doesent exist', async () => {
+        it('should return 404 if station_id doesnt exist', async () => {
             const res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
             expect(res.status).toBe(404)
             
+        })
+    })
+
+
+    describe('GET /filter/date/:station_id/:date_start/:date_end', () => {
+        it('should return all data of a station beetwen date_start and date_end', async () => {
+            const res = await request(server).get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+        })
+
+
+        it('should return 404 if station_id doesnt exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/date/nonesiste/2021-12-31/2021-12-31')
+            expect(res.status).toBe(404)
+            
+        })
+
+
+        it('should return 404 if there arent data beetwen date indicated doesnt exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/date/id_prova/666-6-6/666-6-6')
+            expect(res.status).toBe(404)
+        })
+
+        it('should return 404 if dates indicated doesnt exist', async () => {
+            const res = await request(server).get('/chemical_agents/filter/date/id_prova/nonesiste/nonesiste')
+            expect(res.status).toBe(400)
         })
     })
 }) 

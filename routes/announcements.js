@@ -26,6 +26,11 @@ const router = express.Router()
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               request object:
+*                   type: object
 *       '400' :
 *         description: Request is not suitable
 */
@@ -74,6 +79,11 @@ router.get('/', async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               CF:
+*                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
 */
@@ -103,6 +113,13 @@ router.get('/:CF', async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
 */
@@ -113,6 +130,69 @@ router.get('/:date_start/:date_end', async (req,res) => {
     if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
     res.send(announcements)
 })
+
+
+/**
+* @swagger 
+* /announcements/since/starting_from/date_start:
+*  get:
+*    tags: [Announcements]
+*    description: Use to request all annoucements published starting from date_start
+*    parameters:
+*       - name: date_start
+*         description: upper date bound
+*         in: formData
+*         required: true
+*         type: date
+*    responses:
+*       '200':
+*         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               date_start:
+*                   type: string
+*       '404':
+*         description: No announcements match the given criteria were found 
+*/
+router.get('/since/starting_from/:date_start', async (req,res) => {
+    const date_start = new Date(req.params.date_start)
+    const announcements = await Announcement.find({start: {'$gte': date_start}})
+    if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
+    res.send(announcements)
+})
+
+
+/**
+* @swagger 
+* /announcements/before/terminated_before/date_end:
+*  get:
+*    tags: [Announcements]
+*    description: Use to request all annoucements published before date_end
+*    parameters:
+*       - name: date_end
+*         description: lower date bound
+*         in: formData
+*         required: true
+*         type: date
+*    responses:
+*       '200':
+*         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               date_end:
+*                   type: string
+*       '404':
+*         description: No announcements match the given criteria were found 
+*/
+router.get('/before/terminated_before/:date_end', async (req,res) => {
+    const date_stop = new Date(req.params.date_end)
+    const announcements = await Announcement.find({start: {'$lt': date_stop}})
+    if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
+    res.send(announcements)
+})
+
 
 /**
 * @swagger 
@@ -129,10 +209,22 @@ router.get('/:date_start/:date_end', async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               id:
+*                   type: string
+*               updated object:
+*                   type: object
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
 *         description: Request is not suitable
+*         schema:
+*           type: object
+*           properties:
+*               id:
+*                   type: number
 */
 router.put('/:id' , validateObjectId , async(req,res) => {
     const {error} = validate(req.body)
@@ -164,10 +256,21 @@ router.put('/:id' , validateObjectId , async(req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               id:
+*                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
 *         description: Request is not suitable
+*         schema:
+*           type: object
+*           properties:
+*               id:
+*                   type: number
+*
 */
 router.delete('/:id', validateObjectId, async(req,res) => {
     const annoucement = await Announcement.findByIdAndDelete(req.params.id)
