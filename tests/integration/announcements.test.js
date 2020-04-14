@@ -65,6 +65,42 @@ describe('/announcements', () => {
         })
     })
 
+    
+    describe('GET /since/starting_from/:date_start', () => {
+        it('should return the announcements that refers to a start date following the provided date', async () => {
+            const date_start = "March 2020 , 21 17:30"
+
+            const res = await request(server).get('/announcements/since/starting_from/' + date_start)
+
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+            expect(res.body.some(ann => ann.description === 'This is the second test')).toBeTruthy()
+            expect(res.body.some(ann => ann.description === 'This is the third test')).toBeTruthy()
+        })
+
+        it('should return 404 if no announcement about a date after the provided date is found', async() => {
+            const date_start = "March 2020 , 25 18:30"
+
+            const res = await request(server).get('/announcements/since/starting_from/' + date_start)
+        
+            expect(res.status).toBe(404)
+        })
+    })
+
+
+    describe('GET /before/terminated_before/:date_end', () => {
+        it('should return the announcements that refers to a start date before the provided date ', async() => {
+            const date_stop = "March 2020 , 23 18:30"
+
+            const res = await request(server).get('/announcements/before/terminated_before/' + date_stop)
+
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+            expect(res.body.some(ann => ann.description === 'This is the first test')).toBeTruthy()
+            expect(res.body.some(ann => ann.description === 'This is the second test')).toBeTruthy()
+        })
+    })
+
 
     describe('GET /:date_start/:date_end', () => {
         it('should return the list of all announcements between the start and end date', async () => {
