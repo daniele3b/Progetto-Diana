@@ -7,5 +7,10 @@
     "pick_point_end": "https://api.pickpoint.io/v1/forward",
     "tom_tom_end": "https://api.tomtom.com/traffic/services",
     "timer_meteo" : "15000",
-    "bing_maps_end":"https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix"
+    "bing_maps_end":"https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix",
+    "open_sky_end":"opensky-network.org/api",
+    "LAT_MIN":"41.7088",
+    "LAT_MAX":"42.025",
+    "LON_MIN":"12.378888",
+    "LON_MAX":"13.0291"
 }
