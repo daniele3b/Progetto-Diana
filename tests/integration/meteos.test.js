@@ -24,7 +24,7 @@ describe('/weather', () => {
         await server.close()
        
     })
-    /*
+    
     describe('GET /uv/now', () => {
         it('should return the last UV rays values ' , async() => {
             const res = await request(server).get('/weather/uv/now')
@@ -52,11 +52,7 @@ describe('/weather', () => {
             const res = await request(server).get('/weather/uv/xxxxxxxxxxx')
             expect(res.status).toBe(400)  
         })
-        it('should return error: Not Found' , async() => {
-            const res = await request(server).get('/weather/uv/3000-12-12')
-            expect(res.status).toBe(404)  
-        })
-    })*/
+    })
 
     describe('GET /report/last', () => {
         it('should return the correct report ' , async() => {

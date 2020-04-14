@@ -1,5 +1,6 @@
 const express = require('express')
 var request = require('request')
+const config = require('config')
 const router = express.Router()
 const {Meteo, Meteo7days, validate}=require('../models/meteo')
 
@@ -57,20 +58,20 @@ const {Meteo, Meteo7days, validate}=require('../models/meteo')
 router.get('/uv/now', async (req,res) =>{
 
     var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48'},
+        url: config.get('apiuv_url') ,
+        qs: { lat: config.get('Rome_lat'), lng: config.get('Rome_lon')},
         headers: 
         { 'content-type': 'application/json',
             'x-access-token': process.env.UVRAYS_KEY } };
 
     request(options, function (error, response, body) {
-        if (error || typeof body.result === "undefined"){ 
+        if (error /*|| typeof body.result.uv == "undefined"*/){ 
             res.status(500).send('Internal server error.');
             return
         }
         else{
             var info = JSON.parse(body)
-            res.send(info)
+
             var tosend = {
                     "uv_value" : info.result.uv,
                     'uv_value_time' : info.result.uv_time,
@@ -140,14 +141,14 @@ router.get('/uv/:date', async (req,res) =>{
     }
     var par1 = req.params.date + 'T11:00:00.000Z'
     var options = { method: 'GET',
-        url: 'https://api.openuv.io/api/v1/uv',
-        qs: { lat: '41.89', lng: '12.48', dt: par1},
+        url: config.get('apiuv_url'),
+        qs: { lat: config.get('Rome_lat'), lng: config.get('Rome_lon'), dt: par1},
         headers: 
         { 'content-type': 'application/json',
             'x-access-token': process.env.UVRAYS_KEY } };
 
     request(options, function (error, response, body) {
-        if (error || typeof body.result === "undefined"){ 
+        if (error /*|| typeof body.result === "undefined"*/){ 
             res.status(500).send('Internal server error.');
             return
         }
@@ -283,7 +284,7 @@ router.get('/report/last' , async (req,res) => {
 *         description: Internal server error
 */
 router.get('/report/7daysforecast' , async (req,res) => {
-    var lin = 'https://api.openweathermap.org/data/2.5/onecall?lat=41.89&lon=12.48&appid='+ process.env.METEO_KEY;
+    var lin = config.get('weather_report_url') + process.env.METEO_KEY;
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 
