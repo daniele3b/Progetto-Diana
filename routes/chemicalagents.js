@@ -2,6 +2,7 @@ const express = require('express')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
 const moment=require('moment')
 const router = express.Router()
+const{validateDate}=require('../helper/generic_helper')
 
 
 /**
@@ -202,7 +203,7 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
-    if((date_start instanceof Date && !isNaN(date_start)) && (date_stop instanceof Date &&!isNaN(date_stop))){
+    if(validateDate(date_start) && validateDate(date_stop)){
     date_start.setHours("0")
     date_start.setMinutes("1")
     date_stop.setHours("23")
@@ -287,7 +288,7 @@ router.get('/filter/date/:station_id/:date_start/:date_end', async (req,res) => 
   
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
-    if((date_start instanceof Date && !isNaN(date_start)) && (date_stop instanceof Date &&!isNaN(date_stop))){
+    if(validateDate(date_start) && validateDate(date_stop)){
     date_start.setHours("0")
     date_start.setMinutes("1")
     date_stop.setHours("23")
