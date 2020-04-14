@@ -1,6 +1,6 @@
 function validateDate(date)
 {
-    return (date instanceof Date && !isNaN(date))
+    return (!isNaN(date) && date instanceof Date)
 }
 
 
