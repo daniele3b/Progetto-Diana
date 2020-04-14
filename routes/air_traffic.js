@@ -13,6 +13,35 @@ require('dotenv').config()
  *   description: Air traffic management APIs
  */
 
+/**
+* @swagger 
+* /air_traffic:
+*  get:
+*    tags: [Air Traffic]
+*    description: Used to request geographical coordinates of planes in Rome's area, in real time 
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*         schema:
+*           type: array
+*           items: 
+*             type: object
+*             properties:
+*                 icao24:
+*                     type: String
+*                     example: "4400cd"
+*                 lat:
+*                     type: number
+*                     format: float
+*                     example: 41.01234
+*                 lon:
+*                     type: number
+*                     format: float
+*                     example: 12.23345
+*       '404':
+*         description: There are no flights in the specified area
+*/
+
 router.get('/', async (req, res) => {
     // "https://USERNAME:PASSWORD@opensky-network.org/api/states/all" 
     const url = 'https://'+process.env.OPEN_SKY_USERNAME+':'+process.env.OPEN_SKY_PASSWORD+'@'+config.get('open_sky_end')
@@ -22,7 +51,7 @@ router.get('/', async (req, res) => {
     request(url, function(error, response, body) {
         if(error) {
             console.error(error)
-            return res.status(404).send('There are no flights in the specified area')
+            return 
         }
         
         else {
