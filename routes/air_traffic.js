@@ -3,7 +3,7 @@ const router = express.Router()
 const config = require('config')
 const request = require('request')
 const {checkDate} = require('../helper/air_traffic_helper')
-const logger=require('../startup/logging')
+const logger = require('../startup/logging')
 
 require('dotenv').config()
 
