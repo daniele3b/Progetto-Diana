@@ -1,6 +1,6 @@
 const request = require('supertest')
 const mongoose = require('mongoose')
-const {Meteo} = require('../../models/meteo')
+const {Meteo, UVSchema} = require('../../models/meteo')
 
 let server
 
@@ -18,9 +18,21 @@ describe('/weather', () => {
             wind: '2'
         })
         await meteo.save()
+
+        const  uvschema = new UVSchema({
+            uv_value: 1.234,
+            uv_value_time: "2020-04-15T20:05:38.355Z",
+            uv_max: 1.234,
+            uv_max_time: "2020-04-15T20:05:38.355Z",
+            ozone_value: 1.234,
+            ozone_time: "2020-04-15T20:05:38.355Z",
+            data: "2020-04-15"
+        })
+        await uvschema.save()
     })
     afterEach(async () => {
         await Meteo.deleteMany({})
+        await UVSchema.deleteMany({})
         await server.close()
        
     })
@@ -38,22 +50,27 @@ describe('/weather', () => {
             expect(typeof res.body.ozone_time).toBe('string')
         })
     })
-    
+    */
     describe('GET /uv/:date', () => {
         it('should return the correct values ' , async() => {
-            const res = await request(server).get('/weather/uv/2020-04-12')
+            const res = await request(server).get('/weather/uv/2020-04-15')
             expect(res).not.toBeNull();
             expect(res.status).toBe(200)
-            expect(typeof res.body.uv_value).toBe('number')
             expect(typeof res.body.uv_max).toBe('number')
             expect(typeof res.body.uv_max_time).toBe('string')
+            expect(typeof res.body.ozone_value).toBe('number')
+            expect(typeof res.body.ozone_time).toBe('string')
         })
         it('should return error: Bad request' , async() => {
             const res = await request(server).get('/weather/uv/xxxxxxxxxxx')
             expect(res.status).toBe(400)  
         })
+        it('should return error: Not Found', async() => {
+            const res = await request(server).get('/weather/uv/3030-10-10')
+            expect(res.status).toBe(404)  
+        })
     })
-*/
+
     describe('GET /report/last', () => {
         it('should return the correct report ' , async() => {
             const res = await request(server).get('/weather/report/last')

@@ -3,6 +3,7 @@ var request = require('request')
 const config = require('config')
 require('dotenv').config()
 const {Meteo,validate}=require('../models/meteo')
+const logger=require('./logging')
 
 function updateMeteo(){
     var lin = config.get('weather_report_updater') + process.env.METEO_KEY;
@@ -28,12 +29,9 @@ function updateMeteo(){
             var datastamp = info.dt;
             var descrizione = info.weather[0].main + ", " + info.weather[0].description;
             var temp = Math.trunc(info.main.temp-273.15);
-            //var temp_min = Math.trunc(info.main.temp_min-273.15);
-            //var temp_max = Math.trunc(info.main.temp_max-273.15);
             var umidita = info.main.humidity;
             var wind = info.wind.speed;
         
-            //const Meteo = mongoose.model('Meteo', meteoSchema);
         
             async function creaMeteo(){           
                 var meteo = new Meteo({
@@ -42,8 +40,6 @@ function updateMeteo(){
                     datastamp: datastamp,
                     descrizione: descrizione,
                     t_att: temp,
-                    //t_min: temp_min,
-                    //t_max: temp_max,
                     humidity: umidita,
                     wind: wind  
                 });
@@ -52,12 +48,20 @@ function updateMeteo(){
             try{
                 const result = await meteo.save();
             }catch(ex){
-                console.log(ex);
+                console.error('error:', error);
+                logger.error('M2: Impossibile to save meteo report to databse')
+                console.log('M2')
+                reject(error);
             }
         };
 
         creaMeteo();
         
+        }else{
+            console.error('error:', error);
+            logger.error('M1: Impossibile to get meteo report data')
+            console.log('M1')
+            reject(error);
         }
     });
     
