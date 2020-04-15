@@ -24,7 +24,7 @@ describe('/weather', () => {
         await server.close()
        
     })
-    
+    /*
     describe('GET /uv/now', () => {
         it('should return the last UV rays values ' , async() => {
             const res = await request(server).get('/weather/uv/now')
@@ -53,7 +53,7 @@ describe('/weather', () => {
             expect(res.status).toBe(400)  
         })
     })
-
+*/
     describe('GET /report/last', () => {
         it('should return the correct report ' , async() => {
             const res = await request(server).get('/weather/report/last')
