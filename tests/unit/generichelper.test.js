@@ -1,4 +1,4 @@
-const {validateDate} = require('../../../helper/generic_helper')
+const {validateDate} = require('../../helper/generic_helper')
 
 describe('validateDate ', () => {
     it('should return true if it is a valid date', () => {
