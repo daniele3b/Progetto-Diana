@@ -2,6 +2,7 @@ const config = require('config')
 const request=require('request')
 const moment=require('moment')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
+const logger=require('./logging')
 
 require('dotenv').config()
 
@@ -20,6 +21,8 @@ function getStationsName()
     request(aqi_url+"/search/?keyword="+config.get('aqi_loc')+"&token="+process.env.AQI_TOKEN, function (error, response, body) {
     if(error){  
         console.error('error:', error);
+        logger.error('U2: Impossibile ottenere i dati relativi alle stazioni della zona: '+config.get('aqi_loc'))
+        console.log('U2')
         reject(error);
     }else
     {
@@ -59,11 +62,13 @@ function getData(id,nameStation,coords)
     request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
         if(error){ 
             console.error('error:', error);
+            logger.error('U4: Impossibile contattare endpoint api relativo alla stazione: '+id);
+            console.log('U4')
             reject(error)
            
         }else
         {
-            console.log("UID:"+id+" NAME:"+nameStation)
+           // console.log("UID:"+id+" NAME:"+nameStation)
             let json= JSON.parse(body);
             let chemical_comp=json.data.iaqi
             //if there isn't a value the field is undefined 
@@ -109,8 +114,8 @@ function getDataFromStations(stations){
     for(var i=0;i<len_sd;i++)
     {
         getData(stations_id[i],stations[i],stations_geo[i])
-        .then(function(res){console.log("DATA OK")})
-        .catch(function(error){console.log(error)})
+        .then(function(res){/*console.log("DATA OK")*/})
+        .catch(function(error){logger.error('U3: Impossibile ottenere i dati da una specifica stazione, controllare stato della stazione');console.log('U3');})
 
 
     }
@@ -131,7 +136,7 @@ function  updateChemicalAgents()
     timedata=moment().format();
     getStationsName()
     .then(function(result){getDataFromStations(result)})
-    .catch(function(errore){LogError(errore)})
+    .catch(function(errore){logger.error('U1: Impossibile aggiornare i dati degli agenti chimici servizio non disponibile, controllare stato end point');console.log('U1');})
     
       
 
