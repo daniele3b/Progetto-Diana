@@ -27,12 +27,12 @@ function radiusOK (str) {
     let i = 0
     counter = 0
     if(str[0] == '-') i = 1
-    if(str[0] == '.' || str[0] == ',' || str[dim-1] == '.' || str[dim-1] == ',') return false
+    if(str[0] == '.' || str[dim-1] == '.') return false
     for(;i<dim;i++) {
-        if((str[i] == '.' || str[i] == ',') && counter == 1){
+        if((str[i] == '.') && counter == 1){
             return false
         }
-        if( (str[i] == '.' || str[i] == ',') && counter == 0){
+        if( (str[i] == '.') && counter == 0){
             counter += 1
             continue
         } 
