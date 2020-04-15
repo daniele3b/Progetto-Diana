@@ -29,8 +29,18 @@ const router = express.Router()
 *         schema:
 *           type: object
 *           properties:
-*               request object:
-*                   type: object
+*               CF:
+*                   type: string
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
+*                   type: string
 *       '400' :
 *         description: Request is not suitable
 */
@@ -42,6 +52,7 @@ router.post('/' , async (req,res) => {
         CF: req.body.CF,
         start: req.body.start,
         end: req.body.end,
+        zone: req.body.zone,
         description: req.body.description
     })
     announcement = await announcement.save()
@@ -58,6 +69,21 @@ router.post('/' , async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response
+*         schema:
+*           type: object
+*           properties:
+*               CF:
+*                   type: string
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
+*                   type: string
 */
 router.get('/', async (req,res) => {
     const announcements = await Announcement.find().sort('-start')
@@ -66,7 +92,7 @@ router.get('/', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/CF:
+* /announcements/:CF:
 *  get:
 *    tags: [Announcements]
 *    description: Use to request all annoucements published by the operator with the given CF
@@ -84,6 +110,16 @@ router.get('/', async (req,res) => {
 *           properties:
 *               CF:
 *                   type: string
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
+*                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
 */
@@ -95,7 +131,7 @@ router.get('/:CF', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/date_start/date_end:
+* /announcements/:date_start/:date_end:
 *  get:
 *    tags: [Announcements]
 *    description: Use to request all annoucements published in a day between date_start and date_end
@@ -116,9 +152,17 @@ router.get('/:CF', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               CF:
+*                   type: string
 *               date_start:
 *                   type: string
 *               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
 *                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
@@ -134,7 +178,7 @@ router.get('/:date_start/:date_end', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/since/starting_from/date_start:
+* /announcements/since/:starting_from/:date_start:
 *  get:
 *    tags: [Announcements]
 *    description: Use to request all annoucements published starting from date_start
@@ -150,7 +194,17 @@ router.get('/:date_start/:date_end', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               CF:
+*                   type: string
 *               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
 *                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
@@ -165,7 +219,7 @@ router.get('/since/starting_from/:date_start', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/before/terminated_before/date_end:
+* /announcements/before/terminated_before/:date_end:
 *  get:
 *    tags: [Announcements]
 *    description: Use to request all annoucements published before date_end
@@ -181,7 +235,17 @@ router.get('/since/starting_from/:date_start', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               CF:
+*                   type: string
+*               date_start:
+*                   type: string
 *               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
 *                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
@@ -196,7 +260,7 @@ router.get('/before/terminated_before/:date_end', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/id:
+* /announcements/:id:
 *  put:
 *    tags: [Announcements]
 *    description: Use to update an annoucement 
@@ -212,19 +276,22 @@ router.get('/before/terminated_before/:date_end', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
-*               id:
+*               CF:
 *                   type: string
-*               updated object:
-*                   type: object
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
+*                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
 *         description: Request is not suitable
-*         schema:
-*           type: object
-*           properties:
-*               id:
-*                   type: number
 */
 router.put('/:id' , validateObjectId , async(req,res) => {
     const {error} = validate(req.body)
@@ -233,6 +300,7 @@ router.put('/:id' , validateObjectId , async(req,res) => {
         CF: req.body.CF,
         start: req.body.start,
         end: req.body.end,
+        zone: req.body.zone,
         description: req.body.description
     }, {new: true} )
 
@@ -243,7 +311,7 @@ router.put('/:id' , validateObjectId , async(req,res) => {
 
 /**
 * @swagger 
-* /announcements/id:
+* /announcements/:id:
 *  delete:
 *    tags: [Announcements]
 *    description: Use to delete an annoucement 
@@ -259,18 +327,22 @@ router.put('/:id' , validateObjectId , async(req,res) => {
 *         schema:
 *           type: object
 *           properties:
-*               id:
+*               CF:
+*                   type: string
+*               date_start:
+*                   type: string
+*               date_end:
+*                   type: string
+*               zone:
+*                   type: array
+*                   items:
+*                       type: string
+*               description:
 *                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
 *         description: Request is not suitable
-*         schema:
-*           type: object
-*           properties:
-*               id:
-*                   type: number
-*
 */
 router.delete('/:id', validateObjectId, async(req,res) => {
     const annoucement = await Announcement.findByIdAndDelete(req.params.id)

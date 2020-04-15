@@ -16,6 +16,10 @@ const announcementSchema = new mongoose.Schema({
         type: Date,
         required: true 
     },
+    zone: { // ADDED
+        type: [String],
+        default: ['Everywhere']
+    },
     description: {
         type: String,
         maxlength: 300
@@ -29,6 +33,7 @@ function validateAnnouncement(announcement) {
         CF: Joi.string().min(16).max(16).required(),
         start: Joi.date(),
         end:   Joi.date(),
+        zone:  Joi.array().items(Joi.string()),
         description: Joi.string().max(300)
     }
     return Joi.validate(announcement,schema)
