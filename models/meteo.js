@@ -11,9 +11,10 @@ const uvSchema = new mongoose.Schema({
     data: {type:String, required:true}
 });
 
-const meteoSchema = new mongoose.Schema({
+const meteoSchema = new mongoose.Schema({/*
     data: {type:String, required: true},
-    orario: {type:String, required: true},
+    orario: {type:String, required: true},*/
+    data: {type:Date, required: true},
     datastamp: {type:Number, required: true},
     descrizione: {type:String, required: true},
     t_att: {type:Number, required: true},
@@ -23,7 +24,7 @@ const meteoSchema = new mongoose.Schema({
 
 const meteo7daysSchema = new mongoose.Schema({
     array: [{
-        data: {type:String, required: true},
+        data: {type:Date, required: true},
         datastamp: {type:Number, required: true},
         descrizione: {type:String, required: true},
         t_min: {type:Number, required: true},

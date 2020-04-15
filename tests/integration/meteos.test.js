@@ -9,8 +9,7 @@ describe('/weather', () => {
         server = require('../../index')
 
         const meteo = new Meteo({ 
-            data: '11/02/2020',
-            orario: '11:00:00',
+            data: '2020-03-30T21:30:13.478Z',
             datastamp: '12345678',
             descrizione: 'Clear sky',
             t_att: '14',
@@ -75,7 +74,6 @@ describe('/weather', () => {
         it('should return the correct report ' , async() => {
             const res = await request(server).get('/weather/report/last')
             expect(typeof res.body.data).toBe('string')
-            expect(typeof res.body.orario).toBe('string')
             expect(typeof res.body.datastamp).toBe('number')
             expect(typeof res.body.descrizione).toBe('string')
             expect(typeof res.body.t_att).toBe('number')

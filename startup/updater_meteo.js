@@ -11,7 +11,9 @@ function updateMeteo(){
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 
 
-            var d = new Date();
+            var d = new Date(info.dt*1000);
+            var data = d.toISOString()
+            /*
             var day = d.getDate().toString(); 
             if(day.length==1) day = '0'+day
             var month = (d.getMonth()+1).toString();
@@ -24,7 +26,7 @@ function updateMeteo(){
             if(mm.length==1) mm = '0'+mm
             var ss = d.getSeconds().toString();
             if(ss.length==1) ss = '0'+ss
-            var orario =  hh + ":" + mm + ":" + ss;
+            var orario =  hh + ":" + mm + ":" + ss;*/
 
             var datastamp = info.dt;
             var descrizione = info.weather[0].main + ", " + info.weather[0].description;
@@ -36,7 +38,6 @@ function updateMeteo(){
             async function creaMeteo(){           
                 var meteo = new Meteo({
                     data: data,
-                    orario: orario,
                     datastamp: datastamp,
                     descrizione: descrizione,
                     t_att: temp,

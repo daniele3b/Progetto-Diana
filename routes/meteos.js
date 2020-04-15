@@ -185,8 +185,7 @@ router.get('/uv/:date', async (req,res) =>{
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
-*               <br>"data" is a String object which represents the date (dd/mm/yyyy) of the last report,
-*               <br>"orario" is a String object which represents the time (hh:mm:ss) of the last report,
+*               <br>"data" is a String object which represents the date (YYYY-MM-DDThh:mm:ss.xxxZ) of the last report,
 *               <br>"datastamp" is a Number object which represents the UNIX datastamp of the last report,
 *               <br>"description" is a String object which represents a general description of the weather,
 *               <br>"t_att" is a Number object which represents the current temperature,
@@ -197,8 +196,7 @@ router.get('/uv/:date', async (req,res) =>{
 *           properties:
 *               data:
 *                   type: string
-*               orario:
-*                   type: string
+*                   format: date-time
 *               datastamp:
 *                   type: integer
 *                   example: 1234
@@ -232,7 +230,6 @@ router.get('/report/last' , async (req,res) => {
     else{
         var tosend = {
             "data": result.data,
-            "orario": result.orario,
             "datastamp": result.datastamp,
             "descrizione": result.descrizione,
             "t_att": result.t_att,
@@ -256,7 +253,7 @@ router.get('/report/last' , async (req,res) => {
 *         description: A successful response, data available in JSON format,
 *               <br>each field of the array represents a day 
 *               <br>"_id" is a String object which is used as identifier
-*               <br>"data" is a String object which represents the date (dd/mm/yyyy) of the forecast's day,
+*               <br>"data" is a String object which represents the date (YYYY-MM-DDThh:mm:ss.xxxZ) of the forecast's day,
 *               <br>"datastamp" is a Number object which represents the UNIX datastamp of the day's forecast,
 *               <br>"descrizione" is a String object which represents a general description of the weather's forecast,
 *               <br>"t_min" is a Number object which represents the day's minimum temperature,
@@ -273,6 +270,7 @@ router.get('/report/last' , async (req,res) => {
 *                           type: string
 *                       data:
 *                           type: string 
+*                           format: date-time
 *                       datastamp:
 *                           type: number 
 *                           example: 1234
@@ -316,11 +314,13 @@ router.get('/report/7daysforecast' , async (req,res) => {
                 
                 
                 var d = new Date(datastamp[i]*1000);
+                data[i] = d.toISOString();
+                /*
                 var day = d.getDate().toString(); 
                 if(day.length==1) day = '0'+day
                 var month = (d.getMonth()+1).toString();
                 if(month.length==1) month = '0'+month
-                data[i] = day + '/' + month + '/' + d.getFullYear(); 
+                data[i] = day + '/' + month + '/' + d.getFullYear(); */
             }   
             
             //const Meteo = mongoose.model('Meteo', meteoSchema);
@@ -417,7 +417,7 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
-*               <br>"date" string which represents the report's day,
+*               <br>"date" string which represents the report's day (YYYY-MM-DDThh:mm:ss.xxxZ),
 *               <br>"t_min" number which represents minimum temperature in the choosen's day,
 *               <br>"t_max" number which represents maximum temperature in the choosen's day,
 *               <br> "wind" number which represents the average wind's speed  
@@ -427,6 +427,7 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *           properties:
 *               date:
 *                   type: string
+*                   format: date-time
 *               t_min:
 *                   type: number
 *                   format: float
@@ -477,7 +478,7 @@ router.get('/report/history/:date' , async (req,res) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body)
             var tosend = {
-                    'date': info.data[0].datetime,
+                    'date': miadata,
                     't_min' : info.data[0].min_temp,
                     't_max' : info.data[0].max_temp,
                     'wind': info.data[0].wind_spd,
