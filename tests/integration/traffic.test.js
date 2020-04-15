@@ -44,10 +44,15 @@ describe('/traffic', () => {
             expect(res.status).toBe(400);
         })
 
-        /*it("should return 400 if address doesn't exist", async () => {
-            const res = await request(server).get('/traffic/xxxxxxxx');
-            expect(res.status).toBe(400);
-        })*/
+        it("should return 404 if address doesn't exist", async () => {
+            // NO ADDRESS
+            const res1 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxx');
+            expect(res1.status).toBe(404);
+
+            // ECUADOR SUPERMARKET :)
+            const res2 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxxxxxxx');
+            expect(res2.status).toBe(404);
+        })
         
         it('should return all current data about traffic into an area specified by a given address', async () => {
             const res = await request(server).get('/traffic/Via Tiburtina');
@@ -64,10 +69,15 @@ describe('/traffic', () => {
             expect(res.status).toBe(400);
         })
 
-       /* it("should return 400 if address doesn't exist", async () => {
-            const res = await request(server).get('/traffic/xxxxxxxx/sensor');
-            expect(res.status).toBe(400);
-        })*/
+        it("should return 404 if address doesn't exist", async () => {
+            // NO ADDRESS
+            const res1 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxx');
+            expect(res1.status).toBe(404);
+
+            // ECUADOR SUPERMARKET :)
+            const res2 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxxxxxxx');
+            expect(res2.status).toBe(404);
+        })
 
         it('should return 404 if no chemical agents are stored in the database', async () => {
             await Chemical_Agent.deleteMany({})
@@ -91,16 +101,21 @@ describe('/traffic', () => {
             expect(res.status).toBe(400);
         })
 
-        /*it("should return 400 if address doesn't exist", async () => {
-            const res = await request(server).get('/traffic/xxxxxxxx/sensor/100');
-            expect(res.status).toBe(400);
-        })*/
+        it("should return 404 if address doesn't exist", async () => {
+            // NO ADDRESS
+            const res1 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxx');
+            expect(res1.status).toBe(404);
+
+            // ECUADOR SUPERMARKET :)
+            const res2 = await request(server).get('/traffic/xxxxxxxxxxxxxxxxxxxxxxxx');
+            expect(res2.status).toBe(404);
+        })
 
         it('should return 400 if invalid radius is passed', async () => {
             const res = await request(server).get('/traffic/Via Tiburtina/sensor/invalid_radius');
             expect(res.status).toBe(400);
 
-            const res1 = await request(server).get('/traffic/Via Tiburtina/sensor/8.9,1');
+            const res1 = await request(server).get('/traffic/Via Tiburtina/sensor/8.9.1');
             expect(res1.status).toBe(400);
 
             const res2 = await request(server).get('/traffic/Via Tiburtina/sensor/.7');
@@ -128,10 +143,13 @@ describe('/traffic', () => {
         })
 
         it('should return all sensors close to a specified address within a certain specified radius', async () => {
-            const res = await request(server).get('/traffic/Via Tiburtina/sensor/100');
-            
-            expect(res.status).toBe(200);
-            expect(res.body.length).toBeGreaterThan(0)
+            const res1 = await request(server).get('/traffic/Via Tiburtina/sensor/100');
+            expect(res1.status).toBe(200);
+            expect(res1.body.length).toBeGreaterThan(0)
+
+            const res2 = await request(server).get('/traffic/Via Tiburtina/sensor/100.6');
+            expect(res2.status).toBe(200);
+            expect(res2.body.length).toBeGreaterThan(0)
         })
         
     })  

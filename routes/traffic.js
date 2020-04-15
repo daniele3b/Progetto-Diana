@@ -261,7 +261,7 @@ router.get('/:address/sensor/:radius', async (req, res) => {
     const radius = req.params.radius
     
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
-    if(!radiusOK(radius)) return res.status(400).send("Invalid radius...")
+    if(!radiusOK(radius)) return res.status(400).send("Invalid radius (If you are entering a decimal number don't use ',', but '.')")
     if(radius <= 0) return res.status(400).send("Invalid radius...It must be a positive number!")
 
     getLatLong(address)
