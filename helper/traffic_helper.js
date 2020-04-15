@@ -65,14 +65,20 @@ function getLatLong (address) {
         const url_addr = pick_point_end_url+'/?key='+process.env.ADDRESS+'&q='+parsed+"&limit=1&format=json"
 
         request(url_addr, function(error, response, body) {
+            const parsed_body = JSON.parse(body)
+
             if(error){
                 logger.error('T2: Impossible to get coordinates for the address: '+address)
-                console.log('T2')
-                //reject(NaN) 
+                console.log('T2') 
+                reject(error)
+            }
+            else if( parsed_body.length == 0 ) {
+                reject(error)
+            }
+            else if(parsed_body[0].class != 'highway') {
                 reject(error)
             }
             else{
-                const parsed_body = JSON.parse(body)
                 const lat = parsed_body[0].lat
                 const lon = parsed_body[0].lon
                 resolve([lat, lon])
