@@ -2,7 +2,7 @@ const express = require('express')
 var request = require('request')
 const config = require('config')
 const router = express.Router()
-const {Meteo, Meteo7days, validate}=require('../models/meteo')
+const {Meteo, Meteo7days, UVSchema, validate}=require('../models/meteo')
 
 
 /**
@@ -65,23 +65,44 @@ router.get('/uv/now', async (req,res) =>{
             'x-access-token': process.env.UVRAYS_KEY } };
 
     request(options, function (error, response, body) {
-        if (error /*|| typeof body.result.uv == "undefined"*/){ 
+        if (error){ 
             res.status(500).send('Internal server error.');
+            console.error('error:', error);
+            logger.error('M5: Impossibile to get UV data from external server')
+            console.log('M5')
+            reject(error);
             return
         }
         else{
             var info = JSON.parse(body)
 
-            var tosend = {
+            async function creaUVSchema(){           
+                var uvschema = new UVSchema({
                     "uv_value" : info.result.uv,
                     'uv_value_time' : info.result.uv_time,
                     'uv_max' : info.result.uv_max,
                     'uv_max_time' : info.result.uv_max_time,
                     'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time
-                }
+                    'ozone_time' : info.result.ozone_time ,
+                    'data': info.result.uv_time.substr(0,10)
+                });
 
-            res.status(200).send(tosend);
+
+            try{
+                const result = await uvschema.save();
+            }catch(ex){
+                console.log(ex);
+                console.error('error:', error);
+                logger.error('M6: Impossibile to save UV data to database')
+                console.log('M6')
+                reject(error);
+            }
+
+            res.status(200).send(uvschema);
+
+            };
+            
+            creaUVSchema();
 
         }
     });
@@ -94,29 +115,29 @@ router.get('/uv/now', async (req,res) =>{
 * /weather/uv/:date:
 *  get:
 *    tags: [Weather Report & UV Rays]
-*    description: Use to request the last UV rays' data in the city.
+*    description: Use to request data from a choosen day in the city.
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
-*               <br>"uv_value" float which represents the UV rays's value of the day choosen,
-*               <br>"uv_value_time" string which represents the time of UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ),
 *               <br>"uv_max" float which represents the maximum UV rays's value of the day,
 *               <br>"uv_max_time" string which represents the time of maximum UV ray's value (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"ozone_value" float which represents the ozone's value,
+*               <br>"ozone_time" string which represents the time of ozone's value (YYYY-MM-DDThh:mm:ss.xxxZ)
 *         schema:
 *           type: object
 *           properties:
-*               uv_value:
-*                   type: number
-*                   format: float
-*                   example: 1.234
-*               uv_value_time:
-*                   type: string
-*                   format: date-time
 *               uv_max:
 *                   type: number
 *                   format: float
 *                   example: 1.234
 *               uv_max_time:
+*                   type: string
+*                   format: date-time
+*               ozone_value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               ozone_time:
 *                   type: string
 *                   format: date-time
 *       '400':
@@ -135,41 +156,24 @@ router.get('/uv/now', async (req,res) =>{
 */
 
 router.get('/uv/:date', async (req,res) =>{
+
     if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
         res.status(400).send('Bad request.')
         return
     }
-    var par1 = req.params.date + 'T11:00:00.000Z'
-    var options = { method: 'GET',
-        url: config.get('apiuv_url'),
-        qs: { lat: config.get('Rome_lat'), lng: config.get('Rome_lon'), dt: par1},
-        headers: 
-        { 'content-type': 'application/json',
-            'x-access-token': process.env.UVRAYS_KEY } };
 
-    request(options, function (error, response, body) {
-        if (error /*|| typeof body.result === "undefined"*/){ 
-            res.status(500).send('Internal server error.');
-            return
+    const result = await (await UVSchema.findOne().sort('-_id').find({data: req.params.date}))
+    if(!result || result[0]===undefined) res.status(404).send("Not found.")
+    else {
+        var tosend = {
+            'uv_max': result[0].uv_max,
+            'uv_max_time': result[0].uv_max_time,
+            'ozone_value': result[0].ozone_value,
+            'ozone_time': result[0].ozone_time
         }
-        else{
-            var info = JSON.parse(body)
 
-            var tosend = {
-                    'uv_value' : info.result.uv,
-                    'uv_value_time' : info.result.uv_time,
-                    'uv_max' : info.result.uv_max,
-                    'uv_max_time' : info.result.uv_max_time,/*
-                    'ozone_value' : info.result.ozone,
-                    'ozone_time' : info.result.ozone_time*/
-                }
-
-            res.status(200).send(tosend);
-
-        }
-    });
-
-
+        res.status(200).send(tosend)
+    }
 });
 
 /**
@@ -217,7 +221,14 @@ router.get('/uv/:date', async (req,res) =>{
 router.get('/report/last' , async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
-    if(!result) res.status(500).send("Internal server error.")
+    if(!result){ 
+        res.status(500).send("Internal server error.")
+        console.error('error:', error);
+        logger.error('M3: Impossibile to get meteo report data from database')
+        console.log('M3')
+        reject(error);
+        return
+    }
     else{
         var tosend = {
             "data": result.data,
@@ -387,7 +398,13 @@ router.get('/report/7daysforecast' , async (req,res) => {
 
         creaMeteo();
         
-        }else res.status(500).send("Internal server error.")
+        }else{
+            res.status(500).send("Internal server error.")
+            console.error('error:', error);
+            logger.error('M4: Impossibile to get meteo report forecast from external server')
+            console.log('M4')
+            reject(error);
+        }
     });
 });
 
@@ -467,7 +484,9 @@ router.get('/report/history/:date' , async (req,res) => {
                     'humidity': info.data[0].rh
                 }
             res.status(200).send(tosend)
-        }else res.status(404).send('Not found.')
+        }else{
+            res.status(404).send('Not found.')
+        }
     });
 });
 
