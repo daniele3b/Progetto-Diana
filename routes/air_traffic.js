@@ -3,6 +3,7 @@ const router = express.Router()
 const config = require('config')
 const request = require('request')
 const {checkDate} = require('../helper/air_traffic_helper')
+const logger = require('../startup/logging')
 
 require('dotenv').config()
 
@@ -50,7 +51,14 @@ router.get('/', async (req, res) => {
     
     request(url, function(error, response, body) {
         if(error) {
-            console.error(error)
+            logger.error('AT1: impossible to get info about planes in the area bounded by\n'+
+               'LAT_MIN='+config.get('LAT_MIN')+'\n'+
+               'LAT_MAX='+config.get('LAT_MAX')+'\n'+
+               'LON_MIN='+config.get('LON_MIN')+'\n'+
+               'LON_MAX='+config.get('LON_MAX')
+               )
+            
+            console.log('AT1')
             return 
         }
         
