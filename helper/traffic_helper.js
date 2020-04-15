@@ -66,7 +66,8 @@ function getLatLong (address) {
 
         request(url_addr, function(error, response, body) {
             if(error){
-                console.error('error:', error);
+                logger.error('T2: Impossible to get coordinates for the address: '+address)
+                console.log('T2')
                 //reject(NaN) 
                 reject(error)
             }
@@ -118,7 +119,8 @@ function getResultsAndDestinationsForDistances(coordinates, lat, lon) {
 
         request(bing_maps_end_url, function(error, response, body) {
             if(error) {
-                console.error(error)
+                logger.error('T3: Impossible to get info about distances')
+                console.log('T3')
                 reject(error)
             }
 

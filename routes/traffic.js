@@ -5,6 +5,7 @@ const request = require('request')
 const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate} = require('../models/chemical_agents')
 const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} = require('../helper/traffic_helper')
+const logger=require('../startup/logging')
 
 require('dotenv').config()
 
@@ -73,7 +74,8 @@ router.get('/:address', async (req, res) => {
             
     request(url_info, function(error, response, body){
         if(error) {
-            console.error('error:', error);
+            logger.error('T1: Impossible to get data about traffic')
+            console.log('T1')
             return
         }
         else{
