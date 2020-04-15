@@ -27,7 +27,7 @@ function getStationsName()
     }else
     {
         let stations_name=[];
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+       // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         let json= JSON.parse(body);
         let stations=json.data;
         let len_s=stations.length
