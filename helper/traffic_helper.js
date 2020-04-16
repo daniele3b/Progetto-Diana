@@ -87,7 +87,7 @@ function getLatLong (address) {
     })   
 }
 
-function getSensorsInfo (result) {
+/*function getSensorsInfo (result) {
     return new Promise(function(resolve, reject) {
         let sensors = []
         let uids = []
@@ -108,6 +108,28 @@ function getSensorsInfo (result) {
             coordinates: coordinates
         })
     })
+}*/
+
+function getSensorsInfo (result) {
+    let sensors = []
+    let uids = []
+    let coordinates = []
+
+    let i
+    const dim = result.length
+    for(i=0;i<dim;i++){
+        if(!search(uids, result[i].uid)){
+            uids.push(result[i].uid)
+            sensors.push(result[i].sensor)
+            coordinates.push({lat : result[i].lat, lon : result[i].long})
+        }
+    }
+    
+    return {
+        sensors: sensors,
+        uids: uids,
+        coordinates: coordinates
+    }
 }
 
 function getResultsAndDestinationsForDistances(coordinates, lat, lon) {
