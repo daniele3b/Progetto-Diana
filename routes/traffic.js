@@ -9,60 +9,14 @@ const logger=require('../startup/logging')
 
 require('dotenv').config()
 
-/**
- * @swagger
- * tags:
- *   name: Traffic
- *   description: Traffic management APIs
- */ 
-
-
-/**
-* @swagger 
-* /traffic/:address:
-*  get:
-*    tags: [Traffic]
-*    parameters:
-*       - name: address
-*         description: String that represents the address used by the tom tom api
-*         in: formData
-*         required: true
-*         type: String
-*    description: Used to request all current data about traffic into an area specified by a given address(latest available)
-*    responses:
-*       '200':
-*         description: A successful response, data available
-*         schema:
-*           type: object
-*           properties:
-*               currentSpeed:
-*                   type: number
-*                   format: float
-*                   example: 45
-*               freeFlowSpeed:
-*                   type: number
-*                   format: float
-*                   example: 45
-*               confidence:
-*                   type: number
-*                   format: float
-*                   example: 0.95045677
-*               currentTravelTime:
-*                   type: number
-*                   format: float
-*                   example: 36
-*       '400':
-*         description: An invalid address has been passed(it contains numbers)
-*       '404':
-*         description: The address doesn't exist
-*/
-
 router.get('/:address', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
     getLatLong(address)
     .then(function(latLon) {
+
+        if(latLon == -1) return res.status(404).send("This address doesn't exist")
             
         const lat = latLon[0]
         const lon = latLon[1]
@@ -96,7 +50,7 @@ router.get('/:address', async (req, res) => {
         })
     })
     .catch(function(error){
-        return res.status(404).send("This address doesn't exist")
+        return
     })
     
 })
@@ -153,6 +107,9 @@ router.get('/:address/sensor', async (req, res) => {
 
     getLatLong(address)
     .then(async function(latLon) {
+        
+        if(latLon == -1) return res.status(404).send("This address doesn't exist")
+        
         const lat = latLon[0]
         const lon = latLon[1]
         
@@ -200,7 +157,7 @@ router.get('/:address/sensor', async (req, res) => {
         }
     })
     .catch(function(error) {
-        return res.status(404).send("This address doesn't exist")
+        return
     })
 })
 
@@ -265,6 +222,9 @@ router.get('/:address/sensor/:radius', async (req, res) => {
 
     getLatLong(address)
     .then(async function(latLon) {
+
+        if(latLon == -1) return res.status(404).send("This address doesn't exist")
+
         const lat = latLon[0]
         const lon = latLon[1]
 
@@ -316,7 +276,7 @@ router.get('/:address/sensor/:radius', async (req, res) => {
         }
     })
     .catch(function(error) {
-        return res.status(404).send("This address doesn't exist")
+        return
     })
 })
 
