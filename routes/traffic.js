@@ -160,7 +160,7 @@ router.get('/:address/sensor', async (req, res) => {
         const dim = result.length
         if(dim > 0) {
 
-            const sensorsInfo = await getSensorsInfo(result)
+            const sensorsInfo = getSensorsInfo(result)
                 
             let sensors = sensorsInfo.sensors
             let uids = sensorsInfo.uids
@@ -173,7 +173,6 @@ router.get('/:address/sensor', async (req, res) => {
             const resDests = await getResultsAndDestinationsForDistances(coordinates, lat, lon)
             const results = resDests.results
             const destinations = resDests.destinations
-            //console.log(results)
                         
             const dim = results.length
             let dist_min = 999999

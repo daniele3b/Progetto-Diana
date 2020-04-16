@@ -68,10 +68,11 @@ router.get('/' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date})
     .select("sensor uid -_id types value lat long")
 
-    if(!result.length)
-    res.status(404).send('No data available')
+    if(result.length>0)
+        res.status(200).send(result)
     else
-    res.status(200).send(result)
+        res.status(404).send('No data available')
+  
 })
 
 
@@ -137,9 +138,10 @@ router.get('/current/:station_id' , async (req,res) => {
     const result=await Chemical_Agent.find({reg_date:max_date.reg_date,uid:par})
     .select("sensor uid -_id types value lat long")
 
-    if(!result.length) res.status(404).send("No data with the given criteria")
+    if(result.length>0) 
+        res.status(200).send(result)
     else
-    res.status(200).send(result)
+        res.status(404).send("No data with the given criteria")
 })
 
 
@@ -211,8 +213,8 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
     const result = await Chemical_Agent.find({reg_date: {'$gte': date_start, '$lt': date_stop}})
     .select("sensor uid -_id value types lat long")
     .sort("uid")
-    if(!result.length) res.status(404).send("No data with the given criteria")
-   else res.status(200).send(result)
+    if(result.length>0) res.status(200).send(result)
+   else res.status(404).send("No data with the given criteria")
     }else{
         res.status(400).send("Bad request")
     }
@@ -297,8 +299,8 @@ router.get('/filter/date/:station_id/:date_start/:date_end', async (req,res) => 
     const result = await Chemical_Agent.find({uid:id_s,reg_date: {'$gte': date_start, '$lte': date_stop}})
     .select(" reg_date sensor uid -_id value types lat long")
     .sort("uid")
-    if(!result.length) res.status(404).send("No data with the given criteria")
-   else res.status(200).send(result)
+    if(result.length>0)res.status(200).send(result)
+   else  res.status(404).send("No data with the given criteria")
     }else
     {
         res.status(400).send("Bad request")
@@ -353,9 +355,8 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
     {
         const result=await Chemical_Agent.find({uid:par1,types:par2})
         .sort("-reg_date")
-        if(!result.length)
-            res.status(404).send("NOT FOUND")
-        else{
+        if(result.length>0)
+        {
             let i=0;
             let sum=0;
             let len=result.length
@@ -370,6 +371,9 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
             
             let obj={value:avg}
             res.status(200).send(obj)
+        } 
+        else{
+            res.status(404).send("NOT FOUND")
         }
             
         
@@ -425,72 +429,74 @@ router.get('/filter/avg/:station_id', async (req,res) => {
     let par1=req.params.station_id
     const result=await Chemical_Agent.find({uid:par1})
     .sort("-reg_date")
-    if(!result.length)
-        res.status(404).send("NOT FOUND")
-    else{
-            let i=0;
-            let sum=[0.0,0.0,0.0,0.0,0.0,0.0]
-            let cont=[0,0,0,0,0,0]
-            let len=result.length
-            for(i=0;i<len;i++)
+    if(result.length>0)
+    {
+        let i=0;
+        let sum=[0.0,0.0,0.0,0.0,0.0,0.0]
+        let cont=[0,0,0,0,0,0]
+        let len=result.length
+        for(i=0;i<len;i++)
+        {
+           // console.log(result[i].types+ "->"+result[i].value)
+            if(result[i].types==Agents.CO){
+                sum[0]+=result[i].value
+                cont[0]+=1
+            }
+            if(result[i].types==Agents.SO2)
             {
-               // console.log(result[i].types+ "->"+result[i].value)
-                if(result[i].types==Agents.CO){
-                    sum[0]+=result[i].value
-                    cont[0]+=1
-                }
-                if(result[i].types==Agents.SO2)
-                {
-                    sum[1]+=result[i].value
-                    cont[1]+=1
-                }
-
-                if(result[i].types==Agents.PM10)
-                {
-                    sum[2]+=result[i].value
-                    cont[2]+=1
-                }
-
-                if(result[i].types==Agents.PM25)
-                {
-                    sum[3]+=result[i].value
-                    cont[3]+=1
-                }
-                if(result[i].types==Agents.O3)
-                {
-                    sum[4]+=result[i].value
-                    cont[4]+=1
-                }
+                sum[1]+=result[i].value
+                cont[1]+=1
             }
 
-            let obj=[
-           {
-            types:"CO",
-            avg:(sum[0]/cont[0])
-           },
-           {
-            types:"SO2",
-            avg: (sum[1]/cont[1])
-           },
-           {
-            types:"PM10",
-            avg:(sum[2]/cont[2])
-           },
-           {
-            types:"PM25",
-            avg:(sum[3]/cont[3])
-           },
-           {
-            types:"O3",
-            avg:(sum[4]/cont[4])
-           }
-           
-            ]
-                
-            //console.log(obj)
+            if(result[i].types==Agents.PM10)
+            {
+                sum[2]+=result[i].value
+                cont[2]+=1
+            }
+
+            if(result[i].types==Agents.PM25)
+            {
+                sum[3]+=result[i].value
+                cont[3]+=1
+            }
+            if(result[i].types==Agents.O3)
+            {
+                sum[4]+=result[i].value
+                cont[4]+=1
+            }
+        }
+
+        let obj=[
+       {
+        types:"CO",
+        avg:(sum[0]/cont[0])
+       },
+       {
+        types:"SO2",
+        avg: (sum[1]/cont[1])
+       },
+       {
+        types:"PM10",
+        avg:(sum[2]/cont[2])
+       },
+       {
+        types:"PM25",
+        avg:(sum[3]/cont[3])
+       },
+       {
+        types:"O3",
+        avg:(sum[4]/cont[4])
+       }
+       
+        ]
             
-           
-            res.status(200).send(obj)
+        //console.log(obj)
+        
+       
+        res.status(200).send(obj)
+    }   
+    else{
+        res.status(404).send("NOT FOUND")
         }  
    
 })
@@ -545,10 +551,10 @@ router.get('/history', async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
  .select("reg_date sensor uid types value -_id lat long")
-if(!result.length) 
-    res.status(400).send("Data not available")
+if(result.length>0) 
+    res.status(200).send(result)  
 else
-    res.status(200).send(result)
+    res.status(400).send("Data not available")
 })
 
 
@@ -615,10 +621,11 @@ router.get('/history/:type', async (req,res) => {
     .sort("-reg_date")
     .select("reg_date sensor uid types value -_id lat long")
 
-    if(!result.length)
-        res.status(404).send('No data available')
+    if(result.length>0)
+         res.status(200).send(result)
     else
-     res.status(200).send(result)
+        res.status(404).send('No data available')
+     
     }else{
 
         res.status(400).send("Bad request")
@@ -684,10 +691,10 @@ router.get('/history/:type', async (req,res) => {
     const result=await Chemical_Agent.find({uid:par})
     .sort("-reg_date")
     .select("reg_date sensor uid types value -_id lat long")  
-    if(!result.length)
-        res.status(404).send("Data not available")
-    else
+    if(result.length>0)
         res.status(200).send(result)
+    else
+        res.status(404).send("Data not available")
    })
 
 
@@ -761,10 +768,10 @@ router.get('/history/:type', async (req,res) => {
         const result=await Chemical_Agent.find({uid:par1,types:par2})
         .sort("-reg_date")
         .select("reg_date sensor uid types value -_id lat long")  
-        if(!result.length)
-            res.status(404).send("NOT FOUND")
+        if(result.length>0)
+            res.status(200).send(result) 
         else
-            res.status(200).send(result)
+            res.status(404).send("NOT FOUND")
         
     }else
     

@@ -40,9 +40,14 @@ describe('/chemical_agents', () => {
     describe('GET /', () => {
         it('should return all current data about all stations (latest available)' , async() => {
             const res = await request(server).get('/chemical_agents')
-
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
+        })
+
+        it('should return 404 if no data are available' , async() => {
+            await Chemical_Agent.deleteMany({})
+            const res = await request(server).get('/chemical_agents')
+            expect(res.status).toBe(404)
         })
 
     })
