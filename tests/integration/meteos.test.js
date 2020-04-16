@@ -2,6 +2,8 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const {Meteo, UVSchema} = require('../../models/meteo')
 
+jest.setTimeout(20000)
+
 let server
 
 describe('/weather', () => {
