@@ -2,7 +2,7 @@ const request = require('supertest')
 const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate}=require('../../models/chemical_agents')
 
-jest.setTimeout(50000)
+jest.setTimeout(60000)
 
 let server
 

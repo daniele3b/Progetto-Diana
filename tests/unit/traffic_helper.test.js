@@ -1,7 +1,7 @@
 const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} 
     = require('../../helper/traffic_helper')
 
-jest.setTimeout(50000)
+jest.setTimeout(60000)
 
 describe('search', () => {
     it("should return true if array contains the element", () => {
