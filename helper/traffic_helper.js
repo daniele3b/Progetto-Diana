@@ -66,17 +66,16 @@ function getLatLong (address) {
 
         request(url_addr, function(error, response, body) {
             const parsed_body = JSON.parse(body)
-
             if(error){
                 logger.error('T2: Impossible to get coordinates for the address: '+address)
                 console.log('T2') 
                 reject(error)
             }
             else if( parsed_body.length == 0 ) {
-                reject(error)
+                resolve(-1)
             }
-            else if(parsed_body[0].class != 'highway') {
-                reject(error)
+            else if(parsed_body[0].osm_type != 'way' && parsed_body[0].osm_type != 'relation') {
+                resolve(-1)
             }
             else{
                 const lat = parsed_body[0].lat
