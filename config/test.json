@@ -1,3 +1,5 @@
 {
-    "db" : "mongodb://localhost/Diana_tests"
+    "db" : "mongodb://localhost/Diana_tests",
+    "updater_int":8000,
+    "updater_to":20000
 }
