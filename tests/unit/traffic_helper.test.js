@@ -75,20 +75,20 @@ describe('getLatLong', () => {
         expect(res.length).toBe(2)
     })
 
-    /*it('should return a rejected promise if address is not an existing address', async () => {
+    it('should return a resolved promise with -1 if address is not an existing address', async () => {
         // NO ADDRESS
         
         const res = await getLatLong('xxxxxxxxxxxxxxxxxxx')
 
-        expect(res).toBeFalsy()
+        expect(res).toBe(-1)
     })
 
     it('should return a rejected promise if address is not relative to a way', async () => {
         // ECUADROR SUPERMARKET :)
         
         const res = await getLatLong('xxxxxxxxxxxxxxxxxxxxxxxx')
-        expect(res).toBeFalsy()
-    })*/
+        expect(res).toBe(-1)
+    })
 })
 
 describe('getSensorsInfo', () => {
