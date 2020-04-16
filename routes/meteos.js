@@ -472,10 +472,12 @@ router.get('/report/history/:date' , async (req,res) => {
     tomorrow.setDate(tomorrow.getDate()+1)
     var par1 = miadata.toISOString().substr(0,10) 
     var par2 = tomorrow.toISOString().substr(0,10) 
-
+    
     var lin = 'http://api.weatherbit.io/v2.0/history/daily?&city=Rome,it&start_date='+par1+'&end_date='+par2+'&tz=local&key='+ process.env.METEO_HISTORY_KEY;
     request.get(lin, (error, response, body) => {
-        if (!error && response.statusCode == 200) {
+        if (error || response.statusCode != 200) {
+            res.status(404).send('Not found.')
+        }else{
             var info = JSON.parse(body)
             var tosend = {
                     'date': miadata,
@@ -485,8 +487,6 @@ router.get('/report/history/:date' , async (req,res) => {
                     'humidity': info.data[0].rh
                 }
             res.status(200).send(tosend)
-        }else{
-            res.status(404).send('Not found.')
         }
     });
 });
