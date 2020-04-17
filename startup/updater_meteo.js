@@ -45,8 +45,8 @@ function updateMeteo(){
                     wind: wind  
                 });
 
-
             try{
+                let res=await Meteo.findOneAndDelete({datastamp: datastamp})
                 const result = await meteo.save();
             }catch(ex){
                 console.error('error:', error);
