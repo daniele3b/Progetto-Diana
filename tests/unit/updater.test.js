@@ -3,13 +3,10 @@ const {updateChemicalAgents}=require('../../startup/updater')
 const mongoose=require('mongoose')
 const {Agents,Chemical_Agent,validate}=require('../../models/chemical_agents')
 const config=require('config')
+const {sleep}=require('../../helper/test_helper')
 
 jest.setTimeout(config.get('updater_to'))
 
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
-  
 
 let server
 
