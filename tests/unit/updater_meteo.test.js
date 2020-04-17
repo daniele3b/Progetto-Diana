@@ -3,13 +3,11 @@ const {updateMeteo}=require('../../startup/updater_meteo')
 const mongoose=require('mongoose')
 const {Meteo}=require('../../models/meteo')
 const config=require('config')
+const {sleep}=require('../../helper/test_helper')
 
 jest.setTimeout(config.get('updater_to'))
 
-const sleep = (milliseconds) => {
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-}
-  
+
 
 let server
 
