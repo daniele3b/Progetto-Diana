@@ -16,7 +16,7 @@ const announcementSchema = new mongoose.Schema({
         type: Date,
         required: true 
     },
-    zone: { // ADDED
+    zone: { 
         type: [String],
         default: ['Everywhere']
     },

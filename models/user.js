@@ -1,0 +1,82 @@
+const Joi = require('joi')
+const mongoose = require('mongoose')
+
+const userSchema = new mongoose.Schema({
+    CF: { 
+        type: String,
+        required: true,
+        minlength: 16, 
+        maxlength: 16
+    },
+    type: {
+        type: String,
+        enum: ['cittadino', 'operatore', 'admin'],
+        required: true
+    },
+    name: {
+        type: String,
+        required: true,
+    },
+    surname: {  
+        type: String,
+        required: true
+    },
+    sex: { 
+        type: String,
+        minlength: 1, 
+        maxlength: 1,
+        required: true
+    },
+    birthdate: {    
+        type: Date,
+        required: true
+    },
+    birthplace: {   
+        type: String,
+        required: true
+    },
+    email: {    
+        type: String,
+        minlength: 5,
+        maxlength: 255,
+        unique: true
+    },
+    phone: {
+        type: String,
+        minlength: 5,
+        maxlength: 15,
+        unique: true
+    },
+    password: { 
+        type: String,
+        minlength: 5,
+        maxlength: 1024
+    }
+})
+
+
+const User = mongoose.model('User', userSchema)
+
+
+function validateUser(user) {
+    const pattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+    
+    const schema = {
+        CF: Joi.string().min(16).max(16).required(),    
+        type: Joi.string().valid('cittadino','operatore','admin'),  
+        name: Joi.string().required(),  
+        surname: Joi.string().required(),   
+        sex: Joi.string().min(1).max(1).required(), 
+        birthdate: Joi.date().required(),   
+        birthplace: Joi.string().required(),    
+        email:  Joi.string().min(5).max(255).required().email(),
+        phone: Joi.string().regex(pattern), 
+        password: Joi.string().min(5).max(1024) 
+    }
+
+    return Joi.validate(user,schema)
+}
+
+
+exports.User = User
+exports.validateUser = validateUser
