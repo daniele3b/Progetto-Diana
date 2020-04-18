@@ -64,7 +64,7 @@ describe('/traffic', () => {
                 surname : 'Bufalieri',
                 sex : 'M',
                 birthdate : '1998-12-01',
-                birthplace : 'Latina',
+                birthplace : 'Roma',
                 email : 'federeristheway@gmail.com',
                 phone : '1234567890',
                 password : 'aCertainPassword!'
