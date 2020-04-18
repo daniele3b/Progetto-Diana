@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['cittadino', 'operatore'],
+        enum: ['cittadino', 'operatore','admin'],
         required: true
     },
     name: {
