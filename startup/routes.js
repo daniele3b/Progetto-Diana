@@ -7,7 +7,12 @@ const chemicalagent=require('../routes/chemicalagents')
 const traffic = require('../routes/traffic')
 const air_traffic = require('../routes/air_traffic')
 const meteo = require('../routes/meteos')
+<<<<<<< HEAD
 const auth = require('../routes/auth')
+=======
+const registration = require('../routes/registration')
+const report = require('../routes/report')
+>>>>>>> 492bbfac1cc4ff512135eb35de521134c8b6fd34
 
 module.exports = function(app) {
     app.use(express.json())
@@ -18,5 +23,10 @@ module.exports = function(app) {
     app.use('/traffic', traffic)
     app.use('/weather', meteo)
     app.use('/air_traffic', air_traffic)
+<<<<<<< HEAD
     app.use('/auth', auth)
+=======
+    app.use('/registration',registration)
+    app.use('/report', report)
+>>>>>>> 492bbfac1cc4ff512135eb35de521134c8b6fd34
 }
