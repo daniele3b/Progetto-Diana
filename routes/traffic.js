@@ -6,10 +6,52 @@ const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate} = require('../models/chemical_agents')
 const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} = require('../helper/traffic_helper')
 const logger=require('../startup/logging')
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 require('dotenv').config()
 
-router.get('/:address', async (req, res) => {
+/**
+* @swagger 
+* /traffic/:address:
+*  get:
+*    tags: [Traffic]
+*    parameters:
+*       - name: address
+*         description: String that represents the address used by the tom tom api
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to request info about traffic for a specified address(latest available)
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*         schema:
+*           type: object
+*           properties:
+*               currentSpeed:
+*                   type: number
+*                   format: integer
+*                   example: 46
+*               freeFlowSpeed:
+*                   type: number
+*                   format: integer
+*                   example: 58      
+*               confidence:
+*                   type: number
+*                   format: float
+*                   example: 0.9599999785423279
+*               currentTravelTime:
+*                   type: number
+*                   format: integer
+*                   example: 68             
+*       '400':
+*         description: An invalid address has been passed(it contains numbers)
+*       '404':
+*         description: The address doesn't exist/No chemical agents available in the database
+*/
+
+router.get('/:address', [auth, operator], async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
@@ -101,7 +143,7 @@ router.get('/:address', async (req, res) => {
 *         description: The address doesn't exist/No chemical agents available in the database
 */
 
-router.get('/:address/sensor', async (req, res) => {
+router.get('/:address/sensor', [auth, operator], async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
 
@@ -212,7 +254,7 @@ router.get('/:address/sensor', async (req, res) => {
 *        description: The address doesn't exist/No chemical agents available in the database/No sensors within the specified radius
 */
 
-router.get('/:address/sensor/:radius', async (req, res) => {
+router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
     const address = req.params.address
     const radius = req.params.radius
     

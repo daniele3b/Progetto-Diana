@@ -22,6 +22,7 @@
   "homepage": "https://github.com/daniele3b/Progetto-Diana#readme",
   "dependencies": {
     "bcrypt": "^4.0.1",
+    "codice-fiscale-js": "^2.2.4",
     "config": "^3.3.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
