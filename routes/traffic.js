@@ -6,6 +6,8 @@ const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate} = require('../models/chemical_agents')
 const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} = require('../helper/traffic_helper')
 const logger=require('../startup/logging')
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 require('dotenv').config()
 
@@ -49,7 +51,7 @@ require('dotenv').config()
 *         description: The address doesn't exist/No chemical agents available in the database
 */
 
-router.get('/:address', async (req, res) => {
+router.get('/:address', [auth, operator], async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
     
@@ -141,7 +143,7 @@ router.get('/:address', async (req, res) => {
 *         description: The address doesn't exist/No chemical agents available in the database
 */
 
-router.get('/:address/sensor', async (req, res) => {
+router.get('/:address/sensor', [auth, operator], async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
 
@@ -252,7 +254,7 @@ router.get('/:address/sensor', async (req, res) => {
 *        description: The address doesn't exist/No chemical agents available in the database/No sensors within the specified radius
 */
 
-router.get('/:address/sensor/:radius', async (req, res) => {
+router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
     const address = req.params.address
     const radius = req.params.radius
     
