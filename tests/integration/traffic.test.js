@@ -63,11 +63,11 @@ describe('/traffic', () => {
                 name : 'Daniele',
                 surname : 'Bufalieri',
                 sex : 'M',
-                birthdate : '1998-12-01',
+                birthdate : '1998-12-02',
                 birthplace : 'Roma',
                 email : 'federeristheway@gmail.com',
                 phone : '1234567890',
-                password : 'aCertainPassword!'
+                password : 'aCertainPassword1'
             }).generateAuthToken();
 
             const cf_admin = calculateCF('Laura','Giacomoni','F','30','04','2001','Latina')
