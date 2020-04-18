@@ -3,6 +3,8 @@ const {User,validateUser}=require('../models/user')
 const {calculateCF}=require('../helper/registration_helper')
 const config = require('config')
 const bcrypt=require('bcrypt')
+const jwt = require('jsonwebtoken');
+
 const router = express.Router()
 
 
@@ -105,24 +107,24 @@ router.post('/citizen/change_pw' , async (req,res) => {
          var decoded = jwt.decode(token);
 
 
-        const cf=decoded.payload.CF
+      
         // get the decoded payload and header
         var decoded = jwt.decode(token, {complete: true});
-        console.log(decoded.header);
-        console.log(decoded.payload)
+
+        const cf=decoded.payload.CF
         
        
 
-        let result=await User.find({CF:cf})
+        let result=await User.findOne({CF:cf})
         if(result.length==0) {
             res.status(404).send('User not found')
         }
         else{
-            if(result.type!='citizien'){
+            if(result.type!='cittadino'){
                 return res.status(400).send('Bad request 2')
             }else
             {
-                const validPassword = await bcrypt.compare(req.body.old_password, result.password);
+                const validPassword = await bcrypt.compare(req.body.old_pw, result.password);
                 if(!validPassword) 
                     return res.status(400).send('Invalid password');
                 else{
