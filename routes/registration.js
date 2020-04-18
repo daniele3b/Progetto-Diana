@@ -54,7 +54,7 @@ router.post('/citizen' , async (req,res) => {
         surname:req.body.surname,
         sex:req.body.sex,
         birthdate:req.body.birthdate,
-        birthplace:req.body.birthdate,
+        birthplace:req.body.birthplace,
         email:req.body.email,
         phone:req.body.phone,
         password:req.body.password
