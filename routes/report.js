@@ -22,6 +22,7 @@ const router = express.Router()
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
 *               <br>"CF" string which represents the user's identifier,
 *               <br>"category" string which represents the report's category,
 *               <br>"address" string which represents the report's address,
@@ -32,6 +33,8 @@ const router = express.Router()
 *         schema:
 *           type: object
 *           properties:
+*               id_number:
+*                   type: number
 *               CF:
 *                   type: string
 *               category:
@@ -78,6 +81,56 @@ router.post('/' , async (req,res) => {
 
 /** 
 * @swagger
+* /report/:id_number:
+*  delete:
+*    tags: [Report]
+*    parameters:
+*       - id_number: Report object
+*         description: id_number of the report
+*    description: Use to delete a report, setting the visibility to false
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's category,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" will be false after this,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*                   example: false
+*       '400' :
+*         description: Bad request
+*/
+
+router.delete('/:id_number' , async (req,res) => {
+    const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {visible: false})
+    if (!report) return res.status(404).send('Not found') 
+})
+
+/** 
+* @swagger
 * /report:
 *  get:
 *    tags: [Report]
@@ -85,6 +138,7 @@ router.post('/' , async (req,res) => {
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
 *               <br>"CF" string which represents the user's identifier,
 *               <br>"category" string which represents the report's type,
 *               <br>"address" string which represents the report's address,
@@ -95,6 +149,8 @@ router.post('/' , async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               id_number:
+*                   type: number
 *               CF:
 *                   type: string
 *               category:
@@ -121,15 +177,16 @@ router.get('/', async (req,res) => {
 
 /** 
 * @swagger
-* /report/filter/rifiuti:
+* /report/filter/id/:id:
 *  get:
 *    tags: [Report]
-*    description: Show a list of all reports of 'Rifiuti' category
+*    description: Show the report with the given id_number
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
 *               <br>"CF" string which represents the user's identifier,
-*               <br>"category" here "Rifiuti",
+*               <br>"category" string which represents the report's type,
 *               <br>"address" string which represents the report's address,
 *               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
 *               <br>"description" string which represents the report's description,
@@ -138,6 +195,259 @@ router.get('/', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*       '400' :
+*         description: Bad request
+*    parameters:
+*       - name: id
+*         description: number identifier
+*         required: true
+*         type: Number
+*/
+
+router.get('/filter/id/:id', async (req,res) => {
+    const result = await Report.find({id_number: req.params.id}).sort('-_id')
+    if(!result || result[0]===undefined) res.status(404).send("Not found.")
+    else {
+        res.status(200).send(result)
+    }
+})
+
+/** 
+* @swagger
+* /report/filter/CF/:cf:
+*  get:
+*    tags: [Report]
+*    description: Show a list of all reports made by an user
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's type,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" boolean, true if the report is visible, else altrimenti,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*       '400' :
+*         description: Bad request
+*    parameters:
+*       - name: cf
+*         description: User's CF, regex pattern= '[A-Z][A-Z][A-Z][A-Z][A-Z][A-Z][0-9][0-9][A-Z][0-9][0-9][A-Z][0-9][0-9][0-9][A-Z]'
+*         required: true
+*         type: String
+*/
+
+router.get('/filter/CF/:cf', async (req,res) => {
+    const result = await Report.find({CF: req.params.cf}).sort('-_id')
+    if(!result || result[0]===undefined) res.status(404).send("Not found.")
+    else {
+        res.status(200).send(result)
+    }
+})
+
+/** 
+* @swagger
+* /report/filter/date/:date:
+*  get:
+*    tags: [Report]
+*    description: Show a list of all reports in a given date
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's type,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" boolean, true if the report is visible, else altrimenti,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*       '400' :
+*         description: Bad request
+*    parameters:
+*       - name: date
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
+*/
+
+router.get('/filter/date/:date', async (req,res) => {
+    if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    const d1 = new Date(req.params.date)
+    const d2 = new Date(req.params.date)
+    d1.setHours("0")
+    d1.setMinutes("1")
+    d2.setHours("23")
+    d2.setMinutes("59")
+    const result = await Report.find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
+    if(!result || result[0]===undefined) res.status(404).send("Not found.")
+    else {
+        res.status(200).send(result)
+    }
+})
+
+/** 
+* @swagger
+* /report/filter/date/:date_start/:date_end:
+*  get:
+*    tags: [Report]
+*    description: Show a list of all reports in a givan days' range
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's type,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" boolean, true if the report is visible, else altrimenti,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*       '400' :
+*         description: Bad request
+*    parameters:
+*       - name: date_start
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
+*       - name: date_start
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$' 
+*/
+
+router.get('/filter/date/:date_start/:date_end', async (req,res) => {
+    if(!req.params.date_start.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    if(!req.params.date_end.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    const d1 = new Date(req.params.date_start)
+    const d2 = new Date(req.params.date_end)
+    d1.setHours("0")
+    d1.setMinutes("1")
+    d2.setHours("23")
+    d2.setMinutes("59")
+    const result = await Report.find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
+    if(!result || result[0]===undefined) res.status(404).send("Not found.")
+    else {
+        res.status(200).send(result)
+    }
+})
+
+
+/** 
+* @swagger
+* /report/filter/category/:type:
+*  get:
+*    tags: [Report]
+*    description: Show a list of all reports filters by type category
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's category,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" boolean, true if the report is visible, else altrimenti,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
 *               CF:
 *                   type: string
 *               category:
@@ -156,25 +466,37 @@ router.get('/', async (req,res) => {
 *                   type: boolean
 *       '404' :
 *         description: Not Found
+*    parameters:
+*       - name: type
+*         description: it must be in ['rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro'] 
+*         required: true
+*         type: String  
 */
 
-router.get('/filter/rifiuti', async (req,res) => {
-    const report = await Report.find({category: 'Rifiuti'}).sort('-_id')
+router.get('/filter/category/:type', async (req,res) => {
+    var t = req.params.type.toLowerCase();
+    if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
+        res.status(400).send('Bad request.')
+        return
+    }
+
+    const report = await Report.find({category: t}).sort('-_id')
     if(report.length>0) res.status(200).send(report)
     else res.status(404).send('Not Found.')
 })
 
 /** 
 * @swagger
-* /report/filter/incendio:
+* /report/filter/category/:type/date/:date:
 *  get:
 *    tags: [Report]
-*    description: Show a list of all reports of 'Incendio' category
+*    description: Show a list of all reports by type category and by date
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
 *               <br>"CF" string which represents the user's identifier,
-*               <br>"category" here "Incendio",
+*               <br>"category" string which represents the report's category,
 *               <br>"address" string which represents the report's address,
 *               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
 *               <br>"description" string which represents the report's description,
@@ -183,11 +505,13 @@ router.get('/filter/rifiuti', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               id_number:
+*                   type: number
 *               CF:
 *                   type: string
 *               category:
 *                   type: string
-*                   example: Incendio
+*                   example: Rifiuti
 *               address:
 *                   type: string
 *               date:
@@ -201,25 +525,54 @@ router.get('/filter/rifiuti', async (req,res) => {
 *                   type: boolean
 *       '404' :
 *         description: Not Found
+*    parameters:
+*       - name: type
+*         description: it must be in ['rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro'] 
+*         required: true
+*         type: String  
+*       - name: date
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$' 
 */
 
-router.get('/filter/incendio', async (req,res) => {
-    const report = await Report.find({category: 'Incendio'}).sort('-_id')
+router.get('/filter/category/:type/date/:date', async (req,res) => {
+    var t = req.params.type.toLowerCase();
+    if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
+        res.status(400).send('Bad request.')
+        return
+    }
+
+    if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    const d1 = new Date(req.params.date)
+    const d2 = new Date(req.params.date)
+    d1.setHours("0")
+    d1.setMinutes("1")
+    d2.setHours("23")
+    d2.setMinutes("59")
+
+    const report = await Report.find({category: t}).find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
     if(report.length>0) res.status(200).send(report)
     else res.status(404).send('Not Found.')
 })
 
 /** 
 * @swagger
-* /report/filter/urbanistica:
+* /report/filter/category/:type/date/:date_start/:date_end:
 *  get:
 *    tags: [Report]
-*    description: Show a list of all reports of 'Urbanistica' category
+*    description: Show a list of all reports by type category and by days' range
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
 *               <br>"CF" string which represents the user's identifier,
-*               <br>"category" here "Urbanistica",
+*               <br>"category" string which represents the report's category,
 *               <br>"address" string which represents the report's address,
 *               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
 *               <br>"description" string which represents the report's description,
@@ -228,11 +581,13 @@ router.get('/filter/incendio', async (req,res) => {
 *         schema:
 *           type: object
 *           properties:
+*               id_number:
+*                   type: number
 *               CF:
 *                   type: string
 *               category:
 *                   type: string
-*                   example: Urbanistica
+*                   example: Rifiuti
 *               address:
 *                   type: string
 *               date:
@@ -246,103 +601,52 @@ router.get('/filter/incendio', async (req,res) => {
 *                   type: boolean
 *       '404' :
 *         description: Not Found
+*    parameters:
+*       - name: type
+*         description: it must be in ['rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro'] 
+*         required: true
+*         type: String  
+*       - name: date_start
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
+*       - name: date_start
+*         description: date choosen, 'YYYY-MM-DD'
+*               <br>regex pattern = '{2020}-[0-1][0-9]-[0-3][0-9]'
+*         required: true
+*         type: String
+*         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'
 */
 
-router.get('/filter/urbanistica', async (req,res) => {
-    const report = await Report.find({category: 'Urbanistica'}).sort('-_id')
+router.get('/filter/category/:type/date/:date_start/:date_end', async (req,res) => {
+    var t = req.params.type.toLowerCase();
+    if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
+        res.status(400).send('Bad request.')
+        return
+    }
+
+    if(!req.params.date_start.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    if(!req.params.date_end.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
+        res.status(400).send('Bad request.')
+        return
+    }
+    const d1 = new Date(req.params.date_start)
+    const d2 = new Date(req.params.date_end)
+    d1.setHours("0")
+    d1.setMinutes("1")
+    d2.setHours("23")
+    d2.setMinutes("59")
+
+    const report = await Report.find({category: t}).find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
     if(report.length>0) res.status(200).send(report)
     else res.status(404).send('Not Found.')
 })
 
-/** 
-* @swagger
-* /report/filter/idrogeologia:
-*  get:
-*    tags: [Report]
-*    description: Show a list of all reports of 'Idrogeologia' category
-*    responses:
-*       '200':
-*         description: A successful response, data available in JSON format, 
-*               <br>"CF" string which represents the user's identifier,
-*               <br>"category" here "Idrogeologia",
-*               <br>"address" string which represents the report's address,
-*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
-*               <br>"description" string which represents the report's description,
-*               <br>"status" string which represents the report's status,
-*               <br>"visible" boolean, true if the report is visible, else altrimenti,
-*         schema:
-*           type: object
-*           properties:
-*               CF:
-*                   type: string
-*               category:
-*                   type: string
-*                   example: Idrogeologia
-*               address:
-*                   type: string
-*               date:
-*                   type: string
-*                   format: date-time
-*               description:
-*                   type: string
-*               status:
-*                   type: string
-*               visible:
-*                   type: boolean
-*       '404' :
-*         description: Not Found
-*/
-
-router.get('/filter/idrogeologia', async (req,res) => {
-    const report = await Report.find({category: 'Idrogeologia'}).sort('-_id')
-    if(report.length>0) res.status(200).send(report)
-    else res.status(404).send('Not Found.')
-})
-
-/** 
-* @swagger
-* /report/filter/altro:
-*  get:
-*    tags: [Report]
-*    description: Show a list of all reports of 'Altro' category
-*    responses:
-*       '200':
-*         description: A successful response, data available in JSON format, 
-*               <br>"CF" string which represents the user's identifier,
-*               <br>"category" here "Altro",
-*               <br>"address" string which represents the report's address,
-*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
-*               <br>"description" string which represents the report's description,
-*               <br>"status" string which represents the report's status,
-*               <br>"visible" boolean, true if the report is visible, else altrimenti,
-*         schema:
-*           type: object
-*           properties:
-*               CF:
-*                   type: string
-*               category:
-*                   type: string
-*                   example: Altro
-*               address:
-*                   type: string
-*               date:
-*                   type: string
-*                   format: date-time
-*               description:
-*                   type: string
-*               status:
-*                   type: string
-*               visible:
-*                   type: boolean
-*       '404' :
-*         description: Not Found
-*/
-
-router.get('/filter/altro', async (req,res) => {
-    const report = await Report.find({category: 'Altro'}).sort('-_id')
-    if(report.length>0) res.status(200).send(report)
-    else res.status(404).send('Not Found.')
-})
 
 
 module.exports = router
