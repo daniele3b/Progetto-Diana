@@ -2,33 +2,36 @@ const Joi = require('joi')
 const mongoose = require('mongoose')
 
 const reportSchema = new mongoose.Schema({
+    id_number: {
+        type: Number
+    },
     CF: { 
         type: String,
         required: true,
         minlength: 16, 
         maxlength: 16
     },
-    categoria: {
+    category: {
         type: String,
-        enum: ['rifiuti', 'incendio', 'altro'],
+        enum: ['Rifiuti', 'Incendio', 'Urbanistica', 'Allagamento', 'Altro'],
         required: true
     },
-    indirizzo: {
+    address: {
         type: String,
         required: true,
     },
-    data: {  
+    date: {  
         type: Date
     },
-    descrizione: { 
+    description: { 
         type: String,
         required: true
     },
-    stato: {    
+    status: {    
         type: String,
         enum: ['in attesa', 'presa in carico', 'risolto']
     },
-    visibile: {   
+    visible: {   
         type: Boolean
     }
 })
@@ -41,12 +44,9 @@ function validateReport(report) {
     
     const schema = {
         CF: Joi.string().min(16).max(16).required(),
-        categoria: Joi.string().valid('rifiuti', 'incendio', 'altro').required(),  
-        indirizzo: Joi.string().required(),  
-        //data: Joi.date().required(),   
-        descrizione: Joi.string().required()/*,
-        stato: Joi.string().valid('in attesa', 'presa in carico', 'risolto').required(),
-        visibile: Joi.boolean().required*/
+        category: Joi.string().valid('Rifiuti', 'Incendio', 'Urbanistica', 'Idrogeologia', 'Altro').required(),  
+        address: Joi.string().required(),  
+        description: Joi.string().required()
     }
 
     return Joi.validate(report,schema)
