@@ -9,6 +9,46 @@ const logger=require('../startup/logging')
 
 require('dotenv').config()
 
+/**
+* @swagger 
+* /traffic/:address:
+*  get:
+*    tags: [Traffic]
+*    parameters:
+*       - name: address
+*         description: String that represents the address used by the tom tom api
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to request info about traffic for a specified address(latest available)
+*    responses:
+*       '200':
+*         description: A successful response, data available
+*         schema:
+*           type: object
+*           properties:
+*               currentSpeed:
+*                   type: number
+*                   format: integer
+*                   example: 46
+*               freeFlowSpeed:
+*                   type: number
+*                   format: integer
+*                   example: 58      
+*               confidence:
+*                   type: number
+*                   format: float
+*                   example: 0.9599999785423279
+*               currentTravelTime:
+*                   type: number
+*                   format: integer
+*                   example: 68             
+*       '400':
+*         description: An invalid address has been passed(it contains numbers)
+*       '404':
+*         description: The address doesn't exist/No chemical agents available in the database
+*/
+
 router.get('/:address', async (req, res) => {
     const address = req.params.address
     if(!addressOK(address)) return res.status(400).send("Invalid address... don't use numbers!")
