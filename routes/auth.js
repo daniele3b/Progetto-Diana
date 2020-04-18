@@ -6,6 +6,13 @@ const express = require('express');
 const router = express.Router();
 
 /**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Auth management APIs
+*/
+
+/**
 * @swagger 
 * /auth/email:
 *  post:
