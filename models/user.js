@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema({
         required: function() { return this.phone == undefined}
     },
     phone: {
-        type: String,
+        type: String, 
         minlength: 5,
         maxlength: 15,
         unique: true,
