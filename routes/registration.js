@@ -18,7 +18,7 @@ const router = express.Router()
 
 /**
 * @swagger 
-* /registration/cittadino:
+* /registration/citizen:
 *  post:
 *    tags: [Chemical_Agents]
 *    parameters:
@@ -34,7 +34,7 @@ const router = express.Router()
 *         description: No data available
 */
 
-router.post('/cittadino' , async (req,res) => {
+router.post('/citizen' , async (req,res) => {
 /*
     const {error} = validateUser(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
@@ -44,12 +44,7 @@ router.post('/cittadino' , async (req,res) => {
     let data=req.body.birthdate
     let array = data.split('-');
     const cf=calculateCF(req.body.name,req.body.surname,req.body.sex,array[2],array[1],array[0],req.body.birthplace)
-    if(cf==-1){
-        res.status(400).send('Bad request')
-        
-    }
-
-
+  
     const resp=await User.find({CF:cf})
     if(resp.length==0) {
     let user=new User({

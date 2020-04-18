@@ -12,7 +12,6 @@ function calculateCF(name,surname,gender,day,month,year,birthplace)
         birthplace:birthplace, 
     })
     return cf
-
 }
 
 exports.calculateCF=calculateCF
