@@ -4,6 +4,9 @@ const {calculateCF}=require('../helper/registration_helper')
 const config = require('config')
 const bcrypt=require('bcrypt')
 const jwt = require('jsonwebtoken');
+const auth=require('../middleware/auth')
+const operator=require('../middleware/operator')
+const admin=require('../middleware/admin')
 
 const router = express.Router()
 
@@ -21,7 +24,7 @@ const router = express.Router()
 * @swagger 
 * /registration/citizen:
 *  post:
-*    tags: [Chemical_Agents]
+*    tags: [Registration]
 *    parameters:
 *       - name: User object
 *         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
@@ -84,7 +87,7 @@ router.post('/citizen' , async (req,res) => {
 * @swagger 
 * /registration/citizen/change_pw:
 *  post:
-*    tags: [Chemical_Agents]
+*    tags: [Registration]
 *    parameters:
 *       - name: User object
 *         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
@@ -100,7 +103,7 @@ router.post('/citizen' , async (req,res) => {
 *         description: Bad request
 */
 
-router.post('/citizen/change_pw' , async (req,res) => {
+router.post('/citizen/change_pw' ,auth,async (req,res) => {
 
         if(req.body.new_pw ==undefined || req.body.old_pw==undefined)
          return res.status(400).send('Bad request')
@@ -124,7 +127,7 @@ router.post('/citizen/change_pw' , async (req,res) => {
         }
         else{
             if(result.type!='cittadino'){
-                return res.status(400).send('Bad request 2')
+                return res.status(400).send('Bad request')
             }else
             {
                 const validPassword = await bcrypt.compare(req.body.old_pw, result.password);
@@ -140,11 +143,12 @@ router.post('/citizen/change_pw' , async (req,res) => {
         }
     
     })
+
 /**
 * @swagger 
 * /registration/operator:
 *  post:
-*    tags: [Chemical_Agents]
+*    tags: [Registration]
 *    parameters:
 *       - name: User object
 *         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
@@ -158,7 +162,7 @@ router.post('/citizen/change_pw' , async (req,res) => {
 *         description: No data available
 */
 
-router.post('/operator' , async (req,res) => {
+router.post('/operator' ,[auth,admin], async (req,res) => {
     
         const {error} = validateUser(req.body)
          if (error)  return res.status(400).send(error.details[0].message)
@@ -196,6 +200,70 @@ router.post('/operator' , async (req,res) => {
    else{
            res.status(404).send('User already registered')
         }
+})
+
+
+
+
+/**
+* @swagger 
+* /registration/operator/change_pw:
+*  post:
+*    tags: [Registration]
+*    parameters:
+*       - name: User object
+*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         
+*    description: Use to change a pw of an operator (type operatore)
+*    responses:
+*       '200':
+*         description: A successful request
+*                                  
+*       '404':
+*         description: No data available
+*       '400':
+*         description: Bad request
+*/
+
+router.post('/operator/change_pw' ,[auth,operator], async (req,res) => {
+
+    if(req.body.new_pw ==undefined || req.body.old_pw==undefined)
+     return res.status(400).send('Bad request')
+
+     const token=req.header('x-diana-auth-token')
+
+     var decoded = jwt.decode(token);
+
+
+  
+    // get the decoded payload and header
+    var decoded = jwt.decode(token, {complete: true});
+
+    const cf=decoded.payload.CF
+    
+   
+
+    let result=await User.findOne({CF:cf})
+    if(result.length==0) {
+        res.status(404).send('User not found')
+    }
+    else{
+        if(result.type!='operatore'){
+            return res.status(400).send('Bad request')
+        }else
+        {
+            const validPassword = await bcrypt.compare(req.body.old_pw, result.password);
+            if(!validPassword) 
+                return res.status(400).send('Invalid password');
+            else{
+                const salt = await bcrypt.genSalt(config.get('pw_salt'));
+                const np=await bcrypt.hash(req.body.new_pw, salt);
+                const user= await User.findOneAndUpdate({CF:cf},{password:np})
+                return res.status(200).send('Password updated')
+            }
+        }
+    }
+
 })
 
 module.exports = router
