@@ -5,9 +5,23 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 
-// Login with email and password
+/**
+* @swagger 
+* /auth/email:
+*  post:
+*    tags: [Auth]
+*    description: Used to authenticate a user when he is going to login with email and password
+*    responses:
+*       '200':
+*         description: User has authenticated succesfully, and he received token
+*         schema:
+*           type: string
+*       '400':
+*         description: Invalid email or password
+*/
+
 router.post('/email', async (req, res) => {
-    const { error } = validate(req.body); 
+    const { error } = validateReqEmail(req.body); 
     if (error) return res.status(400).send(error.details[0].message);
   
     let user = await User.findOne({email: req.body.email})
@@ -17,24 +31,36 @@ router.post('/email', async (req, res) => {
     if(!validPassword) return res.status(400).send('Invalid email or password');
     
     const token = user.generateAuthToken();
-    res.send(token);
-
+    res.status(200).send(token);
 });
 
-// Login with phone and password
+/**
+* @swagger 
+* /auth/phone:
+*  post:
+*    tags: [Auth]
+*    description: Used to authenticate a user when he is going to login with phone and password
+*    responses:
+*       '200':
+*         description: User has authenticated succesfully, and he received token
+*         schema:
+*           type: string
+*       '400':
+*         description: Invalid phone or password
+*/
+
 router.post('/phone', async (req, res) => {
-  const { error } = validate(req.body); 
-  if (error) return res.status(400).send(error.details[0].message);
+    const { error } = validateReqPhone(req.body); 
+    if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({phone: req.body.phone})
-  if(!user) return res.status(400).send('Invalid phone or password');
+    let user = await User.findOne({phone: req.body.phone})
+    if(!user) return res.status(400).send('Invalid phone or password');
 
-  const validPassword = await bcrypt.compare(req.body.password, user.password);
-  if(!validPassword) return res.status(400).send('Invalid phone or password');
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    if(!validPassword) return res.status(400).send('Invalid phone or password');
   
-  const token = user.generateAuthToken();
-  res.send(token);
-
+    const token = user.generateAuthToken();
+    res.status(200).send(token);
 });
 
 function validateReqEmail(req) {
@@ -46,7 +72,7 @@ function validateReqEmail(req) {
     return Joi.validate(req, schema);
 }
 
-function validateReqPhonr(req) {
+function validateReqPhone(req) {
     const pattern = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
 
     const schema = {
