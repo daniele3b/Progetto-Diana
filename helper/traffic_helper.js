@@ -141,7 +141,6 @@ function getResultsAndDestinationsForDistances(coordinates, lat, lon) {
     })
 }
 
-exports.search = search
 exports.addressOK = addressOK
 exports.radiusOK = radiusOK
 exports.getLatLong = getLatLong

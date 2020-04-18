@@ -1,19 +1,7 @@
-const {search, addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} 
+const {addressOK, radiusOK, getLatLong, getSensorsInfo, getResultsAndDestinationsForDistances} 
     = require('../../helper/traffic_helper')
 
 jest.setTimeout(60000)
-
-describe('search', () => {
-    it("should return true if array contains the element", () => {
-        const res = search(['32434','123','433','3344','2323'], '3344')
-        expect(res).toBe(true)
-    })
-
-    it("should return false if array doesn't contain the element", () => {
-        const res = search(['32434','123','433','3344','2323'], '1222')
-        expect(res).toBe(false)
-    })
-})
 
 describe('addressOK', () => {
     it("should return true if address doesn't contain numbers", () => {
