@@ -92,6 +92,8 @@ router.post('/citizen' , async (req,res) => {
 *                                  
 *       '404':
 *         description: No data available
+*       '400':
+*         description: Bad request
 */
 
 router.post('/citizen/change_pw' , async (req,res) => {
