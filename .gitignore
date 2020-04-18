@@ -2,4 +2,3 @@ node_modules/
 .env
 coverage/
 logerror.log
-helper/air_traffic_helper.js
