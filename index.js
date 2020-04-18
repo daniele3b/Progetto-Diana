@@ -18,6 +18,7 @@ app.use(cors())
 
 const server = app.listen(8080, () =>  { console.log("Server listening on port : " , port)})
 
+if(process.env.NODE_ENV!="test"){
 SuperUser_startup()
 .then((result)=>{
     if(result=='Super user set')
@@ -26,6 +27,7 @@ SuperUser_startup()
     console.log('Admin already exist')
 })
 .catch((error)=>{console.log(error)})
+}
 
 
 if(process.env.NODE_ENV!="test"){

@@ -111,18 +111,14 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
          const token=req.header('x-diana-auth-token')
 
          var decoded = jwt.decode(token);
-
-
       
         // get the decoded payload and header
         var decoded = jwt.decode(token, {complete: true});
 
         const cf=decoded.payload.CF
         
-       
-
         let result=await User.findOne({CF:cf})
-        if(result.length==0) {
+        if(result==null||result.length<=0) {
             res.status(404).send('User not found')
         }
         else{
@@ -244,7 +240,7 @@ router.post('/operator/change_pw' ,[auth,operator], async (req,res) => {
    
 
     let result=await User.findOne({CF:cf})
-    if(result.length==0) {
+    if(result==null||result.length<=0) {
         res.status(404).send('User not found')
     }
     else{
