@@ -4,6 +4,8 @@ const config = require('config')
 const request = require('request')
 const {checkDate} = require('../helper/air_traffic_helper')
 const logger = require('../startup/logging')
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 require('dotenv').config()
 
@@ -21,6 +23,8 @@ require('dotenv').config()
 *    tags: [Air Traffic]
 *    description: Used to request geographical coordinates of planes in Rome's area, in real time 
 *    responses:
+*       '400':
+*         description: Invalid token provided
 *       '200':
 *         description: A successful response, data available
 *         schema:
@@ -41,9 +45,13 @@ require('dotenv').config()
 *                     example: 12.23345
 *       '404':
 *         description: There are no flights in the specified area
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
-router.get('/', async (req, res) => {
+router.get('/', [auth, operator], async (req, res) => {
     // "https://USERNAME:PASSWORD@opensky-network.org/api/states/all" 
     const url = 'https://'+process.env.OPEN_SKY_USERNAME+':'+process.env.OPEN_SKY_PASSWORD+'@'+config.get('open_sky_end')
                 +'/states/all?lamin='+config.get('LAT_MIN')+'&lomin='+config.get('LON_MIN')+'&lamax='+config.get('LAT_MAX')
@@ -83,11 +91,6 @@ router.get('/', async (req, res) => {
             res.status(200).send(result)
         }
     })
-})
-
-router.get('/now/:start', async (req, res) => {
-    const now = new Date()
-    // WORK IN PROGRESS
 })
 
 module.exports = router

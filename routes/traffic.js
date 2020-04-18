@@ -46,9 +46,13 @@ require('dotenv').config()
 *                   format: integer
 *                   example: 68             
 *       '400':
-*         description: An invalid address has been passed(it contains numbers)
+*         description: An invalid address has been passed(it contains numbers)/Invalid token provided
 *       '404':
 *         description: The address doesn't exist/No chemical agents available in the database
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
 router.get('/:address', [auth, operator], async (req, res) => {
@@ -138,9 +142,13 @@ router.get('/:address', [auth, operator], async (req, res) => {
 *                   format: float
 *                   example: 10.68
 *       '400':
-*         description: An invalid address has been passed(it contains numbers)
+*         description: An invalid address has been passed(it contains numbers)/Invalid token provided
 *       '404':
 *         description: The address doesn't exist/No chemical agents available in the database
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
 router.get('/:address/sensor', [auth, operator], async (req, res) => {
@@ -249,9 +257,13 @@ router.get('/:address/sensor', [auth, operator], async (req, res) => {
 *                   format: float
 *                   example: 10.68
 *       '400':
-*        description: Invalid address has been passed(it contains numbers)/Invalid radius has been passed/0 or a negative radius has been passed
+*        description: Invalid address has been passed(it contains numbers)/Invalid radius has been passed/0 or a negative radius has been passed/Invalid token provided
 *       '404':
 *        description: The address doesn't exist/No chemical agents available in the database/No sensors within the specified radius
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
 router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
