@@ -19,12 +19,15 @@ app.use(cors())
 const server = app.listen(8080, () =>  { console.log("Server listening on port : " , port)})
 
 SuperUser_startup()
-.then((result)=>{if(res==1)
+.then((result)=>{
+    if(result=='Super user set')
     console.log('Admin setted') 
-    else console.log('Admin already exist')
+    else 
+    console.log('Admin already exist')
 })
-
 .catch((error)=>{console.log(error)})
+
+
 if(process.env.NODE_ENV!="test"){
 setInterval(updateChemicalAgents,config.get('aqi_time_int')) //1 minute
 

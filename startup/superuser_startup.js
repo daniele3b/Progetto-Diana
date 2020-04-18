@@ -32,10 +32,10 @@ function SuperUser_startup()
             
             const r=await superUser.save()
 
-            resolve(1)
+            resolve('Super user set')
         }
         else {
-            resolve(-1)
+            resolve('Super user already exist')
         }
         reject(-1)
 
