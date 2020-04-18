@@ -1,5 +1,8 @@
 const Joi = require('joi')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config()
 
 const userSchema = new mongoose.Schema({
     CF: { 
@@ -54,6 +57,10 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+userSchema.methods.generateAuthToken = function() {
+    const token = jwt.sign({type: this.type, CF: this.CF}, process.env.DIANA_TOKEN_KEY);    
+    return token;
+}
 
 const User = mongoose.model('User', userSchema)
 
