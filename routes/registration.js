@@ -3,7 +3,6 @@ const {User,validateUser}=require('../models/user')
 const {calculateCF}=require('../helper/registration_helper')
 const config = require('config')
 const bcrypt=require('bcrypt')
-
 const router = express.Router()
 
 
@@ -100,7 +99,19 @@ router.post('/citizen/change_pw' , async (req,res) => {
 
         if(req.body.new_pw ==undefined || req.body.old_pw==undefined)
          return res.status(400).send('Bad request')
-        let cf='' //DA PRENDERE DAL TOKEN
+
+         const token=req.header('x-diana-auth-token')
+
+         var decoded = jwt.decode(token);
+
+
+        const cf=decoded.payload.CF
+        // get the decoded payload and header
+        var decoded = jwt.decode(token, {complete: true});
+        console.log(decoded.header);
+        console.log(decoded.payload)
+        
+       
 
         let result=await User.find({CF:cf})
         if(result.length==0) {
@@ -111,7 +122,7 @@ router.post('/citizen/change_pw' , async (req,res) => {
                 return res.status(400).send('Bad request 2')
             }else
             {
-                const validPassword = await bcrypt.compare(req.body.old_password, user.password);
+                const validPassword = await bcrypt.compare(req.body.old_password, result.password);
                 if(!validPassword) 
                     return res.status(400).send('Invalid password');
                 else{
