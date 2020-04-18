@@ -17,5 +17,6 @@
     "Rome_lat": "41.89",
     "Rome_lon": "12.48",
     "weather_report_url" : "https://api.openweathermap.org/data/2.5/onecall?lat=41.89&lon=12.48&appid=",
-    "weather_report_updater": "http://api.openweathermap.org/data/2.5/weather?q=rome,it&appid="
+    "weather_report_updater": "http://api.openweathermap.org/data/2.5/weather?q=rome,it&appid=",
+    "pw_salt":10
 }
