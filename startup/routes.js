@@ -7,6 +7,7 @@ const chemicalagent=require('../routes/chemicalagents')
 const traffic = require('../routes/traffic')
 const air_traffic = require('../routes/air_traffic')
 const meteo = require('../routes/meteos')
+const auth = require('../routes/auth')
 
 module.exports = function(app) {
     app.use(express.json())
@@ -17,4 +18,5 @@ module.exports = function(app) {
     app.use('/traffic', traffic)
     app.use('/weather', meteo)
     app.use('/air_traffic', air_traffic)
+    app.use('/auth', auth)
 }
