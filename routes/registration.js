@@ -1,8 +1,9 @@
 const express = require('express')
 const {User,validateUser}=require('../models/user')
+const {calculateCF}=require('../helper/registration_helper')
 const config = require('config')
 const bcrypt=require('bcrypt')
-var CodiceFiscale = require('codice-fiscale-js');
+
 const router = express.Router()
 
 
@@ -42,18 +43,12 @@ router.post('/cittadino' , async (req,res) => {
     
     let data=req.body.birthdate
     let array = data.split('-');
+    const cf=calculateCF(req.body.name,req.body.surname,req.body.sex,array[2],array[1],array[0],req.body.birthplace)
+    if(cf==-1){
+        res.status(400).send('Bad request')
+        
+    }
 
-    var cf = new CodiceFiscale({
-        name: req.body.name,
-        surname: req.body.surname,
-        gender: req.body.sex,
-        day: array[2],
-        month: array[1],
-        year: array[0],
-        birthplace: req.body.birthplace, 
-    });
-
-   // console.log(cf)
 
     const resp=await User.find({CF:cf})
     if(resp.length==0) {
