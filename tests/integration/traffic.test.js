@@ -1,18 +1,16 @@
 const request = require('supertest')
-const mongoose = require('mongoose')
-const {Agents,Chemical_Agent,validate}=require('../../models/chemical_agents')
-const {User} = require('../../models/user');
-const {calculateCF}=require('../../helper/registration_helper')
+const {Agents,Chemical_Agent} = require('../../models/chemical_agents')
+const {getTokens} = require('../../helper/test_helper')
 
-jest.setTimeout(60000)
+jest.setTimeout(70000)
 
 let server
 
 describe('/traffic', () => {
 
-    let operator_token;
-    let citizen_token;
-    let admin_token;
+    let operator_token
+    let citizen_token
+    let admin_token
 
     beforeEach( async () => {
         server = require('../../index')
@@ -38,52 +36,12 @@ describe('/traffic', () => {
             long:"12.3337009"
         })
         await chemical_agent2.save()
-
-
-        const cf_operator = calculateCF('Ivan','Giacomoni','M','31','05','1998','Latina')
-
-            operator_token = new User({
-                CF : cf_operator,
-                type : 'operatore',
-                name : 'Ivan',
-                surname : 'Giacomoni',
-                sex : 'M',
-                birthdate : '1998-05-31',
-                birthplace : 'Latina',
-                email : 'federeristheway@gmail.com',
-                phone : '1234567890',
-                password : 'aCertainPassword'
-            }).generateAuthToken();
-
-            const cf_citizen = calculateCF('Daniele','Bufalieri','M','01','12','1998','Roma')
-
-            citizen_token = new User({
-                CF : cf_citizen,
-                type : 'cittadino',
-                name : 'Daniele',
-                surname : 'Bufalieri',
-                sex : 'M',
-                birthdate : '1998-12-02',
-                birthplace : 'Roma',
-                email : 'federeristheway@gmail.com',
-                phone : '1234567890',
-                password : 'aCertainPassword1'
-            }).generateAuthToken();
-
-            const cf_admin = calculateCF('Laura','Giacomoni','F','30','04','2001','Latina')
-
-            admin_token = new User({
-                CF : cf_admin,
-                type : 'admin',
-                name : 'Laura',
-                surname : 'Giacomoni',
-                sex : 'F',
-                birthdate : '2001-04-30',
-                birthplace : 'Latina',
-                email : 'emailDiLaura@gmail.com',
-                phone : '1234567893',
-                password : 'aCertainPassword2'
-            }).generateAuthToken();
+        
+        const tokens = getTokens()
+        
+        citizen_token = tokens[0]
+        operator_token = tokens[1]
+        admin_token = tokens[2]
 
     })
     afterEach(async () => {
