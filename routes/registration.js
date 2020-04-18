@@ -17,50 +17,23 @@ const router = express.Router()
 
 /**
 * @swagger 
-* /registration:
-*  get:
+* /registration/cittadino:
+*  post:
 *    tags: [Chemical_Agents]
-*    description: Use to request all current data by the sensor in the city (latest available)
+*    parameters:
+*       - name: User object
+*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         
+*    description: Use to create a new user account (type cittadino)
 *    responses:
 *       '200':
-*         description: A successful response, data available return an array of object
-*         schema:
-*           type: object
-*           properties:
-*               sensor:
-*                   type: string
-*               reg_data:
-*                   type: string
-*                   format: date-time
-*               uid:
-*                   type: string
-*               types:
-*                   type: string
-*                   enum:
-*                       O3
-*                       NO
-*                       NO2
-*                       NOX
-*                       PM10
-*                       PM25
-*                       BENZENE
-*                       CO
-*                       SO2
-*               value:
-*                   type: number
-*                   format: float
-*                   example: 70.4
-*               lat:
-*                   type: string
-*               long:
-*                   type: string
-*               type: object
+*         description: A successful request
 *                                  
 *       '404':
 *         description: No data available
 */
 
-router.post('/' , async (req,res) => {
+router.post('/cittadino' , async (req,res) => {
 /*
     const {error} = validateUser(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
