@@ -36,10 +36,10 @@ const router = express.Router()
 */
 
 router.post('/citizen' , async (req,res) => {
-/*
+
     const {error} = validateUser(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
-*/
+
 
     
     let data=req.body.birthdate
@@ -66,10 +66,13 @@ router.post('/citizen' , async (req,res) => {
 
     
 
-   const result= await user.save()
-   res.status(200).send('User registered')
-    }else
-        res.status(404).send('User already registered')
+  await user.save()
+   .then((result)=>{return res.status(200).send('User registered')})
+   .catch((err)=>{ return res.status(404).send('Error something required')})
+    }
+    else{
+            res.status(404).send('User already registered')
+    }
   
 })
 
@@ -156,10 +159,10 @@ router.post('/citizen/change_pw' , async (req,res) => {
 */
 
 router.post('/operator' , async (req,res) => {
-    /*
+    
         const {error} = validateUser(req.body)
-        if (error)  return res.status(400).send(error.details[0].message)
-    */
+         if (error)  return res.status(400).send(error.details[0].message)
+    
     
         
         let data=req.body.birthdate
@@ -186,11 +189,13 @@ router.post('/operator' , async (req,res) => {
     
         
     
-       const result= await user.save()
-       res.status(200).send('User registered')
-        }else
-            res.status(404).send('User already registered')
-      
-    })
+        await user.save()
+        .then((result)=>{return res.status(200).send('User registered')})
+        .catch((err)=>{ return res.status(404).send('Error something required')})
+   }
+   else{
+           res.status(404).send('User already registered')
+        }
+})
 
 module.exports = router
