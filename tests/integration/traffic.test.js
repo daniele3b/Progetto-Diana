@@ -94,13 +94,6 @@ describe('/traffic', () => {
 
 
     describe('/GET/:address', () => {
-
-
-
-/*        beforeEach(() => {
-
-            
-        })*/
         
         it('should return 401 if user is not logged in', async () => {
 
@@ -109,6 +102,15 @@ describe('/traffic', () => {
                 .set('x-diana-auth-token', '');
 
             expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/traffic/Via Tiburtina')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
         });
 
         it('should return 403 if user is not an operator or an admin', async () => {
@@ -165,6 +167,15 @@ describe('/traffic', () => {
                 .set('x-diana-auth-token', '');
 
             expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/traffic/Via Tiburtina/sensor')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
         });
 
         it('should return 403 if user is not an operator or an admin', async () => {
@@ -231,6 +242,15 @@ describe('/traffic', () => {
                 .set('x-diana-auth-token', '');
 
             expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/traffic/Via Tiburtina/sensor/100')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
         });
 
         it('should return 403 if user is not an operator or an admin', async () => {
