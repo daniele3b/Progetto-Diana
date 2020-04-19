@@ -87,6 +87,8 @@ function validateUser(user) {
         email:  Joi.string().min(5).max(255).email(),
         phone: Joi.string().regex(pattern), 
         password: Joi.string().min(5).max(1024),
+        password_changing: Joi.boolean(),
+        password_tmp: Joi.string()
     }
 
     return Joi.validate(user,schema)
