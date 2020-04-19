@@ -11,15 +11,6 @@ let transporter = nodemailer.createTransport({
       pass: process.env.PW_EMAIL // generated ethereal password
     }
   });
-/*
 
-let info = transporter.sendMail({
-    from: '"Fred Foo 👻" <progetto-diana@libero.it>', // sender address
-    to: "danielebufalieritkd@gmail.com, danielebufalieritkd@gmail.com", // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>" // html body
-  });
-  */
 
   exports.transporter=transporter
