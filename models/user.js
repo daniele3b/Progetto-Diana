@@ -56,6 +56,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         minlength: 5,
         maxlength: 1024
+    },
+    password_changing: {
+        type: Boolean,
+        default: false
+    },
+    password_tmp: {
+        type: String
     }
 })
 
@@ -79,7 +86,9 @@ function validateUser(user) {
         birthplace: Joi.string().required(),   
         email:  Joi.string().min(5).max(255).email(),
         phone: Joi.string().regex(pattern), 
-        password: Joi.string().min(5).max(1024) 
+        password: Joi.string().min(5).max(1024),
+        password_changing: Joi.Boolean(),
+        password_tmp: Joi.String()
     }
 
     return Joi.validate(user,schema)
