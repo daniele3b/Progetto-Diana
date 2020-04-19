@@ -158,7 +158,7 @@ describe('/chemical_agents', () => {
         it('should return 401 if user is not logged in', async () => {
 
             const res = await request(server)
-                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
                 .set('x-diana-auth-token', '');
 
             expect(res.status).toBe(401);
@@ -167,7 +167,7 @@ describe('/chemical_agents', () => {
         it('should return 400 if token is not valid', async () => {
 
             const res = await request(server)
-                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
                 .set('x-diana-auth-token', 'invalid_token');
 
             expect(res.status).toBe(400);
@@ -176,7 +176,7 @@ describe('/chemical_agents', () => {
         it('should return 403 if user is not an operator or an admin', async () => {
 
             const res = await request(server)
-                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
                 .set('x-diana-auth-token', citizen_token);
 
             expect(res.status).toBe(403);
@@ -225,39 +225,110 @@ describe('/chemical_agents', () => {
         })
     })
 
- /*   describe('GET /history', () => {
-        it('should return the list of all data of all stations ', async () => {
-            const res = await request(server).get('/chemical_agents/history')
-            expect(res.status).toBe(200)
-            expect(res.body.length).toBe(2)
+    describe('GET /history', () => {
+        
+        describe('GET /history', () => {
+            it('should return 401 if user is not logged in', async () => {
+    
+                const res = await request(server)
+                    .get('/chemical_agents/history')
+                    .set('x-diana-auth-token', '');
+    
+                expect(res.status).toBe(401);
+            });
+    
+            it('should return 400 if token is not valid', async () => {
+    
+                const res = await request(server)
+                    .get('/chemical_agents/history')
+                    .set('x-diana-auth-token', 'invalid_token');
+    
+                expect(res.status).toBe(400);
+            });
+    
+            it('should return 403 if user is not an operator or an admin', async () => {
+    
+                const res = await request(server)
+                    .get('/chemical_agents/history')
+                    .set('x-diana-auth-token', citizen_token);
+    
+                expect(res.status).toBe(403);
+            });
+    
+            it('should return the list of all data of all stations ', async () => {
+                let res = await request(server).get('/chemical_agents/history')
+                    .set('x-diana-auth-token', operator_token);
+                expect(res.status).toBe(200)
+                expect(res.body.length).toBe(2)
+    
+                res = await request(server).get('/chemical_agents/history')
+                    .set('x-diana-auth-token', admin_token);
+                expect(res.status).toBe(200)
+                expect(res.body.length).toBe(2)
+            })
+    
         })
 
     })
-
-    describe('GET /history', () => {
-        it('should return the list of all data of all stations ', async () => {
-            const res = await request(server).get('/chemical_agents/history')
-            expect(res.status).toBe(200)
-            expect(res.body.length).toBe(2)
-        })
-
-    }) 
     
     describe('GET /history:type', () => {
+        it('should return 401 if user is not logged in', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/SO2')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/SO2')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/history/SO2')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
         it('should return the list of all data of all stations of a kind of agent', async () => {
-            const res = await request(server).get('/chemical_agents/history/SO2')
+            let res = await request(server).get('/chemical_agents/history/SO2')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/history/SO2')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
         })
 
         it('should return 400 if type of agent dont exist', async () => {
-            const res = await request(server).get('/chemical_agents/history/test')
+            let res = await request(server).get('/chemical_agents/history/test')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400)
+
+            res = await request(server).get('/chemical_agents/history/test')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(400)
             
         })
 
         it('should return 404 if type of agent exist but there arent values', async () => {
-            const res = await request(server).get('/chemical_agents/history/BENZENE')
+            let res = await request(server).get('/chemical_agents/history/BENZENE')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/history/BENZENE')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
             
         })
@@ -265,79 +336,242 @@ describe('/chemical_agents', () => {
 
 
     describe('GET /history/station/:station_id', () => {
+        it('should return 401 if user is not logged in', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova')
+                .set('x-diana-auth-token', '');
 
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+        
         it('should return the list of all data of a station', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/id_prova')
+            let res = await request(server).get('/chemical_agents/history/station/id_prova')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+
+            res = await request(server).get('/chemical_agents/history/station/id_prova')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(2)
         })
 
         it('should return 404 if the data arent available or station id dont exist', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/nonesiste')
+            let res = await request(server).get('/chemical_agents/history/station/nonesiste')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/history/station/nonesiste')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
             
         })
 
-    
     })
 
     describe('GET /history/station/:station_id/:type', () => {
 
+        it('should return 401 if user is not logged in', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova/CO')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+    
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova/CO')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/history/station/id_prova/CO')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+        
         it('should return the list of all data of a station of a kinf of agent', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/id_prova/CO')
+            let res = await request(server).get('/chemical_agents/history/station/id_prova/CO')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/history/station/id_prova/CO')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
         })
 
         it('should return 404 if station id dont exist', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/nonesiste/CO')
+            let res = await request(server).get('/chemical_agents/history/station/nonesiste/CO')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/history/station/nonesiste/CO')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
         })
 
         it('should return 404 if station id exist but there arent data', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/id_prova/BENZENE')
+            let res = await request(server).get('/chemical_agents/history/station/id_prova/BENZENE')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/history/station/id_prova/BENZENE')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
         })
 
         it('should return 400 if the type of agent dont exist', async () => {
-            const res = await request(server).get('/chemical_agents/history/station/id_prova/nonesiste')
-            expect(res.status).toBe(400)  
+            let res = await request(server).get('/chemical_agents/history/station/id_prova/nonesiste')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400)
+            
+            res = await request(server).get('/chemical_agents/history/station/id_prova/nonesiste')
+                .set('x-diana-auth-token', admin_token);
+            expect(res.status).toBe(400)
         })
 
     
     })
 
-
     describe('GET /filter/avg/:station_id/:type', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/avg/id_prova/CO')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/avg/id_prova/CO')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/avg/id_prova/CO')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+    
         it('should return the avg of all data of a kind of agent of a station', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/CO')
+            let res = await request(server).get('/chemical_agents/filter/avg/id_prova/CO')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('value', 100)
+
+            res = await request(server).get('/chemical_agents/filter/avg/id_prova/CO')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body).toHaveProperty('value', 100)
         })
 
         it('should return 400 if type of agent dont exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/nonesiste')
+            let res = await request(server).get('/chemical_agents/filter/avg/id_prova/nonesiste')
+                .set('x-diana-auth-token', operator_token);
             expect(res.status).toBe(400)
-            
+
+            res = await request(server).get('/chemical_agents/filter/avg/id_prova/nonesiste')
+                .set('x-diana-auth-token', admin_token);
+            expect(res.status).toBe(400)
+        
         })
 
         it('should return 400 if the station doesnt exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/nonesiste/CO')
+            let res = await request(server).get('/chemical_agents/filter/avg/nonesiste/CO')
+                .set('x-diana-auth-token', operator_token);
             expect(res.status).toBe(404)
-            
+
+            res = await request(server).get('/chemical_agents/filter/avg/nonesiste/CO')
+                .set('x-diana-auth-token', admin_token);
+            expect(res.status).toBe(404)
+        
         })
 
         it('should return 404 if type of agent exist but there arent values', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/id_prova/BENZENE')
+            let res = await request(server).get('/chemical_agents/filter/avg/id_prova/BENZENE')
+                .set('x-diana-auth-token', operator_token);
             expect(res.status).toBe(404)
-            
+
+            res = await request(server).get('/chemical_agents/filter/avg/id_prova/BENZENE')
+                .set('x-diana-auth-token', admin_token);
+            expect(res.status).toBe(404)
+        
         })
     })
 
-
     describe('GET /filter/avg/:station_id/', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/avg/id_prova')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/avg/id_prova')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+        
         it('should return the avg of all data of a station', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/id_prova')
+            let res = await request(server).get('/chemical_agents/filter/avg/id_prova')
+                .set('x-diana-auth-token', citizen_token);
+            expect(res.status).toBe(200)
+            
+            expect(res.body[0].avg).toBe(100)
+            expect(res.body[1].avg).toBe(100)
+
+            res = await request(server).get('/chemical_agents/filter/avg/id_prova')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            
+            expect(res.body[0].avg).toBe(100)
+            expect(res.body[1].avg).toBe(100)
+
+            res = await request(server).get('/chemical_agents/filter/avg/id_prova')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             
             expect(res.body[0].avg).toBe(100)
@@ -346,7 +580,16 @@ describe('/chemical_agents', () => {
 
 
         it('should return 404 if station_id doesnt exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
+            let res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
+                .set('x-diana-auth-token', citizen_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/filter/avg/nonesiste')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
             
         })
@@ -354,28 +597,76 @@ describe('/chemical_agents', () => {
 
 
     describe('GET /filter/date/:station_id/:date_start/:date_end', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
         it('should return all data of a station beetwen date_start and date_end', async () => {
-            const res = await request(server).get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+            let res = await request(server).get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/filter/date/id_prova/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
         })
 
 
         it('should return 404 if station_id doesnt exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/date/nonesiste/2021-12-31/2021-12-31')
+            let res = await request(server).get('/chemical_agents/filter/date/nonesiste/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/filter/date/nonesiste/2021-12-31/2021-12-31')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
             
         })
 
 
         it('should return 404 if there arent data beetwen date indicated doesnt exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/date/id_prova/666-6-6/666-6-6')
+            let res = await request(server).get('/chemical_agents/filter/date/id_prova/666-6-6/666-6-6')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/filter/date/id_prova/666-6-6/666-6-6')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
         })
 
         it('should return 404 if dates indicated doesnt exist', async () => {
-            const res = await request(server).get('/chemical_agents/filter/date/id_prova/nonesiste/nonesiste')
+            let res = await request(server).get('/chemical_agents/filter/date/id_prova/nonesiste/nonesiste')
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400)
+
+            res = await request(server).get('/chemical_agents/filter/date/id_prova/nonesiste/nonesiste')
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(400)
         })
-    })*/
+    })
 }) 
