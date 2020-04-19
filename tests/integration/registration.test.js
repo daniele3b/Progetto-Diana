@@ -241,7 +241,155 @@ describe('/registration', () => {
             expect(res.status).toBe(404);
         });
 
-        //manca test utente già esistente
+
+        
+        it('should return 404 if user is logged in ,he is an admin and user is already registered', async () => {
+
+            let res = await request(server)
+            .post('/registration/operator')
+            .send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma', email : 'federeristheway@gmail.com',phone : '1234567890',password : 'aCertainPassword!'})
+            .set('x-diana-auth-token', admin_token);
+            res = await request(server)
+                .post('/registration/operator')
+                .send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma', email : 'federeristheway@gmail.com',phone : '1234567890',password : 'aCertainPassword!'})
+                .set('x-diana-auth-token', admin_token);
+            expect(res.status).toBe(404);
+        });
+
     });
     
+
+    describe('POST /operator/change_pw',()=>{
+
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'aCertainPassword!',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', '');
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 403 if user is logged in and he is a citizien', async () => {
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'aCertainPassword!',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', citizen_token);
+            expect(res.status).toBe(403);
+        });
+
+
+        it('should return 200 if user is logged in and he is an operator', async () => {
+            
+            const salt = await bcrypt.genSalt(config.get('pw_salt'));
+            let us=new User( {CF : cf_operator,
+                type : 'operatore',
+                name : 'Ivan',
+                surname : 'Giacomoni',
+                sex : 'M',
+                birthdate : '1998-05-31',
+                birthplace : 'Latina',
+                email : 'federeristheway@gmail.com',
+                phone : '1234567890',
+                password : 'aCertainPassword'})
+
+            us.password= await bcrypt.hash(us.password, salt);
+            await us.save()
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'aCertainPassword',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200);
+        });
+
+
+
+        it('should return 404 if user is not registered', async () => {
+            
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'aCertainPassword',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404);
+        });
+
+
+        it('should return 400 if user is logged in and he is an operator but body is wrong', async () => {
+            
+            const salt = await bcrypt.genSalt(config.get('pw_salt'));
+            let us=new User( {CF : cf_operator,
+                type : 'operatore',
+                name : 'Ivan',
+                surname : 'Giacomoni',
+                sex : 'M',
+                birthdate : '1998-05-31',
+                birthplace : 'Latina',
+                email : 'federeristheway@gmail.com',
+                phone : '1234567890',
+                password : 'aCertainPassword'})
+
+            us.password= await bcrypt.hash(us.password, salt);
+            await us.save()
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({})
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if user is logged in and he is an operator but old_pw is wrong', async () => {
+            
+            const salt = await bcrypt.genSalt(config.get('pw_salt'));
+            let us=new User( {CF : cf_operator,
+                type : 'operatore',
+                name : 'Ivan',
+                surname : 'Giacomoni',
+                sex : 'M',
+                birthdate : '1998-05-31',
+                birthplace : 'Latina',
+                email : 'federeristheway@gmail.com',
+                phone : '1234567890',
+                password : 'aCertainPassword'})
+
+            us.password= await bcrypt.hash(us.password, salt);
+            await us.save()
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'wrongpassword',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400);
+        });
+
+
+        it('should return 400 if user is logged in and he isnt an operator ', async () => {
+            
+            const salt = await bcrypt.genSalt(config.get('pw_salt'));
+            let us=new User( {CF : cf_operator,
+                type : 'cittadino',
+                name : 'Ivan',
+                surname : 'Giacomoni',
+                sex : 'M',
+                birthdate : '1998-05-31',
+                birthplace : 'Latina',
+                email : 'federeristheway@gmail.com',
+                phone : '1234567890',
+                password : 'aCertainPassword'})
+
+            us.password= await bcrypt.hash(us.password, salt);
+            await us.save()
+
+            const res = await request(server)
+                .post('/registration/operator/change_pw')
+                .send({old_pw:'wrongpassword',new_pw:'newPassword!'})
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(400);
+        });
+
+
+
+    });
 }) 
