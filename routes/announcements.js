@@ -5,6 +5,7 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/auth')
 const operator = require('../middleware/operator')
+const {UpdateCitizen}=require('../helper/email_helper')
 
 /**
  * @swagger
@@ -63,6 +64,7 @@ router.post('/' , [auth, operator], async (req,res) => {
     })
     announcement = await announcement.save()
 
+    UpdateCitizen(req.body.start,req.body.end,req.body.zone,req.body.description)
     res.send(announcement)
 })
 
