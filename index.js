@@ -1,18 +1,18 @@
 const express = require('express')
 const {logger}=require('./startup/logging')
-const app = express()
-var cors = require('cors')
 const config=require('config')
 const {updateChemicalAgents}=require('./startup/updater')
 const {updateMeteo}=require('./startup/updater_meteo')
 const {SuperUser_startup}=require('./startup/superuser_startup')
+const app = express()
+var cors = require('cors')
 
 
 const port = process.env.PORT || 8080 
 
 require('./startup/db')()
+require('./startup/passport-startup')(app)
 require('./startup/routes')(app)
-
 
 app.use(cors())
 
