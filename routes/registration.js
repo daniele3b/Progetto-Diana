@@ -156,9 +156,9 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
 *    tags: [Registration]
 *    parameters:
 *       - name: User object
-*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         description: object in JSON format with email and CF
 *         
-*    description: Use to change a pw of a citizien (type cittadino)
+*    description: Use to reset a pw of a citizien (type cittadino)
 *    responses:
 *       '200':
 *         description: A successful request
@@ -167,10 +167,6 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
 *         description: No data available
 *       '400':
 *         description: Bad request
-*       '401':
-*         description: Not authorized
-*       '403':
-*         description: Forbidden
 */
 
 router.post('/citizen/pw_forgotten' ,async (req,res) => {

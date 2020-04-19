@@ -392,4 +392,46 @@ describe('/registration', () => {
 
 
     });
+
+
+
+    describe('POST /citizen/pw_forgotten',()=>{
+
+        it('should return 400 if email or cf arent setted in body', async () => {
+
+            const res = await request(server)
+                .post('/registration/citizen/pw_forgotten')
+                .send({})
+            expect(res.status).toBe(400);
+        });
+
+
+        it('should return 404 user not exist', async () => {
+
+            const res = await request(server)
+                .post('/registration/citizen/pw_forgotten')
+                .send({email:'nonesiste',CF:'nonesiste'})
+            expect(res.status).toBe(404);
+        });
+
+
+        it('should return 200 if all is setted and email and cf are setted in request body', async () => {
+            let us=new User({CF:'BFLDNL98T02H501H',name : 'Daniele',surname : 'Bufalieri',type:'cittadino',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma', email : 'federeristheway@gmail.com',phone : '1234567890',password : 'aCertainPassword!'})
+            await us.save()
+            const res = await request(server)
+                .post('/registration/citizen/pw_forgotten')
+                .send({email:'federeristheway@gmail.com',CF:'BFLDNL98T02H501H'})
+            expect(res.status).toBe(200);
+        });
+
+
+        it('should return 400 if all is setted and email and cf are setted in request body but user isnt a citizen', async () => {
+            let us=new User({CF:'BFLDNL98T02H501H',name : 'Daniele',surname : 'Bufalieri',type:'operatore',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma', email : 'federeristheway@gmail.com',phone : '1234567890',password : 'aCertainPassword!'})
+            await us.save()
+            const res = await request(server)
+                .post('/registration/citizen/pw_forgotten')
+                .send({email:'federeristheway@gmail.com',CF:'BFLDNL98T02H501H'})
+            expect(res.status).toBe(400);
+        });
+    });
 }) 
