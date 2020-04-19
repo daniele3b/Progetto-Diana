@@ -8,7 +8,8 @@ const auth=require('../middleware/auth')
 const operator=require('../middleware/operator')
 const admin=require('../middleware/admin')
 const Str = require('@supercharge/strings')
-const {transporter}=require('../startup/email_sender')
+
+const {PasswordRecoveryMail}=require('../helper/email_helper')
 
 const router = express.Router()
 
@@ -198,14 +199,8 @@ router.post('/citizen/pw_forgotten' ,async (req,res) => {
             //aggiorno la pw dell'utente e setto a true il flag
             const user= await User.findOneAndUpdate({CF:req.body.CF,email:req.body.email},{password:np,password_changing:true})
 
-    //invio email contenente la nuova pw
-    let info = transporter.sendMail({
-        from: '"Progetto Diana" <progetto-diana@libero.it>', // sender address
-        to: result.email+','+result.email, // list of receivers
-        subject: "Temporary pw", // Subject line
-        text: "This is your temporary pw:"+random, // plain text body
-        html: "<b>Log in whit this pw</b>"+random, // html body
-     });
+             //invio email contenente la nuova pw
+            PasswordRecoveryMail(req.body.email,random)
             res.status(200).send('Password temporary setted')
         }
     }
