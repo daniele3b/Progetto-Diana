@@ -1,10 +1,16 @@
 const request = require('supertest')
 const mongoose = require('mongoose')
 const {Agents,Chemical_Agent,validate}=require('../../models/chemical_agents')
+const {getTokens} = require('../../helper/test_helper')
 
 let server
 
 describe('/chemical_agents', () => {
+
+    let operator_token
+    let citizen_token
+    let admin_token
+
     beforeEach(async() => {
         server = require('../../index')
 
@@ -29,6 +35,13 @@ describe('/chemical_agents', () => {
             long:"666"
         })
         await chemical_agent2.save()
+
+        const tokens = getTokens()
+        
+        citizen_token = tokens[0]
+        operator_token = tokens[1]
+        admin_token = tokens[2]
+
     })
     afterEach(async () => {
         await Chemical_Agent.deleteMany({})
@@ -38,15 +51,47 @@ describe('/chemical_agents', () => {
 
 
     describe('GET /', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
         it('should return all current data about all stations (latest available)' , async() => {
-            const res = await request(server).get('/chemical_agents')
+            let res = await request(server).get('/chemical_agents').set('x-diana-auth-token', citizen_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents').set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents').set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
         })
 
         it('should return 404 if no data are available' , async() => {
             await Chemical_Agent.deleteMany({})
-            const res = await request(server).get('/chemical_agents')
+            let res = await request(server).get('/chemical_agents').set('x-diana-auth-token', citizen_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents').set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents').set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
         })
 
@@ -54,8 +99,36 @@ describe('/chemical_agents', () => {
 
 
     describe('GET /:station_id', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/current/id_prova')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/chemical_agents/current/id_prova')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
         it('should return all current data about a station with the given station id', async() => {
-            const res = await request(server).get('/chemical_agents/current/id_prova')
+            let res = await request(server).get('/chemical_agents/current/id_prova').set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/current/id_prova').set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/current/id_prova').set('x-diana-auth-token', admin_token);
 
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
@@ -63,7 +136,15 @@ describe('/chemical_agents', () => {
         })
 
         it('should return 404 if no station has the given station_id', async() => {
-            const res = await request(server).get('/chemical_agents/nonesiste')
+            let res = await request(server).get('/chemical_agents/nonesiste').set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/nonesiste').set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404)
+
+            res = await request(server).get('/chemical_agents/nonesiste').set('x-diana-auth-token', admin_token);
 
             expect(res.status).toBe(404)
         })
@@ -71,11 +152,46 @@ describe('/chemical_agents', () => {
 
 
     describe('GET /filter/date/:date_start/:date_end', () => {
-        it('should return the list of all data of all stations between the start and end date', async () => {
-            const date_start = "December 2021 , 30 17:30"
-            const date_end = "December 2022 , 1 00:00"
+        const date_start = "December 2021 , 30 17:30"
+        const date_end = "December 2022 , 1 00:00"
 
-            const res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+        
+        it('should return the list of all data of all stations between the start and end date', async () => {
+
+            let res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(1)
+
+            res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', admin_token);
 
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1)
@@ -85,21 +201,31 @@ describe('/chemical_agents', () => {
             const date_start = "March 1970 , 26 17:30"
             const date_end = "March 1971 , 30 00:00"
 
-            const res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+            let res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', operator_token);
+            expect(res.status).toBe(404)
 
+            res = await request(server).get('/chemical_agents/filter/date/' +date_start+ '/' +date_end)
+                .set('x-diana-auth-token', admin_token);
             expect(res.status).toBe(404)
         })
 
 
         it('should return 400 if data doesnt exist', async() => {
 
-            const res = await request(server).get('/chemical_agents/filter/date/nonesiste/noonesiste')
+            let res = await request(server).get('/chemical_agents/filter/date/nonesiste/noonesiste')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400)
+
+            res = await request(server).get('/chemical_agents/filter/date/nonesiste/noonesiste')
+                .set('x-diana-auth-token', admin_token);
 
             expect(res.status).toBe(400)
         })
     })
 
-    describe('GET /history', () => {
+ /*   describe('GET /history', () => {
         it('should return the list of all data of all stations ', async () => {
             const res = await request(server).get('/chemical_agents/history')
             expect(res.status).toBe(200)
@@ -251,5 +377,5 @@ describe('/chemical_agents', () => {
             const res = await request(server).get('/chemical_agents/filter/date/id_prova/nonesiste/nonesiste')
             expect(res.status).toBe(400)
         })
-    })
+    })*/
 }) 
