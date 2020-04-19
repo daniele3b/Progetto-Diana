@@ -25,7 +25,7 @@ function getTokens() {
         password : 'aCertainPassword'
     }).generateAuthToken();
 
-    const cf_citizen = calculateCF('Daniele','Bufalieri','M','01','12','1998','Roma')
+    const cf_citizen = calculateCF('Daniele','Bufalieri','M','02','12','1998','Roma')
 
     citizen_token = new User({
         CF : cf_citizen,
