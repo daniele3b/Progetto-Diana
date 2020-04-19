@@ -13,7 +13,7 @@ const reportSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['Rifiuti', 'Incendio', 'Urbanistica', 'Allagamento', 'Altro'],
+        enum: ['rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro'],
         required: true
     },
     address: {
@@ -44,7 +44,7 @@ function validateReport(report) {
     
     const schema = {
         CF: Joi.string().min(16).max(16).required(),
-        category: Joi.string().valid('Rifiuti', 'Incendio', 'Urbanistica', 'Idrogeologia', 'Altro').required(),  
+        category: Joi.string().valid('rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro').required(),  
         address: Joi.string().required(),  
         description: Joi.string().required()
     }
