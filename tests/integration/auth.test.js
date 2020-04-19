@@ -67,19 +67,22 @@ describe('/auth', () => {
             expect(res.status).toBe(400)
         })
 
-        it('should return 400 if email or password is wrong', async () => {
-
-            email = 'federeristheway@gmail.com'
-            password = 'aCertainPassword1'
-           
-            let res = await exec_email()
-
-            expect(res.status).toBe(400)
+        it('should return 400 if email is wrong', async () => {
 
             email = 'federeristhewayyyy@gmail.com'
             password = 'aCertainPassword'
            
             res = await exec_email()
+
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 400 if password is wrong', async () => {
+
+            email = 'federeristheway@gmail.com'
+            password = 'aCertainPassword1'
+           
+            let res = await exec_email()
 
             expect(res.status).toBe(400)
         })
@@ -115,19 +118,22 @@ describe('/auth', () => {
             expect(res.status).toBe(400)
         })
 
-        it('should return 400 if phone or password is wrong', async () => {
+        it('should return 400 if phone is wrong', async () => {
+
+            phone = '1111111111'
+            password = 'aCertainPassword'
+           
+            res = await exec_phone()
+
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 400 if password is wrong', async () => {
 
             phone = '1234567890'
             password = 'aCertainPassword1'
            
             let res = await exec_phone()
-
-            expect(res.status).toBe(400)
-
-            phone = '3334455009'
-            password = 'aCertainPassword'
-           
-            res = await exec_phone()
 
             expect(res.status).toBe(400)
         })
