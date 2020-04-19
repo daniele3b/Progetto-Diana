@@ -4,7 +4,7 @@ const config=require('config')
 const {updateChemicalAgents}=require('./startup/updater')
 const {updateMeteo}=require('./startup/updater_meteo')
 const {SuperUser_startup}=require('./startup/superuser_startup')
-const {transporter}=require('./startup/email_sender')
+
 const app = express()
 var cors = require('cors')
 

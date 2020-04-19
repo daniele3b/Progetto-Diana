@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const auth=require('../middleware/auth')
 const operator=require('../middleware/operator')
 const admin=require('../middleware/admin')
+const Str = require('@supercharge/strings')
+
+const {PasswordRecoveryMail}=require('../helper/email_helper')
 
 const router = express.Router()
 
@@ -169,30 +172,42 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
 *       '403':
 *         description: Forbidden
 */
-/*
+
 router.post('/citizen/pw_forgotten' ,async (req,res) => {
 
+    //il reset della pw deve richiedere ne body cf ed email
     if(req.body.CF ==undefined || req.body.email==undefined)
      return res.status(400).send('Bad request')
 
-
-    
+    //vedo se esiste l'uente
     let result=await User.findOne({CF:req.body.CF,email:req.body.email})
     if(result==null||result.length<=0) {
+        //se non esiste si fotte
         res.status(404).send('User not found')
     }
     else{
         if(result.type!='cittadino'){
+            //se non è un cittadino non può cambiare pw 
             return res.status(400).send('Bad request')
         }else
         {
-           
+            //genero una pw random
+            const random = Str.random(15)
+            //la cripto 
+            const salt = await bcrypt.genSalt(config.get('pw_salt'));
+            const np=await bcrypt.hash(random, salt);
+            //aggiorno la pw dell'utente e setto a true il flag
+            const user= await User.findOneAndUpdate({CF:req.body.CF,email:req.body.email},{password:np,password_changing:true})
+
+             //invio email contenente la nuova pw
+            PasswordRecoveryMail(req.body.email,random)
+            res.status(200).send('Password temporary setted')
         }
     }
     }
 
-})
-*/
+)
+
 
 /**
 * @swagger 
