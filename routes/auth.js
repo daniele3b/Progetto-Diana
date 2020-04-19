@@ -36,6 +36,9 @@ router.post('/email', async (req, res) => {
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if(!validPassword) return res.status(400).send('Invalid email or password');
+
+    if(user.password_changing)
+        await User.findOneAndUpdate({email: req.body.email}, {password_changing: false})
     
     const token = user.generateAuthToken();
     res.status(200).send(token);
@@ -65,6 +68,9 @@ router.post('/phone', async (req, res) => {
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if(!validPassword) return res.status(400).send('Invalid phone or password');
+
+    if(user.password_changing)
+        await User.findOneAndUpdate({phone: req.body.phone}, {password_changing: false})
   
     const token = user.generateAuthToken();
     res.status(200).send(token);
