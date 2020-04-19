@@ -57,6 +57,10 @@ const operator = require('../middleware/operator')
 *                                  
 *       '404':
 *         description: No data available
+*       '400':
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
 
 router.get('/', auth, async (req,res) => {
@@ -124,7 +128,9 @@ router.get('/', auth, async (req,res) => {
 *                   type: string
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
 
 router.get('/current/:station_id' , auth, async (req,res) => {
@@ -198,7 +204,11 @@ router.get('/current/:station_id' , auth, async (req,res) => {
 *                   type: string
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
 
@@ -283,7 +293,11 @@ router.get('/filter/date/:date_start/:date_end', [auth, operator], async (req,re
 *                   type: string
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 *       '404' :
 *         description: No data with the given criteria
 */
@@ -341,7 +355,11 @@ router.get('/filter/date/:station_id/:date_start/:date_end', [auth, operator], a
 *                   example: 27.3
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 *       '404' :
 *         description: No data available
 */
@@ -424,6 +442,10 @@ router.get('/filter/avg/:station_id/:type', [auth, operator], async (req,res) =>
 *               type: object
 *       '404' :
 *         description: No data available
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
 
 router.get('/filter/avg/:station_id', auth, async (req,res) => {
@@ -544,7 +566,11 @@ router.get('/filter/avg/:station_id', auth, async (req,res) => {
 *                   type: string
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
 //should return history of all data 
@@ -607,7 +633,11 @@ else
 *                   type: string
 *               type: object
 *       '400' :
-*         description: Bad request
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 *       '404' :
 *         description: No data available
 */
@@ -683,6 +713,12 @@ router.get('/history/:type', [auth, operator], async (req,res) => {
 *               type: object
 *       '404' :
 *         description: Not found
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
    router.get('/history/station/:station_id', [auth, operator], async (req,res) => {
@@ -756,7 +792,11 @@ router.get('/history/:type', [auth, operator], async (req,res) => {
 *       '404' :
 *         description: Not found
 *       '400':
-*         description: Bad Request 
+*         description: Bad Request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
    //return history data of an station id and of a kind of data
    router.get('/history/station/:station_id/:type', [auth, operator], async (req,res) => {
