@@ -101,6 +101,10 @@ router.post('/citizen' , async (req,res) => {
 *         description: No data available
 *       '400':
 *         description: Bad request
+*       '401':
+*         description: Not authorized
+*       '403':
+*         description: Forbidden
 */
 
 router.post('/citizen/change_pw' ,auth,async (req,res) => {
@@ -156,6 +160,10 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
 *                                  
 *       '404':
 *         description: No data available
+*       '401':
+*         description: Not authorized
+*       '403':
+*         description: Forbidden
 */
 
 router.post('/operator' ,[auth,admin], async (req,res) => {
@@ -219,6 +227,10 @@ router.post('/operator' ,[auth,admin], async (req,res) => {
 *         description: No data available
 *       '400':
 *         description: Bad request
+*       '401':
+*         description: Not authorized
+*       '403':
+*         description: Forbidden
 */
 
 router.post('/operator/change_pw' ,[auth,operator], async (req,res) => {
