@@ -3,7 +3,8 @@ const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
 const moment=require('moment')
 const router = express.Router()
 const{validateDate}=require('../helper/generic_helper')
-
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 /**
  * @swagger
@@ -58,7 +59,7 @@ const{validateDate}=require('../helper/generic_helper')
 *         description: No data available
 */
 
-router.get('/' , async (req,res) => {
+router.get('/', auth, async (req,res) => {
 
     const max_date= await Chemical_Agent.findOne()
     .sort("-reg_date")
@@ -126,7 +127,7 @@ router.get('/' , async (req,res) => {
 *         description: Bad request
 */
 
-router.get('/current/:station_id' , async (req,res) => {
+router.get('/current/:station_id' , auth, async (req,res) => {
     let par=req.params.station_id
 
     const max_date= await Chemical_Agent.findOne()
@@ -201,7 +202,7 @@ router.get('/current/:station_id' , async (req,res) => {
 */
 
 
-router.get('/filter/date/:date_start/:date_end', async (req,res) => {
+router.get('/filter/date/:date_start/:date_end', [auth, operator], async (req,res) => {
 
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
@@ -286,7 +287,7 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 *       '404' :
 *         description: No data with the given criteria
 */
-router.get('/filter/date/:station_id/:date_start/:date_end', async (req,res) => {
+router.get('/filter/date/:station_id/:date_start/:date_end', [auth, operator], async (req,res) => {
   
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
@@ -345,7 +346,7 @@ router.get('/filter/date/:station_id/:date_start/:date_end', async (req,res) => 
 *         description: No data available
 */
 
-router.get('/filter/avg/:station_id/:type', async (req,res) => {
+router.get('/filter/avg/:station_id/:type', [auth, operator], async (req,res) => {
     
     let par1=req.params.station_id
     let par2=req.params.type.toUpperCase()
@@ -425,7 +426,7 @@ router.get('/filter/avg/:station_id/:type', async (req,res) => {
 *         description: No data available
 */
 
-router.get('/filter/avg/:station_id', async (req,res) => {
+router.get('/filter/avg/:station_id', auth, async (req,res) => {
     let par1=req.params.station_id
     const result=await Chemical_Agent.find({uid:par1})
     .sort("-reg_date")
@@ -547,7 +548,7 @@ router.get('/filter/avg/:station_id', async (req,res) => {
 */
 
 //should return history of all data 
-router.get('/history', async (req,res) => {
+router.get('/history', [auth, operator], async (req,res) => {
  const result=await Chemical_Agent.find()
  .sort("-reg_date")
  .select("reg_date sensor uid types value -_id lat long")
@@ -612,7 +613,7 @@ else
 */
 
 
-router.get('/history/:type', async (req,res) => {
+router.get('/history/:type', [auth, operator], async (req,res) => {
     let par=req.params.type.toUpperCase()
     let ind=Object.values(Agents).indexOf(par)
     if(ind>-1)
@@ -684,7 +685,7 @@ router.get('/history/:type', async (req,res) => {
 *         description: Not found
 */
 
-   router.get('/history/station/:station_id', async (req,res) => {
+   router.get('/history/station/:station_id', [auth, operator], async (req,res) => {
     let par=req.params.station_id
 
     
@@ -758,7 +759,7 @@ router.get('/history/:type', async (req,res) => {
 *         description: Bad Request 
 */
    //return history data of an station id and of a kind of data
-   router.get('/history/station/:station_id/:type', async (req,res) => {
+   router.get('/history/station/:station_id/:type', [auth, operator], async (req,res) => {
     let par1=req.params.station_id
     let par2=req.params.type.toUpperCase()
   
