@@ -3,6 +3,8 @@ const {Announcement,validate} = require('../models/announcement')
 const mongoose = require('mongoose')
 const express = require('express')
 const router = express.Router()
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 /**
  * @swagger
@@ -42,9 +44,13 @@ const router = express.Router()
 *               description:
 *                   type: string
 *       '400' :
-*         description: Request is not suitable
+*         description: Request is not suitable/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
-router.post('/' , async (req,res) => {
+router.post('/' , [auth, operator], async (req,res) => {
     const {error} = validate(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
 
@@ -84,8 +90,12 @@ router.post('/' , async (req,res) => {
 *                       type: string
 *               description:
 *                   type: string
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
-router.get('/', async (req,res) => {
+router.get('/', auth, async (req,res) => {
     const announcements = await Announcement.find().sort('-start')
     res.send(announcements)
 })
@@ -121,9 +131,15 @@ router.get('/', async (req,res) => {
 *               description:
 *                   type: string
 *       '404':
-*         description: No announcements match the given criteria were found 
+*         description: No announcements match the given criteria were found
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin 
 */
-router.get('/:CF', async (req,res) => {
+router.get('/:CF', [auth, operator], async (req,res) => {
     const announcements = await Announcement.find({CF: req.params.CF})
     if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
     res.send(announcements)
@@ -166,8 +182,12 @@ router.get('/:CF', async (req,res) => {
 *                   type: string
 *       '404':
 *         description: No announcements match the given criteria were found 
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
-router.get('/:date_start/:date_end', async (req,res) => {
+router.get('/:date_start/:date_end', auth, async (req,res) => {
     const date_start = new Date(req.params.date_start)
     const date_stop = new Date(req.params.date_end)
     const announcements = await Announcement.find({start: {'$gte': date_start, '$lt': date_stop}})
@@ -178,7 +198,7 @@ router.get('/:date_start/:date_end', async (req,res) => {
 
 /**
 * @swagger 
-* /announcements/since/:starting_from/:date_start:
+* /announcements/since/starting_from/:date_start:
 *  get:
 *    tags: [Announcements]
 *    description: Use to request all annoucements published starting from date_start
@@ -207,9 +227,13 @@ router.get('/:date_start/:date_end', async (req,res) => {
 *               description:
 *                   type: string
 *       '404':
-*         description: No announcements match the given criteria were found 
+*         description: No announcements match the given criteria were found
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
-router.get('/since/starting_from/:date_start', async (req,res) => {
+router.get('/since/starting_from/:date_start', auth, async (req,res) => {
     const date_start = new Date(req.params.date_start)
     const announcements = await Announcement.find({start: {'$gte': date_start}})
     if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
@@ -248,9 +272,13 @@ router.get('/since/starting_from/:date_start', async (req,res) => {
 *               description:
 *                   type: string
 *       '404':
-*         description: No announcements match the given criteria were found 
+*         description: No announcements match the given criteria were found
+*       '400' :
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
-router.get('/before/terminated_before/:date_end', async (req,res) => {
+router.get('/before/terminated_before/:date_end', auth, async (req,res) => {
     const date_stop = new Date(req.params.date_end)
     const announcements = await Announcement.find({start: {'$lt': date_stop}})
     if (!announcements.length) return res.status(404).send('No announcements match the given criteria')
@@ -291,9 +319,13 @@ router.get('/before/terminated_before/:date_end', async (req,res) => {
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
-*         description: Request is not suitable
+*         description: Request is not suitable/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
-router.put('/:id' , validateObjectId , async(req,res) => {
+router.put('/:id' , [validateObjectId, auth, operator], async(req,res) => {
     const {error} = validate(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
     const annoucement = await Announcement.findByIdAndUpdate(req.params.id, {
@@ -342,9 +374,13 @@ router.put('/:id' , validateObjectId , async(req,res) => {
 *       '404':
 *         description: No announcements match the given criteria were found
 *       '400':
-*         description: Request is not suitable
+*         description: Request is not suitable/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
-router.delete('/:id', validateObjectId, async(req,res) => {
+router.delete('/:id', [validateObjectId, auth, operator], async(req,res) => {
     const annoucement = await Announcement.findByIdAndDelete(req.params.id)
     if (!annoucement) return res.status(404).send('Announcement not found')
     res.send(annoucement)
