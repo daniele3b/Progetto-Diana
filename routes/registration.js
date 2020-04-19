@@ -144,6 +144,56 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
     
     })
 
+
+
+    /**
+* @swagger 
+* /registration/citizen/pw_forgotten:
+*  post:
+*    tags: [Registration]
+*    parameters:
+*       - name: User object
+*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         
+*    description: Use to change a pw of a citizien (type cittadino)
+*    responses:
+*       '200':
+*         description: A successful request
+*                                  
+*       '404':
+*         description: No data available
+*       '400':
+*         description: Bad request
+*       '401':
+*         description: Not authorized
+*       '403':
+*         description: Forbidden
+*/
+/*
+router.post('/citizen/pw_forgotten' ,async (req,res) => {
+
+    if(req.body.CF ==undefined || req.body.email==undefined)
+     return res.status(400).send('Bad request')
+
+
+    
+    let result=await User.findOne({CF:req.body.CF,email:req.body.email})
+    if(result==null||result.length<=0) {
+        res.status(404).send('User not found')
+    }
+    else{
+        if(result.type!='cittadino'){
+            return res.status(400).send('Bad request')
+        }else
+        {
+           
+        }
+    }
+    }
+
+})
+*/
+
 /**
 * @swagger 
 * /registration/operator:

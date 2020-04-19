@@ -6,6 +6,7 @@ const config=require('config')
 const {updateChemicalAgents}=require('./startup/updater')
 const {updateMeteo}=require('./startup/updater_meteo')
 const {SuperUser_startup}=require('./startup/superuser_startup')
+const {transporter}=require('./startup/email_sender')
 
 
 const port = process.env.PORT || 8080 
@@ -17,6 +18,9 @@ require('./startup/routes')(app)
 app.use(cors())
 
 const server = app.listen(8080, () =>  { console.log("Server listening on port : " , port)})
+
+
+
 
 if(process.env.NODE_ENV!="test"){
 SuperUser_startup()
