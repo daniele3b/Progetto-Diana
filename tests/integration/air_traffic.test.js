@@ -3,6 +3,8 @@ const {getTokens} = require('../../helper/test_helper')
 
 let server
 
+jest.setTimeout(20000)
+
 describe('/air_traffic', () => {
 
     let operator_token
