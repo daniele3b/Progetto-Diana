@@ -2,8 +2,6 @@ const {User} = require('../../models/user');
 const request = require('supertest');
 let server;
 
-// MANCA IL CONTROLLO DI INVALID PASSWORD -> 400
-
 describe('/auth', () => {
 
     let user
