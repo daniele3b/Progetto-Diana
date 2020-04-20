@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const config = require('config')
 const request = require('request')
-const logger = require('../startup/logging')
+const {logger} = require('../startup/logging')
 const auth = require('../middleware/auth')
 const operator = require('../middleware/operator')
 
@@ -70,6 +70,7 @@ router.get('/', [auth, operator], async (req, res) => {
         }
         
         else {
+            logger.error(body)
             const parsed_body = JSON.parse(body)
             const states = parsed_body.states
 
@@ -93,3 +94,22 @@ router.get('/', [auth, operator], async (req, res) => {
 })
 
 module.exports = router
+
+/*
+setInterval(() => {
+    const url = 'https://'+process.env.OPEN_SKY_USERNAME+':'+process.env.OPEN_SKY_PASSWORD+'@'+config.get('open_sky_end')
+                +'/states/all?lamin='+config.get('LAT_MIN')+'&lomin='+config.get('LON_MIN')+'&lamax='+config.get('LAT_MAX')
+                +'&lomax='+config.get('LON_MAX')
+    request(url, function(error, response, body) {
+        const parsed_body = JSON.parse(body)
+        if(!parsed_body){
+            console.log('ERRORE BODY')
+            logger.error(parsed_body)
+            return
+        }  
+        else{
+            console.log('CHIAMATA AIR_TRAFFIC ANDATA A BUON FINE')
+            logger.error(parsed_body)
+        } 
+    })
+}, 5000)*/
