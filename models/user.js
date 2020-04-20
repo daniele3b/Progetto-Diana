@@ -81,9 +81,9 @@ function validateUser(user) {
         sex: Joi.string().min(1).max(1).required(), 
         birthdate: Joi.date().required(),   
         birthplace: Joi.string().required(),   
-        email:  Joi.string().min(5).max(255).email(),
+        email:  Joi.string().min(5).max(255).email().required(),
         phone: Joi.string().regex(pattern), 
-        password: Joi.string().min(5).max(1024)
+        password: Joi.string().min(5).max(1024).required()
     
     }
 
