@@ -43,19 +43,19 @@ const userSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 255,
         unique: true,
-        required: function() { return this.phone == undefined}
+        required: true
     },
     phone: {
         type: String, 
         minlength: 5,
         maxlength: 15,
         unique: true,
-        required: function() { return this.email == undefined}
     },
     password: { 
         type: String,
         minlength: 5,
-        maxlength: 1024
+        maxlength: 1024,
+        required: true
     },
     password_changing: {
         type: Boolean,
