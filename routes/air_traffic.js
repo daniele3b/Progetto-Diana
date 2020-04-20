@@ -43,7 +43,7 @@ require('dotenv').config()
 *                     format: float
 *                     example: 12.23345
 *       '404':
-*         description: There are no flights in the specified area
+*         description: There are no flights in the specified area/Invalid token provided
 *       '401':
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
