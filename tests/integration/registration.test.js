@@ -54,9 +54,9 @@ describe('/registration', () => {
            expect(res.status).toBe(200)
         })
 
-        it('should return 200 and to add a new user without email type: citizien ' , async() => {
+        it('should return 400 and to add a new user without email type: citizien ' , async() => {
             const res = await request(server).post('/registration/citizen').send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma',phone : '1234567890',password : 'aCertainPassword!'})
-           expect(res.status).toBe(200)
+           expect(res.status).toBe(400)
         })
 
         it('should return 200 and to add a new user without phone type: citizien ' , async() => {
@@ -64,9 +64,9 @@ describe('/registration', () => {
            expect(res.status).toBe(200)
         })
 
-        it('should return 404 if email and phone arent given ' , async() => {
+        it('should return 400 if email and phone arent given ' , async() => {
             const res = await request(server).post('/registration/citizen').send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma',password : 'aCertainPassword!'})
-           expect(res.status).toBe(404)
+           expect(res.status).toBe(400)
         })
 
         it('should return 404 if user already exist ' , async() => {
@@ -212,13 +212,13 @@ describe('/registration', () => {
         });
 
 
-        it('should return 200 if user is logged in ,he is an admin and fields are filled without email', async () => {
+        it('should return 400 if user is logged in ,he is an admin and fields are filled without email', async () => {
 
             const res = await request(server)
                 .post('/registration/operator')
                 .send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma',phone : '1234567890',password : 'aCertainPassword!'})
                 .set('x-diana-auth-token', admin_token);
-            expect(res.status).toBe(200);
+            expect(res.status).toBe(400);
         });
 
 
@@ -238,7 +238,7 @@ describe('/registration', () => {
                 .post('/registration/operator')
                 .send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma',password : 'aCertainPassword!'})
                 .set('x-diana-auth-token', admin_token);
-            expect(res.status).toBe(404);
+            expect(res.status).toBe(400);
         });
 
 
