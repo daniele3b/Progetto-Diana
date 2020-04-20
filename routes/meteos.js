@@ -3,6 +3,8 @@ var request = require('request')
 const config = require('config')
 const router = express.Router()
 const {Meteo, Meteo7days, UVSchema, validate}=require('../models/meteo')
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 
 /**
@@ -53,9 +55,15 @@ const {Meteo, Meteo7days, UVSchema, validate}=require('../models/meteo')
 *                   format: date-time  
 *       '500':
 *         description: Internal server error  
+*       '404':
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 */
 
-router.get('/uv/now', async (req,res) =>{
+router.get('/uv/now', [auth, operator], async (req,res) =>{
 
     var options = { method: 'GET',
         url: config.get('apiuv_url') ,
@@ -143,9 +151,13 @@ router.get('/uv/now', async (req,res) =>{
 *       '400':
 *         description: Bad request
 *       '404':
-*         description: Not found
+*         description: Not found/Invalid token provided
 *       '500':
 *         description: Internal server error
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
 *    parameters:
 *       - name: date
 *         description: date choosen, 'YYYY-MM-DD'
@@ -155,7 +167,7 @@ router.get('/uv/now', async (req,res) =>{
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
 */
 
-router.get('/uv/:date', async (req,res) =>{
+router.get('/uv/:date', [auth, operator], async (req,res) =>{
 
     if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
         res.status(400).send('Bad request.')
@@ -214,9 +226,13 @@ router.get('/uv/:date', async (req,res) =>{
 *               
 *       '500':
 *         description: Internal server error
+*       '404':
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
 
-router.get('/report/last' , async (req,res) => {
+router.get('/report/last', auth, async (req,res) => {
     
     const result = await Meteo.findOne().sort('-_id')
     if(!result){ 
@@ -291,8 +307,12 @@ router.get('/report/last' , async (req,res) => {
 *                                
 *       '500':
 *         description: Internal server error
+*       '404':
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 */
-router.get('/report/7daysforecast' , async (req,res) => {
+router.get('/report/7daysforecast', auth, async (req,res) => {
     var lin = config.get('weather_report_url') + process.env.METEO_KEY;
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
@@ -447,7 +467,9 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *       '400':
 *         description: Bad request
 *       '404':
-*         description: Not found   
+*         description: Not found/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
 *    parameters:
 *       - name: date
 *         description: date choosen, 'YYYY-MM-DD'
@@ -458,7 +480,7 @@ router.get('/report/7daysforecast' , async (req,res) => {
 *    
 */
 
-router.get('/report/history/:date' , async (req,res) => {
+router.get('/report/history/:date', auth, async (req,res) => {
     if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
         res.status(400).send('Bad request.')
         return
