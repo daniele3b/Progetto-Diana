@@ -28,7 +28,7 @@ async function  UpdateCitizen(start,end,zone,description){
             to: res[i].email+','+res[i].email, // list of receivers
             subject: "Announcement", // Subject line
             text: "This is an announcemente", // plain text body
-            html: "<body><h1> Announcement: <br> Zone: "+zone+"<br> Date: "+start+"->"+end+"</h1><br><span>Description: <b>"+description+" </b></span></body>", // html body
+            html: "<body><h1> Announcement:</h1><br> Zone: <b>"+zone+"</b><br> Date: <b> "+start+"->"+end+" </b><br><span>Description: <b>"+description+" </b></span></body>", // html body
         })
     }
 }

@@ -2,6 +2,8 @@ const {Report,validate} = require('../models/report')
 const mongoose = require('mongoose')
 const express = require('express')
 const router = express.Router()
+const auth = require('../middleware/auth')
+const operator = require('../middleware/operator')
 
 /**
  * @swagger
@@ -54,7 +56,7 @@ const router = express.Router()
 *         description: Bad request
 */
 
-router.post('/' , async (req,res) => {
+router.post('/' , auth, async (req,res) => {
     const {error} = validate(req.body)
     if (error)  return res.status(400).send(error.details[0].message)
 
@@ -170,7 +172,7 @@ router.delete('/:id_number' , async (req,res) => {
 *         description: Bad request
 */
 
-router.get('/', async (req,res) => {
+router.get('/', auth, async (req,res) => {
     const report = await Report.find().sort('-_id')
     res.send(report)
 })
@@ -221,7 +223,7 @@ router.get('/', async (req,res) => {
 *         type: Number
 */
 
-router.get('/filter/id/:id', async (req,res) => {
+router.get('/filter/id/:id', [auth, operator], async (req,res) => {
     const result = await Report.find({id_number: req.params.id}).sort('-_id')
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
@@ -275,7 +277,7 @@ router.get('/filter/id/:id', async (req,res) => {
 *         type: String
 */
 
-router.get('/filter/CF/:cf', async (req,res) => {
+router.get('/filter/CF/:cf',[auth, operator], async (req,res) => {
     const result = await Report.find({CF: req.params.cf}).sort('-_id')
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
@@ -331,7 +333,7 @@ router.get('/filter/CF/:cf', async (req,res) => {
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'  
 */
 
-router.get('/filter/date/:date', async (req,res) => {
+router.get('/filter/date/:date', auth, async (req,res) => {
     if(!req.params.date.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
         res.status(400).send('Bad request.')
         return
@@ -403,7 +405,7 @@ router.get('/filter/date/:date', async (req,res) => {
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$' 
 */
 
-router.get('/filter/date/:date_start/:date_end', async (req,res) => {
+router.get('/filter/date/:date_start/:date_end', auth, async (req,res) => {
     if(!req.params.date_start.match('[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]')){ 
         res.status(400).send('Bad request.')
         return
@@ -473,7 +475,7 @@ router.get('/filter/date/:date_start/:date_end', async (req,res) => {
 *         type: String  
 */
 
-router.get('/filter/category/:type', async (req,res) => {
+router.get('/filter/category/:type', auth, async (req,res) => {
     var t = req.params.type.toLowerCase();
     if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
         res.status(400).send('Bad request.')
@@ -538,7 +540,7 @@ router.get('/filter/category/:type', async (req,res) => {
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$' 
 */
 
-router.get('/filter/category/:type/date/:date', async (req,res) => {
+router.get('/filter/category/:type/date/:date', auth, async (req,res) => {
     var t = req.params.type.toLowerCase();
     if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
         res.status(400).send('Bad request.')
@@ -620,7 +622,7 @@ router.get('/filter/category/:type/date/:date', async (req,res) => {
 *         pattern: '^{2020}-[0-1][0-9]-[0-3][0-9]$'
 */
 
-router.get('/filter/category/:type/date/:date_start/:date_end', async (req,res) => {
+router.get('/filter/category/:type/date/:date_start/:date_end', auth, async (req,res) => {
     var t = req.params.type.toLowerCase();
     if(t!='rifiuti' && t !='incendio' && t !='urbanistica' && t !='idrogeologia' && t !='altro'){
         res.status(400).send('Bad request.')
