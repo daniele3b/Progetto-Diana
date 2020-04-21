@@ -43,7 +43,6 @@ const Report = mongoose.model('Report', reportSchema)
 function validateReport(report) {
     
     const schema = {
-        CF: Joi.string().min(16).max(16).required(),
         category: Joi.string().valid('rifiuti', 'incendio', 'urbanistica', 'idrogeologia', 'altro').required(),  
         address: Joi.string().required(),  
         description: Joi.string().required()

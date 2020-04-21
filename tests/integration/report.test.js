@@ -5,6 +5,8 @@ const {getTokens} = require('../../helper/test_helper')
 
 let server
 
+jest.setTimeout(20000)
+
 describe('/report', () => {
 
     let operator_token
@@ -25,6 +27,18 @@ describe('/report', () => {
             visible: true
         })
         await report.save()
+
+        const report2 = new Report({
+            id_number: 1,
+            CF:"NTRMNC99C57D662L",
+            category:"altro",
+            address:"Via delle cornacchie assunte",
+            date:"2020-04-21T08:39:16.835Z",
+            description: "Supercalifragili",
+            status:"in attesa",
+            visible: true
+        })
+        await report2.save()
 
         const tokens = getTokens()
         
@@ -59,7 +73,488 @@ describe('/report', () => {
             expect(res.status).toBe(400);
         });
 
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report')
+                .set('x-diana-auth-token', operator_token);
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
         
 
     })
+
+    describe('GET /filter/id/:id', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/id/1')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/id/1')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/id/1')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/id/9999999')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/id/1')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+    describe('GET /filter/CF/:cf', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/CF/cvlmra98s29l120y')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/CF/cvlmra98s29l120y')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/CF/cvlmra98s29l120y')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/CF/aaaaaaaaaaaaaaaa')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/CF/cvlmra98s29l120y')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+
+    describe('GET /filter/date/:date', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/202w0-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/3020-04-20')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-21')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+    describe('GET /filter/date/:date_start/:date_end', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date_start', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/202w0-04-21/2020-04-22')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date_end', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-21/202er0-04-22')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/date/3020-04-20/3020-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/date/2020-04-20/2020-04-22')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+    describe('GET /filter/category/:type', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404 if there are not reports', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/idrogeologia')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 bad request error category', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/noncorretto')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/category/incendio')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+    describe('GET /filter/category/:type/date/:date', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-21')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-21')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-21')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404 if there are not reports', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-01')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 bad request error category', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/sbagliato/date/2020-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/202w0-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-20')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
+    describe('GET /filter/category/:type/date/:date_start/:date_end', () => {
+        it('should return 401 if user is not logged in', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', '');
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', 'invalid_token');
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 403 if user is not an operator or an admin', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', citizen_token);
+
+            expect(res.status).toBe(403);
+        });
+
+        it('should return 404 if there are not reports', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/3020-04-20/3020-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 bad request error category', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/sbagliato/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date_start', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/20antonio-04-20/2020-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 bad request error date_end', async () => {
+
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/20-04-20/202wef0-04-21')
+                .set('x-diana-auth-token', operator_token);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200 if is ok', async () => {
+            const res = await request(server)
+                .get('/report/filter/category/incendio/date/2020-04-20/2020-04-21')
+                .set('x-diana-auth-token', operator_token);
+            
+            expect(typeof res.body[0].id_number).toBe("number");
+            expect(typeof res.body[0].CF).toBe("string");
+            expect(typeof res.body[0].category).toBe("string");
+            expect(typeof res.body[0].address).toBe("string");
+            expect(typeof res.body[0].description).toBe("string");
+            expect(typeof res.body[0].status).toBe("string");
+            expect(typeof res.body[0].visible).toBe("boolean");
+            expect(res.status).toBe(200);
+        });
+        
+
+    })
+
 })
