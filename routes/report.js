@@ -21,7 +21,7 @@ const jwt = require('jsonwebtoken');
 *    parameters:
 *       - name: Report object
 *         description: object in JSON format with category (String) , address (String) and description (String) as fields
-*    description: (Accessible by citizen & operator) Use to create a new report
+*    description: (Accessible by citizen & operator) Use to create a new report (Max 3 in a day)
 *    responses:
 *       '200':
 *         description: A successful response, data available in JSON format, 
@@ -66,7 +66,24 @@ router.post('/' , auth, async (req,res) => {
     const token=req.header('x-diana-auth-token')
     var decoded = jwt.decode(token);
 
+    //date per controllo
+    var d1 = new Date();
+    var d2 = new Date();
+    d1.setHours("0")
+    d1.setMinutes("1")
+    d2.setHours("23")
+    d2.setMinutes("59")
+
+    //Max 3 al giorno per utente
+    const occurrences = await (await Report.find({CF:decoded.CF, date: {'$gte': d1, '$lt': d2}})).length
+    if(occurrences>=3){ 
+        res.status(400).send("Maximum number of daily reports reach.")
+        return
+    }
+
+    //data del giorno
     var d = new Date().toISOString();
+
     var numero = 1
     const lastnumber = await Report.findOne().sort('-_id')
     if(lastnumber) numero = lastnumber.id_number + 1
