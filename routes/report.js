@@ -81,6 +81,13 @@ router.post('/' , auth, async (req,res) => {
         return
     }
 
+    //Controllo Spam
+    const spam = await Report.find({CF:decoded.CF, date: {'$gte': d1, '$lt': d2}, address: req.body.address, category: req.body.category, description: req.body.description})
+    if(spam.length>0){ 
+        res.status(400).send("Received duplicate. No spam!")
+        return
+    }
+
     //data del giorno
     var d = new Date().toISOString();
 
