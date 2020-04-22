@@ -644,31 +644,7 @@ describe('/report', () => {
             expect(res4.status).toBe(400);
         });
 
-        /*
         
-    
-
-
-
-        it('should save the announcement if it is valid' , async() => {
-            CF = '1111111111111111'
-            start = "April 2020 , 30 13:00"
-            end = "April 2020 , 31 14:00"
-            description = "This is a test of the post endpoint"
-            
-            token = operator_token
-            let res = await exec()
-
-            expect(res.status).toBe(200)
-            expect(res.body).toHaveProperty('description','This is a test of the post endpoint')
-
-            token = admin_token
-            res = await exec()
-
-            expect(res.status).toBe(200)
-            expect(res.body).toHaveProperty('description','This is a test of the post endpoint')
-        })
-        */
     })
 
 })
