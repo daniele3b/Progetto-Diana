@@ -557,4 +557,118 @@ describe('/report', () => {
 
     })
 
+    describe('POST /', () => {
+
+        let cateogory  
+        let address
+        let description
+        let token
+
+        const exec = async () => {
+            return await request(server).post('/report')
+                .set('x-diana-auth-token', token)
+                .send({category,address,description})
+        }
+
+        it('should return 200 if is ok', async () => {
+            token = citizen_token
+            category = 'altro'
+            address = 'via corna'
+            description = 'caduto materasso'
+            const res = await exec()
+
+            expect(res.status).toBe(200);
+        });
+
+        it('should return 401 if user is not logged in', async () => {
+            token = ''
+
+            const res = await exec()
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 if token is not valid', async () => {
+            token = 'invalid_token'
+
+            const res = await exec()
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if the request is not valid', async() => {
+            category = 'tulipano'
+
+            token = operator_token
+            let res = await exec()
+            
+            expect(res.status).toBe(400)
+
+            token = admin_token
+            res = await exec()
+            
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 400 if received duplicate', async () => {
+            token = citizen_token
+            category = 'incendio'
+            address = 'via salsiccia'
+            description = 'bruciato materasso'
+            const res1 = await exec()
+            const res2 = await exec()
+
+            expect(res2.status).toBe(400);
+        });
+
+        it('should return 400 if max request in a day reach', async () => {
+            token = citizen_token
+            category = 'incendio'
+            address = 'via salsiccia'
+            description = 'prova1'
+            const res1 = await exec()
+            category = 'incendio'
+            address = 'via salsiccia'
+            description = 'prova2'
+            const res2 = await exec()
+            category = 'incendio'
+            address = 'via salsiccia'
+            description = 'prova3'
+            const res3 = await exec()
+            category = 'incendio'
+            address = 'via salsiccia'
+            description = 'prova4'
+            const res4 = await exec()
+
+
+            expect(res4.status).toBe(400);
+        });
+
+        /*
+        
+    
+
+
+
+        it('should save the announcement if it is valid' , async() => {
+            CF = '1111111111111111'
+            start = "April 2020 , 30 13:00"
+            end = "April 2020 , 31 14:00"
+            description = "This is a test of the post endpoint"
+            
+            token = operator_token
+            let res = await exec()
+
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('description','This is a test of the post endpoint')
+
+            token = admin_token
+            res = await exec()
+
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('description','This is a test of the post endpoint')
+        })
+        */
+    })
+
 })
