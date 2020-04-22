@@ -5,6 +5,7 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const operator = require('../middleware/operator')
 const jwt = require('jsonwebtoken');
+const config = require('config')
 
 /**
  * @swagger
@@ -76,7 +77,7 @@ router.post('/' , auth, async (req,res) => {
 
     //Max 3 al giorno per utente
     const occurrences = await (await Report.find({CF:decoded.CF, date: {'$gte': d1, '$lt': d2}})).length
-    if(occurrences>=3){ 
+    if(occurrences>=config.get("max_daily_report")){ 
         res.status(400).send("Maximum number of daily reports reach.")
         return
     }
@@ -214,7 +215,7 @@ router.get('/', auth, async (req,res) => {
     var decoded = jwt.decode(token);
     var chisei = decoded.type
     if(chisei == "cittadino"){
-        const report = await Report.find({CF:decoded.CF}, {visible: true}).sort('-_id')
+        const report = await Report.find({CF:decoded.CF, visible: true}).sort('-_id')
         res.send(report)
     }
     else{
