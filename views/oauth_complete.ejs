@@ -1,31 +1,72 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <h2> Your registration is almost complete, <%- user.name%> </h2>
-        <h3> Please fill in the fields below to start using Diana! </h3>
+      
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+       
     </head>
     <body>
+
+    <script>  
+    
+    function controllaPW(){
+    var pw=document.getElementById("password_field").value
+    var cnf_pw=document.getElementById("repeat_password_field").value
+
+    if(pw!=cnf_pw)
+    {
+        var btn=document.getElementById('sub')
+        btn.disabled=true
+    }else
+    {
+        var btn=document.getElementById('sub')
+        btn.disabled=false
+    }
+    }
+    </script>
+    <div class="container-fluid">
+
+     <h2> Your registration is almost complete, <%- user.name%> </h2>
+     <h3> Please fill in the fields below to start using Diana! </h3>
+    <div class="card" style="width: 18rem;">
         <form action="/sign-in/complete" method="POST">
-            
-            <input type="hidden" id="id_field" name="googleId" value="<%- user.gid %>">
-            <input type="hidden" id='name_field' name="name" value="<%- user.name %>"> <br>
-            <input type="hidden" id='surname_field' name="surname" value="<%- user.surname %>"> <br>
-            <input type="hidden" id="email_field" name="email" value="<%- user.email %>"> <br>
 
-            Sesso:
-            <input type="text" id="sex_field" name="sex" required> <br>
-            Birthdate:
-            <input type="date" id="date_field" name="birthdate" required> <br>
-            Birthplace:
-            <input type="text" id="birth_place" name="birthplace" required> <br>
-            Phone:
-            <input type="text" id="phone_field" name="phone"> <br>
-            Password:
-            <input type="password" id="password_field" name="password" required> <br>
-            Repeat Password:
-            <input type="password" id="repeat_password_field" name="repeat_password" required> <br>
+           
+            <input type="hidden" id="id_field" name="googleId" value="<%- user.gid %>" hidden>
+            <input type="hidden" id='name_field' name="name" value="<%- user.name %>" hidden> <br>
+            <input type="hidden" id='surname_field' name="surname" value="<%- user.surname %>" hidden> <br>
+            <input type="hidden" id="email_field" name="email" value="<%- user.email %>" hidden> <br>
+            <h5>DIANA REGISTRATION</h5><br>
+            <div class="form-group">
+                
+                <label for="exampleFormControlSelect1">Sex: </label>
+                <select class="form-control" id="exampleFormControlSelect1" id="sex_field" name="sex" style="width: 60px;" required>
+                  <option>M</option>
+                  <option>F</option>
+                </select><br>
+                
+                <label for="BirthdateField">Birthdate: </label><br>
+                <input type="date" id="date_field" name="birthdate" required> <br>
+                
+                <label for="birth_place">Birthplace: </label><br>
+                <input type="text" id="birth_place" name="birthplace" required> <br>
 
-            <input type="submit" value="submit">
-        </form>
+                <label for="phone_field">Phone: </label><br>
+                <input type="text" id="phone_field" name="phone"> <br>
+
+                <label for="password_field">Password: </label><br>
+                <input type="password" id="password_field" name="password" required> <br>
+
+
+                <label for="repeat_password_field">Repeat Password: </label>
+                <input type="password" id="repeat_password_field" name="repeat_password" required onchange="controllaPW()"> <br>
+
+                <br>
+                <input type="submit" id="sub" value="submit">
+          </form>
+        </div>
+     </div>
+        
+      
     </body>
 </html>
