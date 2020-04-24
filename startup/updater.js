@@ -3,6 +3,7 @@ const request=require('request')
 const moment=require('moment')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
 const logger=require('./logging')
+const {sendByAmqp}=require('../amqp/producer')
 
 require('dotenv').config()
 
@@ -10,6 +11,7 @@ let aqi_url=config.get('aqi_end');
 let stations_id=[] //used to req data from stations
 let timedata;
 let stations_geo=[];
+let data2send=[];
 
 
 
@@ -80,7 +82,9 @@ function getData(id,nameStation,coords)
                 saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id,coords)
             if(chemical_comp.o3!=undefined)
                 saveData(nameStation,Agents.O3,chemical_comp.o3.v,id,coords)
-            
+              
+            sendByAmqp(data2send)
+
             resolve(true)
            }
 });
@@ -100,6 +104,17 @@ async function saveData (names,agents,values,ids,coords)
    });
 
    await chemical_agent.save()
+  
+   data2send.push({
+            reg_date: timedata,
+            value: values,
+            types: agents,
+            sensor:names,
+            uid:ids,
+            lat:coords[0],
+            long:coords[1]
+   })
+ 
 
 }
 
@@ -120,6 +135,9 @@ function getDataFromStations(stations){
 
     }
 
+  
+   
+
 
 }
 
@@ -133,13 +151,13 @@ function  updateChemicalAgents()
 {
     stations_id=[]
     stations_geo=[]
+    data2send=[]
     timedata=moment().format();
     getStationsName()
     .then(function(result){getDataFromStations(result)})
     .catch(function(errore){logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
     
-      
-
+    
 }
 
 
