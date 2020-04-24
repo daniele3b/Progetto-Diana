@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+       
+    </head>
+    <body>
+
+        <div class="border border-success p-4 mb-3 " style="background-color:green;" >
+        
+        </div>
+            <script>  
+            
+            function controllaPW(){
+            var pw=document.getElementById("password_field").value
+            var cnf_pw=document.getElementById("repeat_password_field").value
+        
+            if(pw!=cnf_pw)
+            {
+                var btn=document.getElementById('sub')
+                btn.disabled=true
+                btn.style.backgroundColor="red"
+            }else
+            {
+                var btn=document.getElementById('sub')
+                btn.disabled=false
+                btn.style.backgroundColor="green"
+                
+            }
+            }
+            </script>
+            <center>
+            <div class="mt-5">
+                <h2> Your registration is almost complete,<%- user.name%> </h2>
+                <h3> Please fill in the fields below to start using Diana! </h3>
+             </div>
+             </center>
+             
+            <div class="container-fluid w-50 border border-success mt-4 ">
+        
+         
+              <form action="/sign-in/complete" method="POST">
+                    
+                
+                    <input type="hidden" id="id_field" name="googleId" value="<%- user.gid %>" hidden>
+                    <input type="hidden" id='name_field' name="name" value="<%- user.name %>" hidden> 
+                    <input type="hidden" id='surname_field' name="surname" value="<%- user.surname %>" hidden>
+                    <input type="hidden" id="email_field" name="email" value="<%- user.email %>" hidden> 
+                
+                   
+                <div class="row ">
+                    <div class="col" style="background-color:green">
+                        <h5 style="color:white;"> <b>DIANA REGISTRATION</b></h5>
+                    </div>
+                </div>
+               
+                  
+                    <div class="row mt-2 mb-1 ">
+                        <div class="col ">
+                            <label for="exampleFormControlSelect1">Sex: </label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="exampleFormControlSelect1" id="sex_field" name="sex" style="width: 60px;" required>
+                                <option>M</option>
+                                <option>F</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-2 ">
+                        <div class="col">
+                            <label for="BirthdateField">Birthdate: </label>
+                        </div>
+                        <div class="col">
+                            <input type="date" id="date_field" name="birthdate" required>
+                        </div>
+                    </div> 
+                    
+                    <div class="row mt-2">
+                        <div class="col">
+                            <label for="birth_place">Birthplace: </label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="birth_place" name="birthplace" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row  mt-2">
+                        <div class="col">
+                            <label for="phone_field">Phone: </label>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="phone_field" name="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="row  mt-2">
+                        <div class="col">
+                            <label for="password_field">Password: </label>
+                        </div>
+                        <div class="col">
+                            <input type="password" id="password_field" name="password" required onchange="controllaPW()">
+                        </div>
+                    </div>
+                    
+                    <div class="row  mt-2">
+                        <div class="col">
+                            <label for="repeat_password_field">Repeat Password: </label>
+                        </div>
+                        <div class="col">
+                            <input type="password" id="repeat_password_field" name="repeat_password" required onchange="controllaPW()"> 
+                        </div>
+                    </div>
+
+                    <div class="row  mt-2 mb-2">
+                        <div class="col">
+                            <input type="submit" id="sub" value="SUBMIT" style="background-color:green;color:white;">
+                        </div>
+                    </div>
+
+                  </form>
+           
+           
+                </div>
+                <div class="border border-success p-4 mt-3 fixed-bottom" style="background-color:green;" >
+        
+                </div>
+              
+            </body>
+</html>
