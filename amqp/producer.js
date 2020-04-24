@@ -11,7 +11,10 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         }
 
         var queue = 'Diana-queue';
-        var msg = 'Hello World!';
+        var msg = [{
+            name:'ciao',
+            surname:'me'
+        }]
 
         channel.assertQueue(queue, {
             durable: false
