@@ -7,6 +7,7 @@ const {SuperUser_startup}=require('./startup/superuser_startup')
 
 const app = express()
 var cors = require('cors')
+var ejs = require('ejs')
 
 
 const port = process.env.PORT || 8080 
@@ -16,6 +17,7 @@ require('./startup/passport-startup')(app)
 require('./startup/routes')(app)
 
 app.use(cors())
+app.set('view engine' , 'ejs')  // modified
 
 const server = app.listen(8080, () =>  { console.log("Server listening on port : " , port)})
 

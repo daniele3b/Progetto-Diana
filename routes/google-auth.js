@@ -9,8 +9,13 @@ router.get('/', passport.authenticate('google', {
 
 
 router.get('/redirect', passport.authenticate('google'), (req,res) => {
-    const query_string = '/?name=' +req.user.name+ '&surname=' +req.user.surname+ '&email=' +req.user.email+ ''
-    res.redirect('sign-in/complete'+query_string)
+    const user = {
+        gid: req.user.googleId,
+        name: req.user.name,
+        surname: req.user.surname,
+        email: req.user.email
+    }
+    res.render('oauth_complete' , {user})
 })
 
 module.exports = router
