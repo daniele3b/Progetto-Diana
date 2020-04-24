@@ -19,7 +19,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         channel.assertQueue(queue, {
             durable: false
         });
-        channel.sendToQueue(queue, Buffer.from(msg));
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
 
         console.log(" [x] Sent %s", msg);
     });
