@@ -59,7 +59,7 @@ function getStationsName()
 //https://api.waqi.info/feed/@idx/?token=x
 function getData(id,nameStation,coords)
 {
-    return new Promise(function(resolve,reject){
+    return new Promise( function(resolve,reject){
 
     request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
         if(error){ 
@@ -75,15 +75,15 @@ function getData(id,nameStation,coords)
             let chemical_comp=json.data.iaqi
             //if there isn't a value the field is undefined 
             if(chemical_comp.so2!=undefined)
-                saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id,coords)
+                await saveData(nameStation,Agents.SO2,chemical_comp.so2.v,id,coords)
             if(chemical_comp.pm10!=undefined)
-                saveData(nameStation,Agents.PM10,chemical_comp.pm10.v,id,coords)
+                await saveData(nameStation,Agents.PM10,chemical_comp.pm10.v,id,coords)
             if(chemical_comp.pm25!=undefined)
-                saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id,coords)
+                await saveData(nameStation,Agents.PM25,chemical_comp.pm25.v,id,coords)
             if(chemical_comp.o3!=undefined)
-                saveData(nameStation,Agents.O3,chemical_comp.o3.v,id,coords)
+                await saveData(nameStation,Agents.O3,chemical_comp.o3.v,id,coords)
               
-            sendByAmqp(data2send)
+            //sendByAmqp(data2send)
 
             resolve(true)
            }
@@ -93,6 +93,10 @@ function getData(id,nameStation,coords)
 
 async function saveData (names,agents,values,ids,coords)
 {
+
+
+return new Promise(async function(resolve,reject){
+    let arr=[]
    let chemical_agent=new Chemical_Agent({
         reg_date: timedata,
         value: values,
@@ -105,6 +109,8 @@ async function saveData (names,agents,values,ids,coords)
 
    await chemical_agent.save()
   
+
+   
    data2send.push({
             reg_date: timedata,
             value: values,
@@ -114,6 +120,9 @@ async function saveData (names,agents,values,ids,coords)
             lat:coords[0],
             long:coords[1]
    })
+
+   resolve(1)
+})
  
 
 }
@@ -121,7 +130,7 @@ async function saveData (names,agents,values,ids,coords)
 
 
 
-function getDataFromStations(stations){
+function getDataFromStations(stations,callback){
     //console.log(stations)
     //console.log(stations_id)
 
@@ -129,13 +138,11 @@ function getDataFromStations(stations){
     for(var i=0;i<len_sd;i++)
     {
         getData(stations_id[i],stations[i],stations_geo[i])
-        .then(function(res){/*console.log("DATA OK")*/})
+        .then(function(res){  const arr=data2send; callback(arr);data2send=[]})
         .catch(function(error){logger.error('U3:Impossible get data from a specific station, watch station state');console.log('U3');})
-
-
     }
 
-  
+
    
 
 
@@ -154,7 +161,7 @@ function  updateChemicalAgents()
     data2send=[]
     timedata=moment().format();
     getStationsName()
-    .then(function(result){getDataFromStations(result)})
+    .then(function(result){getDataFromStations(result,sendByAmqp)})
     .catch(function(errore){logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
     
     
