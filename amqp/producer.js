@@ -1,8 +1,9 @@
 var amqp = require('amqplib/callback_api');
+const config=require('config')
 
 
 function sendByAmqp(data){
-amqp.connect('amqp://localhost', function(error0, connection) {
+amqp.connect(config.get('amqp_server'), function(error0, connection) {
     if (error0) {
         console.log(error0)
         throw error0;
@@ -11,8 +12,8 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         if (error1) {
             throw error1;
         }
-        console.log(data)
-        var queue = 'Diana-queue';
+        //console.log(data)
+        var queue = config.get('amqp_queue');
         var msg = data
 
         channel.assertQueue(queue, {
@@ -21,7 +22,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
 
         channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
 
-        console.log(" [x] Sent %s", msg);
+      //  console.log(" [x] Sent %s", msg);
     });
     setTimeout(function() {
         connection.close();
