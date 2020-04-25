@@ -13,7 +13,8 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
             throw error1;
         }
 
-
+       let x= Math.floor(Math.random() * 100) + 1
+       if(x%2==0){
         data.push(
             {
                 reg_date: "1970-12-12",
@@ -25,13 +26,14 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
                 long:"76"
             }
         )
+       }
         console.log(data)
 
         var queue = config.get('amqp_queue');
         var msg = data
 
         channel.assertQueue(queue, {
-            durable: true
+            durable: false
         });
 
         channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
