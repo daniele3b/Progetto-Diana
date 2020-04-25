@@ -12,7 +12,21 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
         if (error1) {
             throw error1;
         }
+
+
+        data.push(
+            {
+                reg_date: "1970-12-12",
+                value: 300,
+                types: "SO2",
+                sensor:"nome_sensore",
+                uid:"id",
+                lat:"45.7",
+                long:"76"
+            }
+        )
         console.log(data)
+
         var queue = config.get('amqp_queue');
         var msg = data
 
