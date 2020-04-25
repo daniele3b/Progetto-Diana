@@ -13,7 +13,7 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
             throw error1;
         }
 
-       let x= Math.floor(Math.random() * 100) + 1
+     /*  let x= Math.floor(Math.random() * 100) + 1
        if(x%2==0){
         data.push(
             {
@@ -26,8 +26,8 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
                 long:"76"
             }
         )
-       }
-        console.log(data)
+       }*/
+        //console.log(data)
 
         var queue = config.get('amqp_queue');
         var msg = data
@@ -38,7 +38,7 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
 
         channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
 
-        console.log(" [x] Sent %s", msg);
+       // console.log(" [x] Sent %s", msg);
     });
     setTimeout(function() {
         connection.close();

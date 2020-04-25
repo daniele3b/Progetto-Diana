@@ -2,7 +2,7 @@ const config = require('config')
 const request=require('request')
 const moment=require('moment')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
-const logger=require('./logging')
+const {logger}=require('./logging')
 const {sendByAmqp}=require('../amqp/producer')
 
 require('dotenv').config()

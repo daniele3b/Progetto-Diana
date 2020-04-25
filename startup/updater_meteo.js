@@ -52,7 +52,7 @@ function updateMeteo(){
                 console.error('error:', error);
                 logger.error('M2: Impossibile to save meteo report to databse')
                 console.log('M2')
-                reject(error);
+                return
             }
         };
 
@@ -62,7 +62,7 @@ function updateMeteo(){
             console.error('error:', error);
             logger.error('M1: Impossibile to get meteo report data')
             console.log('M1')
-            reject(error);
+           return
         }
     });
     
