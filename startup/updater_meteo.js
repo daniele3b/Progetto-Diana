@@ -3,7 +3,7 @@ var request = require('request')
 const config = require('config')
 require('dotenv').config()
 const {Meteo,validate}=require('../models/meteo')
-const logger=require('./logging')
+const {logger}=require('./logging')
 
 function updateMeteo(){
     var lin = config.get('weather_report_updater') + process.env.METEO_KEY;
