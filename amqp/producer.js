@@ -31,7 +31,7 @@ amqp.connect(config.get('amqp_server'), function(error0, connection) {
         var msg = data
 
         channel.assertQueue(queue, {
-            durable: false
+            durable: true
         });
 
         channel.sendToQueue(queue, Buffer.from(JSON.stringify(msg)));
