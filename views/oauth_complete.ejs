@@ -100,7 +100,7 @@
                             <label for="password_field">Password: </label>
                         </div>
                         <div class="col">
-                            <input type="password" id="password_field" name="password" required onchange="controllaPW()">
+                            <input type="password" id="password_field" name="password" required onchange="controllaPW()" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
                         </div>
                     </div>
                     
@@ -109,7 +109,7 @@
                             <label for="repeat_password_field">Repeat Password: </label>
                         </div>
                         <div class="col">
-                            <input type="password" id="repeat_password_field" name="repeat_password" required onchange="controllaPW()"> 
+                            <input type="password" id="repeat_password_field" name="repeat_password" required onchange="controllaPW()" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"> 
                         </div>
                     </div>
 
