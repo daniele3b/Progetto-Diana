@@ -47,7 +47,7 @@ require('dotenv').config()
 *       '400':
 *         description: An invalid address has been passed(it contains numbers)/Invalid token provided
 *       '404':
-*         description: The address doesn't exist/No chemical agents available in the database
+*         description: The address doesn't exist
 *       '401':
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
