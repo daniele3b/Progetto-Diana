@@ -41,7 +41,10 @@ router.post('/email', async (req, res) => {
         await User.findOneAndUpdate({email: req.body.email}, {password_changing: false})
     
     const token = user.generateAuthToken();
-    res.status(200).send(token);
+    res.status(200).send({
+        token : token,
+        type : user.type
+    });
 });
 
 /**
@@ -73,7 +76,10 @@ router.post('/phone', async (req, res) => {
         await User.findOneAndUpdate({phone: req.body.phone}, {password_changing: false})
   
     const token = user.generateAuthToken();
-    res.status(200).send(token);
+    res.status(200).send({
+        token : token,
+        type : user.type
+    });
 });
 
 module.exports = router;
