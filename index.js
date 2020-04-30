@@ -10,13 +10,15 @@ var cors = require('cors')
 var ejs = require('ejs')
 
 
+app.use(cors());
+app.options('*', cors()) 
 const port = process.env.PORT || 8081
 
 require('./startup/db')()
 require('./startup/passport-startup')(app)
 require('./startup/routes')(app)
 
-app.use(cors())
+
 app.set('view engine' , 'ejs')  // modified
 
 const server = app.listen(8081, () =>  { console.log("Server listening on port : " , port)})
