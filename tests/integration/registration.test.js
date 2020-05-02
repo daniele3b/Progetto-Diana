@@ -54,7 +54,7 @@ describe('/registration', () => {
            expect(res.status).toBe(200)
         })
 
-        it('should return 400 and to add a new user without email type: citizien ' , async() => {
+        it('should return 400 and dont add a new user without email type: citizien ' , async() => {
             const res = await request(server).post('/registration/citizen').send({name : 'Daniele',surname : 'Bufalieri',sex: 'M',birthdate : '1998-12-02', birthplace : 'Roma',phone : '1234567890',password : 'aCertainPassword!'})
            expect(res.status).toBe(400)
         })
