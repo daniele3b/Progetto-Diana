@@ -51,10 +51,12 @@ router.post('/citizen' , async (req,res) => {
     let data=req.body.birthdate
     let array = data.split('-');
     const cf=calculateCF(req.body.name,req.body.surname,req.body.sex,array[2],array[1],array[0],req.body.birthplace)
-  
+   
     const resp=await User.find({CF:cf})
     if(resp.length==0) {
-    let user=new User({
+        let user
+    if(req.body.phone!=undefined){
+    user=new User({
         CF:cf,
         type:'cittadino',
         name:req.body.name,
@@ -66,6 +68,21 @@ router.post('/citizen' , async (req,res) => {
         phone:req.body.phone,
         password:req.body.password
     })
+    }else
+    {
+        user=new User({
+            CF:cf,
+            type:'cittadino',
+            name:req.body.name,
+            surname:req.body.surname,
+            sex:req.body.sex,
+            birthdate:req.body.birthdate,
+            birthplace:req.body.birthplace,
+            email:req.body.email,
+            password:req.body.password
+        })
+
+    }
 
     const salt = await bcrypt.genSalt(config.get('pw_salt'));
     user.password = await bcrypt.hash(user.password, salt);
