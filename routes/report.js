@@ -409,7 +409,7 @@ router.get('/filter/date/:date', [auth, operator], async (req,res) => {
     d1.setMinutes("1")
     d2.setHours("23")
     d2.setMinutes("59")
-    const result = await Report.find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
+    const result = await Report.find({date: {'$gte': d1, '$lt': d2},visible:true}).sort('-_id')
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
         res.status(200).send(result)
