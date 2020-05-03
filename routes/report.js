@@ -109,7 +109,7 @@ router.post('/' , auth, async (req,res) => {
   
     report = await report.save()
 
-    res.send("Ok")
+    res.send(report)
 })
 
 /** 
