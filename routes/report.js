@@ -112,6 +112,63 @@ router.post('/' , auth, async (req,res) => {
     res.send(report)
 })
 
+/**
+* @swagger 
+* /report/:id_number:
+*  put:
+*    tags: [Report]
+*    description: Use to update a report
+*    parameters:
+*       - name: id
+*         description: id of the document to modify
+*         in: formData
+*         required: true
+*         type: date
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"id_number" number used as identifier,
+*               <br>"CF" string which represents the user's identifier,
+*               <br>"category" string which represents the report's category,
+*               <br>"address" string which represents the report's address,
+*               <br>"date" string which represents the time of report's pubblication (YYYY-MM-DDThh:mm:ss.xxxZ)
+*               <br>"description" string which represents the report's description,
+*               <br>"status" string which represents the report's status,
+*               <br>"visible" will be false after this,
+*         schema:
+*           type: object
+*           properties:
+*               id_number:
+*                   type: number
+*               CF:
+*                   type: string
+*               category:
+*                   type: string
+*               address:
+*                   type: string
+*               date:
+*                   type: string
+*                   format: date-time
+*               description:
+*                   type: string
+*               status:
+*                   type: string
+*               visible:
+*                   type: boolean
+*                   example: false
+*       '400' :
+*         description: Bad request or Invalid Token
+*       '401' :
+*         description: Access denied. No token provided
+*       '403' :
+*         description: Access denied. You're not an admin or operator!
+*/
+
+router.put('/:id_number' , [auth, operator], async(req,res) => {
+    const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {status: req.body.status})
+    if (!report)   return res.status(404).send('Report not found')
+})
+
 /** 
 * @swagger
 * /report/:id_number:
