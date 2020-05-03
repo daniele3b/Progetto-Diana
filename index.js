@@ -40,7 +40,7 @@ SuperUser_startup()
 
 if(process.env.NODE_ENV!="test"){
 setInterval(updateChemicalAgents,config.get('aqi_time_int')) //1 minute
-
+updateMeteo()
 setInterval(updateMeteo, config.get('timer_meteo')) //15 seconds
 }
 
