@@ -132,6 +132,17 @@ router.get('/uv/real_time', auth, async (req,res) => {
     
 });
 
+router.get('/uv/forecast', auth, async (req,res) => {
+    var lin = 'http://api.openweathermap.org/data/2.5/uvi/forecast?appid='+process.env.METEO_KEY+'&lat='+config.get('Rome_lat')+'&lon='+config.get('Rome_lon')+'&cnt=7';
+    request.get(lin, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            var info = JSON.parse(body); 
+            res.status(200).send(info)
+        }
+    });
+    
+});
+
 
 /**
 * @swagger 
