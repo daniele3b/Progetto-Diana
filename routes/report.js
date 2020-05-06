@@ -218,7 +218,7 @@ router.put('/:id_number' , [auth, operator], async(req,res) => {
 *         description: Access denied. You're not an admin or operator!
 */
 
-router.delete('/:id_number' ,auth, async (req,res) => {
+router.delete('/:id_number' ,[auth, operator], async (req,res) => {
     const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {visible: false})
     if (!report) return res.status(404).send('Not found') 
     else res.status(200).send("Ok")
