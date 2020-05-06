@@ -25,7 +25,7 @@ function addressOK (str) {
 function radiusOK (str) {
     const dim = str.length
     let i = 0
-    counter = 0
+    let counter = 0
     if(str[0] == '-') i = 1
     if(str[0] == '.' || str[dim-1] == '.') return false
     for(;i<dim;i++) {
