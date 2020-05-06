@@ -48,6 +48,8 @@ require('dotenv').config()
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
+*       '502':
+*         description: Bad Gateway, server didn't respond correctly
 */
 
 router.get('/', [auth, operator], async (req, res) => {
@@ -72,6 +74,10 @@ router.get('/', [auth, operator], async (req, res) => {
         else {
             logger.error(body)
             const parsed_body = JSON.parse(body)
+
+            // Possibile errore 502 del server di Open Sky
+            if(parsed_body.message[0] == '<') return res.status(502).send("Bad Gateway: server didn't respond correctly")
+
             const states = parsed_body.states
 
             if(!states) return res.status(404).send('There are no flights in the specified area')
