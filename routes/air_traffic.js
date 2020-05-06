@@ -75,9 +75,6 @@ router.get('/', [auth, operator], async (req, res) => {
             logger.error(body)
             const parsed_body = JSON.parse(body)
 
-            // Possibile errore 502 del server di Open Sky
-            if(parsed_body.message[0] == '<') return res.status(502).send("Bad Gateway: server didn't respond correctly")
-
             const states = parsed_body.states
 
             if(!states) return res.status(404).send('There are no flights in the specified area')
