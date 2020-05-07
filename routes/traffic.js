@@ -87,7 +87,9 @@ router.get('/:address', [auth, operator], async (req, res) => {
                     currentSpeed: parsed_body.flowSegmentData.currentSpeed,
                     freeFlowSpeed: parsed_body.flowSegmentData.freeFlowSpeed,
                     confidence: parsed_body.flowSegmentData.confidence,
-                    currentTravelTime: parsed_body.flowSegmentData.currentTravelTime
+                    currentTravelTime: parsed_body.flowSegmentData.currentTravelTime,
+                    lat : parsed_body.flowSegmentData.coordinates.coordinate[0].latitude,
+                    lon : parsed_body.flowSegmentData.coordinates.coordinate[0].longitude
                 }
 
                 res.status(200).send([resp])
