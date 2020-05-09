@@ -324,6 +324,101 @@ router.get('/filter/date/:station_id/:date_start/:date_end', [auth, operator], a
 })
 
 
+/** 
+* @swagger
+* /chemical_agents/filter/date/:date_start/:date_end/:type :
+*  get:
+*    tags: [Chemical_Agents]
+*    description: Use to request all chemical data from a sensor registred in a day between date_start and date_end of a kind of chemical agents
+*    parameters:
+*  
+*       - name: station_id
+*         description: uid of the station
+*         in: formData
+*         required: true
+*         type: string
+
+*       - name: date_start
+*         description: upper date bound format must be YYYY/MM/DD
+*         in: formData
+*         required: true
+*         type: date
+*       - name: date_end
+*         description: lower date bound format must be YYYY/MM/DD
+*         in: formData
+*         required: true
+*         type: date
+*       - name: type
+*         description: the name of chemical agents
+*         in: formData
+*         required: true
+*         type: date
+*    responses:
+*       '200':
+*         description: A successful response, data available return an array of object
+*         schema:
+*           type: object
+*           properties:
+*               sensor:
+*                   type: string
+*               reg_data:
+*                   type: string
+*                   format: date-time
+*               uid:
+*                   type: string
+*               types:
+*                   type: string
+*                   enum:
+*                       O3
+*                       NO
+*                       NO2
+*                       NOX
+*                       PM10
+*                       PM25
+*                       BENZENE
+*                       CO
+*                       SO2
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 70.4
+*               lat:
+*                   type: string
+*               long:
+*                   type: string
+*               type: object
+*       '400' :
+*         description: Bad request/Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
+*       '404' :
+*         description: No data with the given criteria
+*/
+router.get('/filter/date/:date_start/:date_end/type/:type', [auth, operator], async (req,res) => {
+  
+    const date_start = new Date(req.params.date_start)
+    const date_stop = new Date(req.params.date_end)
+    if(validateDate(date_start) && validateDate(date_stop)){
+    date_start.setHours("0")
+    date_start.setMinutes("1")
+    date_stop.setHours("23")
+    date_stop.setMinutes("59")
+    const result = await Chemical_Agent.find({types:(req.params.type.toUpperCase()),reg_date: {'$gte': date_start, '$lte': date_stop}})
+    .select(" reg_date sensor uid -_id value types lat long")
+    .sort("uid")
+    console.log('i valori sono:' +result)
+    if(result.length>0)res.status(200).send(result)
+   else  res.status(404).send("No data with the given criteria")
+    }else
+    {
+        res.status(400).send("Bad request")
+    }
+ 
+})
+
+
 
 
 /** 
