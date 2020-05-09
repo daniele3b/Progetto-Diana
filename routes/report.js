@@ -276,7 +276,7 @@ router.get('/', auth, async (req,res) => {
         res.send(report)
     }
     else{
-        const report = await Report.find().sort('-_id')
+        const report = await Report.find({visible:true}).sort('-_id')
         res.send(report)
     }
 })
