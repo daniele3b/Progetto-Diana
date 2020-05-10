@@ -48,8 +48,6 @@ require('dotenv').config()
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
-*       '500':
-*         description: Server didn't respond correctly
 */
 
 router.get('/', [auth, operator], async (req, res) => {
@@ -59,8 +57,6 @@ router.get('/', [auth, operator], async (req, res) => {
                 +'&lomax='+config.get('LON_MAX')
     
     request(url, function(error, response, body) {
-
-        if(response.statusCode >= 500) return res.status(500).send('Some internal error from OpenSky')
 
         if(error) {
             logger.error('AT1: impossible to get info about planes in the area bounded by\n'+
