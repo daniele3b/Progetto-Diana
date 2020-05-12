@@ -167,6 +167,7 @@ router.post('/' , auth, async (req,res) => {
 router.put('/:id_number' , [auth, operator], async(req,res) => {
     const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {status: req.body.status})
     if (!report)   return res.status(404).send('Report not found')
+    return res.status(200).send('ok')
 })
 
 /** 
@@ -394,7 +395,7 @@ router.get('/filter/id/:id', [auth, operator], async (req,res) => {
 */
 
 router.get('/filter/CF/:cf',[auth, operator], async (req,res) => {
-    const result = await Report.find({CF: req.params.cf}).sort('-_id')
+    const result = await Report.find({CF: req.params.cf})
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
         res.status(200).send(result)
@@ -466,7 +467,7 @@ router.get('/filter/date/:date', [auth, operator], async (req,res) => {
     d1.setMinutes("1")
     d2.setHours("23")
     d2.setMinutes("59")
-    const result = await Report.find({date: {'$gte': d1, '$lt': d2},visible:true}).sort('-_id')
+    const result = await Report.find({date: {'$gte': d1, '$lt': d2},visible:true})
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
         res.status(200).send(result)
@@ -548,7 +549,7 @@ router.get('/filter/date/:date_start/:date_end', [auth,operator], async (req,res
     d1.setMinutes("1")
     d2.setHours("23")
     d2.setMinutes("59")
-    const result = await Report.find({date: {'$gte': d1, '$lt': d2}}).sort('-_id')
+    const result = await Report.find({date: {'$gte': d1, '$lt': d2}})
     if(!result || result[0]===undefined) res.status(404).send("Not found.")
     else {
         res.status(200).send(result)
