@@ -6,6 +6,8 @@ const auth = require('../middleware/auth')
 const operator = require('../middleware/operator')
 const {Report} = require('../models/report')
 const jwt = require('jsonwebtoken');
+const {checkToken} = require('../startup/updater_token')
+const config = require('config')
 
 /**
  * @swagger
@@ -38,8 +40,9 @@ const jwt = require('jsonwebtoken');
 *         description: Announcemente or report not found in the database
 */
 
-router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
+router.post('/setToken/:object/:id' , auth, async (req,res) => {
     const tipo = req.params.object
+    
     if(tipo != "report" && tipo != "announcement") return res.status(400).send("Bad request")
 
     if(tipo == "announcement" && !mongoose.Types.ObjectId.isValid(req.params.id)) 
@@ -67,6 +70,8 @@ router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
 
         const res1 = await Announcement.findByIdAndUpdate(req.params.id, {token: cf})
 
+        //setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+
         return res.status(200).send("Token settato")
     }
 
@@ -79,6 +84,8 @@ router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
         if(t != "") return res.status(403).send("Non puoi accedere a tale annuncio: token già settato")
 
         const res1 = await Report.findOneAndUpdate({id_number:req.params.id}, {token: cf})
+
+        //setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
 
         return res.status(200).send("Token settato")
     }
@@ -108,7 +115,7 @@ router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
 *         description: Announcemente or report not found in the database
 */
 
-router.delete('/deleteToken/:object/:id' , [auth, operator], async (req,res) => {
+router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
     const tipo = req.params.object
     if(tipo != "report" && tipo != "announcement") return res.status(400).send("Bad request")
 
