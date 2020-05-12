@@ -167,6 +167,7 @@ router.post('/' , auth, async (req,res) => {
 router.put('/:id_number' , [auth, operator], async(req,res) => {
     const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {status: req.body.status})
     if (!report)   return res.status(404).send('Report not found')
+    return res.status(200).send('ok')
 })
 
 /** 
