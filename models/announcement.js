@@ -23,6 +23,10 @@ const announcementSchema = new mongoose.Schema({
     description: {
         type: String,
         maxlength: 300
+    },
+    token : {
+        type: String,
+        default : ""
     }
 })
 

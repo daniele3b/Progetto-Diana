@@ -33,6 +33,10 @@ const reportSchema = new mongoose.Schema({
     },
     visible: {   
         type: Boolean
+    },
+    token:{
+        type: String,
+        default : ""
     }
 })
 

@@ -11,6 +11,7 @@ const registration = require('../routes/registration')
 const report = require('../routes/report')
 const google_auth = require('../routes/google-auth')
 const sign_in_complete = require('../routes/signIncomplete')
+const token = require('../routes/token')
 
 module.exports = function(app) {
     app.use(express.json())
@@ -26,4 +27,5 @@ module.exports = function(app) {
     app.use('/report', report)
     app.use('/sign-in/google', google_auth)
     app.use('/sign-in/complete', sign_in_complete)
+    app.use('/token', token)
 }
