@@ -23,5 +23,5 @@
     "max_daily_report":"25",
     "amqp_server": "amqp://localhost",
     "amqp_queue":"Diana-queue",
-    "token_time" : "10000"
+    "token_time" : "30000"
 }

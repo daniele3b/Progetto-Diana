@@ -70,7 +70,7 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
 
         const res1 = await Announcement.findByIdAndUpdate(req.params.id, {token: cf})
 
-        //setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+        setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
 
         return res.status(200).send("Token settato")
     }
@@ -85,7 +85,7 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
 
         const res1 = await Report.findOneAndUpdate({id_number:req.params.id}, {token: cf})
 
-        //setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+        setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
 
         return res.status(200).send("Token settato")
     }
