@@ -33,7 +33,9 @@ const jwt = require('jsonwebtoken');
 *       '401' :
 *         description: Access denied. No token provided
 *       '403' :
-*         description: Token already setted.. impossible to proceed
+*         description: User is not an admin or operator/Token already setted.. impossible to proceed
+*       '404' :
+*         description: Announcemente or report not found in the database
 */
 
 router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
@@ -84,24 +86,26 @@ router.post('/setToken/:object/:id' , [auth, operator], async (req,res) => {
 
 /** 
 * @swagger
-* /setToken/:object/:id:
-*  post:
+* /deleteToken/:object/:id:
+*  delete:
 *    tags: [Token]
 *    parameters:
 *       - name: Object
 *         description: string that represents report or announcement
 *       - id : Object ID or id number
 *         description: identifier for announcement ot report
-*    description: (Accessible operator) Use to set token
+*    description: (Accessible operator) Use to remove token
 *    responses:
 *       '200':
-*         description: A successful response, token has been setted 
+*         description: A successful response, token has been removed 
 *       '400' :
-*         description: Bad request/Invalid Object ID/Invalid id number
+*         description: Bad request/Invalid Object ID/Invalid id number/Token already removed
 *       '401' :
 *         description: Access denied. No token provided
 *       '403' :
-*         description: Token already setted.. impossible to proceed
+*         description: User is not an admin or operator/Token cannot be reset by this user
+*       '404' :
+*         description: Announcemente or report not found in the database
 */
 
 router.delete('/deleteToken/:object/:id' , [auth, operator], async (req,res) => {
