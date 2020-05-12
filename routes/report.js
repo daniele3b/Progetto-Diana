@@ -165,6 +165,20 @@ router.post('/' , auth, async (req,res) => {
 */
 
 router.put('/:id_number' , [auth, operator], async(req,res) => {
+
+    const result=await Report.find({id_number:req.params.id_number})
+
+    const token = req.header('x-diana-auth-token')
+
+    var decoded = jwt.decode(token);
+      
+    // get the decoded payload and header
+    var decoded = jwt.decode(token, {complete: true});
+
+    const cf = decoded.payload.CF
+
+    if(cf != result[0].token) return res.status(400).send("Session expired")
+
     const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {status: req.body.status})
     if (!report)   return res.status(404).send('Report not found')
     return res.status(200).send('ok')
@@ -220,6 +234,22 @@ router.put('/:id_number' , [auth, operator], async(req,res) => {
 */
 
 router.delete('/:id_number' ,auth, async (req,res) => {
+
+
+    const result=await Report.find({id_number:req.params.id_number})
+
+    const token = req.header('x-diana-auth-token')
+
+    var decoded = jwt.decode(token);
+      
+    // get the decoded payload and header
+    var decoded = jwt.decode(token, {complete: true});
+
+    const cf = decoded.payload.CF
+
+    if(cf != result[0].token) return res.status(400).send("Session expired")
+
+
     const report = await Report.findOneAndUpdate({id_number: req.params.id_number}, {visible: false})
     if (!report) return res.status(404).send('Not found') 
     else res.status(200).send("Ok")
