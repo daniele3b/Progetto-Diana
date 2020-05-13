@@ -8,6 +8,7 @@ const {Report} = require('../models/report')
 const jwt = require('jsonwebtoken');
 const {checkToken} = require('../startup/updater_token')
 const config = require('config')
+let timerObjects=[]
 
 /**
  * @swagger
@@ -70,8 +71,10 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
 
         const res1 = await Announcement.findByIdAndUpdate(req.params.id, {token: cf})
 
-        setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
-
+        let tobject=setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+        
+        timerObjects.push({timer:tobject,id:req.params.id,cf:cf})
+        console.log(timerObjects)
         return res.status(200).send("Token settato")
     }
 
@@ -85,7 +88,10 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
 
         const res1 = await Report.findOneAndUpdate({id_number:req.params.id}, {token: cf})
 
-        setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+        let tobject=setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
+
+        timerObjects.push({timer:tobject,id:req.params.id,cf:cf})
+        console.log(timerObjects)
 
         return res.status(200).send("Token settato")
     }
@@ -146,6 +152,16 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
 
         await Announcement.findByIdAndUpdate(req.params.id, {token: ""})
 
+        var ind = timerObjects.findIndex(x => (x.id ==req.params.id&& x.cf==cf));
+
+        let timeobject=timerObjects[ind]
+
+        clearTimeout(timeobject.timer)
+
+        timerObjects.splice(ind,1)
+
+        console.log("DOPO CLEAR: "+timerObjects)
+
 
         return res.status(200).send("Token rimosso")
     }
@@ -164,6 +180,18 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
         if(result[0].token != cf) return res.status(403).send("Non puoi resettare il token")
 
         await Report.findOneAndUpdate({id_number:req.params.id}, {token: ""})
+
+
+        var ind = timerObjects.findIndex(x => (x.id ==req.params.id&& x.cf==cf));
+
+        let timeobject=timerObjects[ind]
+
+        clearTimeout(timeobject.timer)
+
+        timerObjects.splice(ind,1)
+
+        console.log("DOPO CLEAR: "+timerObjects)
+
 
         return res.status(200).send("Token rimosso")
     }
