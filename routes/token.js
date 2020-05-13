@@ -74,7 +74,7 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
         let tobject=setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
         
         timerObjects.push({timer:tobject,id:req.params.id,cf:cf})
-        console.log(timerObjects)
+       // console.log(timerObjects)
         return res.status(200).send("Token settato")
     }
 
@@ -91,7 +91,7 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
         let tobject=setTimeout(() => {checkToken(tipo, req.params.id, cf)}, config.get('token_time'))
 
         timerObjects.push({timer:tobject,id:req.params.id,cf:cf})
-        console.log(timerObjects)
+      //  console.log(timerObjects)
 
         return res.status(200).send("Token settato")
     }
@@ -160,7 +160,7 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
 
         timerObjects.splice(ind,1)
 
-        console.log("DOPO CLEAR: "+timerObjects)
+       // console.log("DOPO CLEAR: "+timerObjects)
 
 
         return res.status(200).send("Token rimosso")
@@ -190,7 +190,7 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
 
         timerObjects.splice(ind,1)
 
-        console.log("DOPO CLEAR: "+timerObjects)
+        //console.log("DOPO CLEAR: "+timerObjects)
 
 
         return res.status(200).send("Token rimosso")
