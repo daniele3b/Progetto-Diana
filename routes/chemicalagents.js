@@ -310,6 +310,7 @@ router.get('/filter/date/:station_id/:date_start/:date_end', [auth, operator], a
     date_start.setMinutes("1")
     date_stop.setHours("23")
     date_stop.setMinutes("59")
+    // proviamo
     const id_s=req.params.station_id
     const result = await Chemical_Agent.find({uid:id_s,reg_date: {'$gte': date_start, '$lte': date_stop}})
     .select(" reg_date sensor uid -_id value types lat long")
