@@ -198,11 +198,7 @@ router.post('/citizen/pw_forgotten' ,async (req,res) => {
         //se non esiste si fotte
         res.status(404).send('User not found')
     }
-    else{
-        if(result.type!='cittadino'){
-            //se non è un cittadino non può cambiare pw 
-            return res.status(400).send('Bad request')
-        }else
+    else
         {
             //genero una pw random
             const random = Str.random(15)
@@ -216,7 +212,7 @@ router.post('/citizen/pw_forgotten' ,async (req,res) => {
             PasswordRecoveryMail(req.body.email,random)
             res.status(200).send('Password temporary setted')
         }
-    }
+    
     }
 
 )
