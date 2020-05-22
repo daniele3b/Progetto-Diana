@@ -162,7 +162,7 @@ function  updateChemicalAgents()
     timedata=moment().format();
     getStationsName()
     .then(function(result){getDataFromStations(result,sendByAmqp)})
-    .catch(function(errore){logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
+    .catch(function(errore){console.log(errore); logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
     
     
 }
