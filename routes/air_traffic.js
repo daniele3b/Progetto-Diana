@@ -48,6 +48,8 @@ require('dotenv').config()
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
+*       '500':
+*         description: Bad gateway
 */
 
 router.get('/', [auth, operator], async (req, res) => {
@@ -71,7 +73,8 @@ router.get('/', [auth, operator], async (req, res) => {
         }
         
         else {
-            logger.error(body)
+            if(body.includes('html')) return res.status(500).send("Bad gateway")
+
             const parsed_body = JSON.parse(body)
 
             const states = parsed_body.states
