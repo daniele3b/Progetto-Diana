@@ -20,8 +20,8 @@
     "weather_report_updater": "http://api.openweathermap.org/data/2.5/weather?q=rome,it&appid=",
     "pw_salt":10,
     "email_host":"smtp.libero.it",
-    "max_daily_report":"3",
+    "max_daily_report":"5",
     "amqp_server": "amqp://localhost",
     "amqp_queue":"Diana-queue",
-    "token_time" : "30000"
+    "token_time" : "20000"
 }
