@@ -202,7 +202,6 @@ router.post('/citizen/pw_forgotten' ,async (req,res) => {
         {
             //genero una pw random
             const random = Str.random(15)
-            random+=Math.random()
             //la cripto 
             const salt = await bcrypt.genSalt(config.get('pw_salt'));
             const np=await bcrypt.hash(random, salt);
