@@ -52,6 +52,8 @@ require('dotenv').config()
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
+*       '500':
+*         description: Bad gateway
 */
 
 router.get('/:address', [auth, operator], async (req, res) => {
@@ -62,6 +64,7 @@ router.get('/:address', [auth, operator], async (req, res) => {
     .then(function(latLon) {
 
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
+        if(latLon == -2) return res.status(500).send("Bad gateway")
             
         const lat = latLon[0]
         const lon = latLon[1]
@@ -150,6 +153,8 @@ router.get('/:address', [auth, operator], async (req, res) => {
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
+*       '500':
+*         description: Bad gateway
 */
 
 router.get('/:address/sensor', [auth, operator], async (req, res) => {
@@ -160,6 +165,7 @@ router.get('/:address/sensor', [auth, operator], async (req, res) => {
     .then(async function(latLon) {
         
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
+        if(latLon == -2) return res.status(500).send("Bad gateway")
         
         const lat = latLon[0]
         const lon = latLon[1]
@@ -265,6 +271,8 @@ router.get('/:address/sensor', [auth, operator], async (req, res) => {
 *         description: User is not logged in... user has to authenticate himself
 *       '403':
 *         description: User is not an operator or admin
+*       '500':
+*         description: Bad gateway
 */
 
 router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
@@ -279,6 +287,7 @@ router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
     .then(async function(latLon) {
 
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
+        if(latLon == -2) return res.status(500).send("Bad gateway")
 
         const lat = latLon[0]
         const lon = latLon[1]

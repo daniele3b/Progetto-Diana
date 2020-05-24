@@ -73,7 +73,7 @@ router.get('/', [auth, operator], async (req, res) => {
         }
         
         else {
-            if(body.includes('html')) return res.status(500).send("Bad gateway")
+            if(body.includes('html')) return res.status(500).send("Bad gateway") // Some internal error from api call
 
             const parsed_body = JSON.parse(body)
 

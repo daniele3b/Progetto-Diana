@@ -65,7 +65,10 @@ function getLatLong (address) {
         const url_addr = pick_point_end_url+'/?key='+process.env.ADDRESS+'&q='+parsed+"&limit=1&format=json"
 
         request(url_addr, function(error, response, body) {
+            if(body.includes('undefined')) resolve(-2)  // Some internal error from api call
+            
             const parsed_body = JSON.parse(body)
+            
             if(error){
                 logger.error('T2: Impossible to get coordinates for the address: '+address)
                 console.log('T2') 
