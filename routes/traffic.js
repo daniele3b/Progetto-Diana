@@ -64,7 +64,7 @@ router.get('/:address', [auth, operator], async (req, res) => {
     .then(function(latLon) {
 
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
-        if(latLon == -2) return res.status(500).send("Bad gateway")
+        if(latLon == -2) return res.status(500).send("Bad gateway") // Some internal error from api call
             
         const lat = latLon[0]
         const lon = latLon[1]
@@ -165,7 +165,7 @@ router.get('/:address/sensor', [auth, operator], async (req, res) => {
     .then(async function(latLon) {
         
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
-        if(latLon == -2) return res.status(500).send("Bad gateway")
+        if(latLon == -2) return res.status(500).send("Bad gateway") // Some internal error from api call
         
         const lat = latLon[0]
         const lon = latLon[1]
@@ -287,7 +287,7 @@ router.get('/:address/sensor/:radius', [auth, operator], async (req, res) => {
     .then(async function(latLon) {
 
         if(latLon == -1) return res.status(404).send("This address doesn't exist")
-        if(latLon == -2) return res.status(500).send("Bad gateway")
+        if(latLon == -2) return res.status(500).send("Bad gateway") // Some internal error from api call
 
         const lat = latLon[0]
         const lon = latLon[1]
