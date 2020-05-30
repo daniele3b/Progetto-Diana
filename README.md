@@ -21,7 +21,7 @@ Il frontend è stato realizzato con Vue.js, Javascript, CSS e diverse librerie:
 
 * Bootstrap
 * Axios
-* Vue-map-google
+* vue2-google-maps
 * Chart-js
 
 Il backend è stato realizzato con Nodejs e diverse librerie:
