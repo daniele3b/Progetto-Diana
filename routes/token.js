@@ -17,28 +17,34 @@ let timerObjects=[]
  *   description: Token management APIs
  */ 
  
-/** 
-* @swagger
-* /setToken/:object/:id:
+/**
+* @swagger 
+* /token/setToken/:object/:id:
 *  post:
 *    tags: [Token]
 *    parameters:
-*       - name: Object
-*         description: string that represents report or announcement
-*       - id : Object ID or id number
-*         description: identifier for announcement ot report
-*    description: (Accessible operator) Use to set token
+*       - name: object
+*         description: String which value must be 'announcement' or 'report'
+*         in: formData
+*         required: true
+*         type: String
+*       - name: id
+*         description: String that represents announcement's or report's id
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to set the token for gaining the authorization to modify or delete an announcement or a report
 *    responses:
 *       '200':
-*         description: A successful response, token has been setted 
-*       '400' :
-*         description: Bad request/Invalid Object ID/Invalid id number
-*       '401' :
-*         description: Access denied. No token provided
-*       '403' :
-*         description: User is not an admin or operator/Token already setted.. impossible to proceed
-*       '404' :
-*         description: Announcemente or report not found in the database
+*         description: A successful response, token setted successfully            
+*       '400':
+*         description: Invalid token provided/Bad request/Invalid ID for the announcement/Invalid id number for the report
+*       '404':
+*         description: Announcement or report not found in the database
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: Token already setted... you can't access the announcement or report
 */
 
 router.post('/setToken/:object/:id' , auth, async (req,res) => {
@@ -84,7 +90,7 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
 
         const t = result[0].token
         
-        if(t != "") return res.status(403).send("Non puoi accedere a tale annuncio: token già settato")
+        if(t != "") return res.status(403).send("Non puoi accedere a tale segnalazione: token già settato")
 
         const res1 = await Report.findOneAndUpdate({id_number:req.params.id}, {token: cf})
 
@@ -97,28 +103,34 @@ router.post('/setToken/:object/:id' , auth, async (req,res) => {
     }
 })
 
-/** 
-* @swagger
-* /deleteToken/:object/:id:
+/**
+* @swagger 
+* /token/deleteToken/:object/:id:
 *  delete:
 *    tags: [Token]
 *    parameters:
-*       - name: Object
-*         description: string that represents report or announcement
-*       - id : Object ID or id number
-*         description: identifier for announcement ot report
-*    description: (Accessible operator) Use to remove token
+*       - name: object
+*         description: String which value must be 'announcement' or 'report'
+*         in: formData
+*         required: true
+*         type: String
+*       - name: id
+*         description: String that represents announcement's or report's id
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to delete the token when the operator stops updating or removing an announcement or a report 
 *    responses:
 *       '200':
-*         description: A successful response, token has been removed 
-*       '400' :
-*         description: Bad request/Invalid Object ID/Invalid id number/Token already removed
-*       '401' :
-*         description: Access denied. No token provided
-*       '403' :
-*         description: User is not an admin or operator/Token cannot be reset by this user
-*       '404' :
-*         description: Announcemente or report not found in the database
+*         description: A successful response, token removed successfully            
+*       '400':
+*         description: Invalid token provided/Bad request/Invalid ID for the announcement/Invalid id number for the report/Token already removed
+*       '404':
+*         description: Announcement or report not found in the database
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: You're not the operator who setted this token
 */
 
 router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
@@ -196,6 +208,36 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
         return res.status(200).send("Token rimosso")
     }
 })
+
+/**
+* @swagger 
+* /token/refreshToken/:object/:id:
+*  put:
+*    tags: [Token]
+*    parameters:
+*       - name: object
+*         description: String which value must be 'announcement' or 'report'
+*         in: formData
+*         required: true
+*         type: String
+*       - name: id
+*         description: String that represents announcement's or report's id
+*         in: formData
+*         required: true
+*         type: String
+*    description: Used to refresh the token after the operator modified an announcement or a report
+*    responses:
+*       '200':
+*         description: A successful response, token refreshed successfully            
+*       '400':
+*         description: Invalid token provided/Bad request/Invalid ID for the announcement/Invalid id number for the report/Token already removed
+*       '404':
+*         description: Announcement or report not found in the database
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: You're not the operator who setted this token
+*/
 
 router.put('/refreshToken/:object/:id' , auth, async (req,res) => {
     const tipo = req.params.object
