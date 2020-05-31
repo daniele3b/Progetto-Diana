@@ -110,7 +110,7 @@ router.post('/citizen' , async (req,res) => {
 *    tags: [Registration]
 *    parameters:
 *       - name: User object
-*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         description: object in JSON format with old_pw and new_pw
 *         
 *    description: Use to change a pw of a citizien (type cittadino)
 *    responses:
@@ -175,7 +175,7 @@ router.post('/citizen/change_pw' ,auth,async (req,res) => {
 *       - name: User object
 *         description: object in JSON format with email and CF
 *         
-*    description: Use to reset a pw of a citizien (type cittadino)
+*    description: Use to reset a pw of an user
 *    responses:
 *       '200':
 *         description: A successful request
@@ -290,7 +290,7 @@ router.post('/operator' ,[auth,admin], async (req,res) => {
 *    tags: [Registration]
 *    parameters:
 *       - name: User object
-*         description: object in JSON format with name,surname, birthdate(YYYY-MM-DD),birthplace,email or phone,password
+*         description: object in JSON format with new_pw and old_pw
 *         
 *    description: Use to change a pw of an operator (type operatore)
 *    responses:

@@ -17,6 +17,17 @@ const {validateReqEmail, validateReqPhone} = require('../helper/auth_helper')
 * /auth/email:
 *  post:
 *    tags: [Auth]
+*    parameters:
+*       - name: email
+*         description: String that represents user's email for authentication
+*         in: formData
+*         required: true
+*         type: String
+*       - name: password
+*         description: String that represents user's password for authentication
+*         in: formData
+*         required: true
+*         type: String
 *    description: Used to authenticate a user when he is going to login with email and password
 *    responses:
 *       '200':
@@ -52,6 +63,17 @@ router.post('/email', async (req, res) => {
 * /auth/phone:
 *  post:
 *    tags: [Auth]
+*    parameters:
+*       - name: phone
+*         description: String that represents user's phone for authentication
+*         in: formData
+*         required: true
+*         type: String
+*       - name: password
+*         description: String that represents user's password for authentication
+*         in: formData
+*         required: true
+*         type: String
 *    description: Used to authenticate a user when he is going to login with phone and password
 *    responses:
 *       '200':
