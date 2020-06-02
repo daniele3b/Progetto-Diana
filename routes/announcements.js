@@ -333,16 +333,13 @@ router.put('/:id' , [validateObjectId, auth, operator], async(req,res) => {
     if (error)  return res.status(400).send(error.details[0].message)
 
     const result = await Announcement.findById(req.params.id)
-
+    if (!result)   return res.status(404).send('Announcement not found')
+ 
     const token = req.header('x-diana-auth-token')
-
     var decoded = jwt.decode(token);
-      
     // get the decoded payload and header
     var decoded = jwt.decode(token, {complete: true});
-
     const cf = decoded.payload.CF
-
     if(cf != result.token) return res.status(400).send("Session expired")
 
     const annoucement = await Announcement.findByIdAndUpdate(req.params.id, {
@@ -352,8 +349,7 @@ router.put('/:id' , [validateObjectId, auth, operator], async(req,res) => {
         zone: req.body.zone,
         description: req.body.description
     }, {new: true} )
-
-    if (!annoucement)   return res.status(404).send('Announcement not found')
+    
     res.send(annoucement)
 })
 
@@ -400,20 +396,17 @@ router.put('/:id' , [validateObjectId, auth, operator], async(req,res) => {
 router.delete('/:id', [validateObjectId, auth, operator], async(req,res) => {
 
     const result = await Announcement.findById(req.params.id)
+    if (!result) return res.status(404).send('Announcement not found')
 
     const token = req.header('x-diana-auth-token')
-
     var decoded = jwt.decode(token);
-      
     // get the decoded payload and header
     var decoded = jwt.decode(token, {complete: true});
-
     const cf = decoded.payload.CF
 
     if(cf != result.token) return res.status(400).send("Session expired")
 
     const annoucement = await Announcement.findByIdAndDelete(req.params.id)
-    if (!annoucement) return res.status(404).send('Announcement not found')
     res.send(annoucement)
 })
 

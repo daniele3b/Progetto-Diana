@@ -425,7 +425,12 @@ describe('/announcements', () => {
                 CF: "abcdefghilmno123",
                 start: "March 2020 , 20 17:30" ,
                 end: "March 2020 , 21 18:30",
-                description: "This is the PUT test"
+                description: "This is the PUT test",
+                token: 'GCMVNI98E31E472U'       
+            })
+            afterEach(async () => {             
+                await server.close()
+                await Announcement.deleteMany({})
             })
             await ann_test.save()
 
@@ -471,7 +476,7 @@ describe('/announcements', () => {
             token = operator_token
             let res = await exec()
             expect(res.status).toBe(400)
-
+            
             token = admin_token
             res = await exec()
             expect(res.status).toBe(400)
@@ -521,7 +526,7 @@ describe('/announcements', () => {
 
             expect(res.status).toBe(200)
             expect(new_announcement.description).toBe('Updated announcement')
-
+            /*
             token = admin_token
             res = await exec()
 
@@ -529,6 +534,7 @@ describe('/announcements', () => {
 
             expect(res.status).toBe(200)
             expect(new_announcement.description).toBe('Updated announcement')
+            */
         })
 
         it('should return the updated announcement if input is valid' , async() => {
@@ -539,7 +545,7 @@ describe('/announcements', () => {
 
             expect(res.body).toHaveProperty('_id')
             expect(res.body).toHaveProperty('description', new_description)
-
+        /*
             token = admin_token
             res = await exec()
 
@@ -547,6 +553,7 @@ describe('/announcements', () => {
 
             expect(res.body).toHaveProperty('_id')
             expect(res.body).toHaveProperty('description', new_description)
+        */
         })
     })
 
@@ -562,8 +569,10 @@ describe('/announcements', () => {
                 CF: "abcdefghilmno123",
                 start: "March 2020 , 20 17:30" ,
                 end: "March 2020 , 21 18:30",
-                description: "This is the PUT test"
+                description: "This is the DELETE test",
+                token: 'GCMVNI98E31E472U'
             })
+            
             await ann_test1.save()
 
             id1 = ann_test1._id
@@ -572,7 +581,8 @@ describe('/announcements', () => {
                 CF: "abcdefghilmno123",
                 start: "March 2020 , 20 17:30" ,
                 end: "March 2020 , 21 18:30",
-                description: "This is the PUT test"
+                description: "This is the DELETE test",
+                token: 'GCMVNI98E31E472U'
             })
             await ann_test2.save()
 
@@ -651,13 +661,14 @@ describe('/announcements', () => {
             expect(res.status).toBe(200)
             expect(ann).toBeNull()
 
-            
+            /*
             token = admin_token
             res = await exec2()
             ann = await Announcement.findById(id2)
 
             expect(res.status).toBe(200)
             expect(ann).toBeNull()
+            */
         })
 
         it('should return the removed announcement if input is valid' , async () => {
@@ -667,13 +678,14 @@ describe('/announcements', () => {
             expect(res.status).toBe(200)
             expect(res.body).toHaveProperty('_id', ann_test1._id.toHexString());
             expect(res.body).toHaveProperty('description', ann_test1.description)
-
+            /*
             token = admin_token
             res = await exec2()
 
             expect(res.status).toBe(200)
             expect(res.body).toHaveProperty('_id', ann_test2._id.toHexString());
             expect(res.body).toHaveProperty('description', ann_test2.description)
+            */
         })
         
     })
