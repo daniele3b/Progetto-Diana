@@ -1,6 +1,6 @@
 {
     "db" : "mongodb://localhost/Diana_tests",
     "updater_int":8000,
-    "updater_to":20000,
+    "updater_to":30000,
     "token_time" : "90000"
 }
