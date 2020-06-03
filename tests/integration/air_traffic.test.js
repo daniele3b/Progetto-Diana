@@ -54,16 +54,20 @@ describe('/air_traffic', () => {
             expect(res.status).toBe(403);
         });
         
-        it('should return:\n  -404 if there are no planes in the specified area\n  -200 if there are planes in the area specified', async () => {
+        it('should return:\n        -404 if there are no planes in the specified area\n        -200 if there are planes in the specified area\n        -500 if a Bad Gateway error occurred', async () => {
             let res = await request(server).get('/air_traffic').set('x-diana-auth-token', operator_token);
             if(res.status == 404)
                 expect(res.status).toBe(404)
+            else if(res.status == 500)
+                expect(res.status).toBe(500)
             else
                 expect(res.status).toBe(200)
 
             res = await request(server).get('/air_traffic').set('x-diana-auth-token', admin_token);
             if(res.status == 404)
                 expect(res.status).toBe(404)
+            else if(res.status == 500)
+                expect(res.status).toBe(500)
             else
                 expect(res.status).toBe(200)
         })
