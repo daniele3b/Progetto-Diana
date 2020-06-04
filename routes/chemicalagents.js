@@ -327,7 +327,7 @@ router.get('/filter/date/:station_id/:date_start/:date_end', [auth, operator], a
 
 /** 
 * @swagger
-* /chemical_agents/filter/date/:date_start/:date_end/:type :
+* /chemical_agents/filter/date/:date_start/:date_end/type/:type :
 *  get:
 *    tags: [Chemical_Agents]
 *    description: Use to request all chemical data from a sensor registred in a day between date_start and date_end of a kind of chemical agents
@@ -420,7 +420,7 @@ router.get('/filter/date/:date_start/:date_end/type/:type', [auth, operator], as
 })
 /** 
 * @swagger
-* /chemical_agents/filter/date/:date_start/:date_end/:type/:station_id :
+* /chemical_agents/filter/date/:date_start/:date_end/type/:type/:station_id :
 *  get:
 *    tags: [Chemical_Agents]
 *    description: Use to request all chemical data from a sensor registred in a day between date_start and date_end of a kind of chemical agents of a station
