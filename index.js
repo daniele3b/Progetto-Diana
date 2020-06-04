@@ -39,9 +39,9 @@ SuperUser_startup()
 
 
 if(process.env.NODE_ENV!="test"){
-setInterval(updateChemicalAgents,config.get('aqi_time_int')) //1 minute
+setInterval(updateChemicalAgents,config.get('aqi_time_int')) //10 minutes
 updateMeteo()
-setInterval(updateMeteo, config.get('timer_meteo')) //15 seconds
+setInterval(updateMeteo, config.get('timer_meteo')) //10 minutes
 }
 
 module.exports = server
