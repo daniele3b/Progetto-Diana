@@ -133,6 +133,53 @@ router.get('/uv/real_time', auth, async (req,res) => {
     
 });
 
+/**
+* @swagger 
+* /weather/uv/forecast:
+*  get:
+*    tags: [Weather Report & UV Rays]
+*    description: Use to request the UV rays' forecast data in the city.
+*    responses:
+*       '200':
+*         description: A successful response, data available in JSON format, 
+*               <br>"lat" latitude of the position,
+*               <br>"lat" longitude of the position,
+*               <br>"date_iso" day of the forecast,
+*               <br>"date" timestamp,
+*               <br>"value" value
+*         schema:
+*           type: object
+*           properties:
+*               lat:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               lon:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               date_iso:
+*                   type: string
+*                   format: date-time
+*               date:
+*                   type: number
+*                   example: 123456789
+*               value:
+*                   type: number
+*                   format: float
+*                   example: 1.234
+*               
+*       '500':
+*         description: Internal server error  
+*       '404':
+*         description: Invalid token provided
+*       '401':
+*         description: User is not logged in... user has to authenticate himself
+*       '403':
+*         description: User is not an operator or admin
+*/
+
+
 router.get('/uv/forecast', auth, async (req,res) => {
     var lin = 'http://api.openweathermap.org/data/2.5/uvi/forecast?appid='+process.env.METEO_KEY+'&lat='+config.get('Rome_lat')+'&lon='+config.get('Rome_lon')+'&cnt=7';
     request.get(lin, (error, response, body) => {
