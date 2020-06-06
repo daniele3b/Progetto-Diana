@@ -225,7 +225,7 @@ router.delete('/deleteToken/:object/:id' , auth, async (req,res) => {
 *         in: formData
 *         required: true
 *         type: String
-*    description: Used to refresh the token after the operator modified an announcement or a report
+*    description: Used to refresh the token after the operator modified an announcement
 *    responses:
 *       '200':
 *         description: A successful response, token refreshed successfully            
