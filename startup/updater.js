@@ -4,6 +4,7 @@ const moment=require('moment')
 const {Agents,Chemical_Agent,validate}=require('../models/chemical_agents')
 const {logger}=require('./logging')
 const {sendByAmqp}=require('../amqp/producer')
+const dns = require('dns');
 
 require('dotenv').config()
 
@@ -160,6 +161,16 @@ function  updateChemicalAgents()
     stations_geo=[]
     data2send=[]
     timedata=moment().format();
+
+
+    dns.resolve('api.waqi.info', 'ANY', (err, records) => {
+        if (err) {
+          console.log("Error: ", err);
+          return;
+        }else
+        console.log('OK')
+      });
+
     getStationsName()
     .then(function(result){getDataFromStations(result,sendByAmqp)})
     .catch(function(errore){console.log(errore); logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})

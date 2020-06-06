@@ -4,9 +4,22 @@ const config = require('config')
 require('dotenv').config()
 const {Meteo,validate}=require('../models/meteo')
 const {logger}=require('./logging')
+const dns = require('dns');
+
+
 
 function updateMeteo(){
     var lin = config.get('weather_report_updater') + process.env.METEO_KEY;
+
+    dns.resolve('api.openweathermap.org', 'ANY', (err, records) => {
+        if (err) {
+          console.log("Error: ", err);
+          return;
+        }else
+        console.log('OK')
+      });
+
+
     request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 
