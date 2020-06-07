@@ -50,7 +50,7 @@ function updateMeteo(){
                 const result = await meteo.save();
                 console.log("aggiunto "+meteo)
             }catch(ex){
-                logger.error('M2: Impossibile to save meteo report to database')
+                //logger.error('M2: Impossibile to save meteo report to database')
                 console.log('M2')
                 return
             }
@@ -64,7 +64,7 @@ function updateMeteo(){
                 console.log("ECONNRESET METEO")
                 return
             }
-            logger.error('M1: Impossibile to get meteo report data')
+            //logger.error('M1: Impossibile to get meteo report data')
             console.log('M1')
            return
         }

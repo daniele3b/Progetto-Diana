@@ -24,7 +24,7 @@ function getStationsName()
     request(aqi_url+"/search/?keyword="+config.get('aqi_loc')+"&token="+process.env.AQI_TOKEN, function (error, response, body) {
     if(error){  
         
-        logger.error('U2: Impossible to obtain data about stations of the zone: '+config.get('aqi_loc'))
+        //logger.error('U2: Impossible to obtain data about stations of the zone: '+config.get('aqi_loc'))
         console.log('U2')
         if(error=='ECONNRESET'||error.code=='ECONNRESET')
         {
@@ -70,7 +70,7 @@ function getData(id,nameStation,coords)
     request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
         if(error){ 
             
-            logger.error('U4: Impossbile to contact api endpoint about the station '+id);
+           /* logger.error('U4: Impossbile to contact api endpoint about the station '+id);*/
             console.log('U4')
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
                 console.log("ECONNRESET")
@@ -149,7 +149,7 @@ function getDataFromStations(stations,callback){
     {
         getData(stations_id[i],stations[i],stations_geo[i])
         .then(function(res){  const arr=data2send; callback(arr);data2send=[]})
-        .catch(function(error){logger.error('U3:Impossible get data from a specific station, watch station state');console.log('U3');})
+        .catch(function(error){/*logger.error('U3:Impossible get data from a specific station, watch station state');*/console.log('U3');})
     }
 
 
@@ -182,7 +182,7 @@ function  updateChemicalAgents()
 
     getStationsName()
     .then(function(result){getDataFromStations(result,sendByAmqp)})
-    .catch(function(errore){ logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
+    .catch(function(errore){ /*logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');*/console.log('U1');})
     
     
 }
