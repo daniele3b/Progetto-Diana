@@ -29,7 +29,7 @@ function getStationsName()
         if(error=='ECONNRESET'||error.code=='ECONNRESET')
         {
             console.log("ECONNRESET")
-            return
+            reject(error)
         }
         reject(error);
     }else
@@ -74,7 +74,7 @@ function getData(id,nameStation,coords)
             console.log('U4')
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
                 console.log("ECONNRESET")
-                return
+                reject(error)
             }
             reject(error)
            
