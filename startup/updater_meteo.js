@@ -61,9 +61,11 @@ function updateMeteo(){
         creaMeteo();
         
         }else{
-            
-            if(error=='ECONNRESET'||error.code=='ECONNRESET')
-            return
+
+            if(error=='ECONNRESET'||error.code=='ECONNRESET'){
+                console.log("ECONNRESET")
+                return
+            }
             console.error('error:', error);
             logger.error('M1: Impossibile to get meteo report data')
             console.log('M1')
