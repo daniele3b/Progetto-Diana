@@ -26,7 +26,8 @@ function getStationsName()
         console.error('error:', error);
         logger.error('U2: Impossible to obtain data about stations of the zone: '+config.get('aqi_loc'))
         console.log('U2')
-        response.end()
+        if(error=='ECONNRESET'||error.code=='ECONNRESET')
+            return
         reject(error);
     }else
     {
@@ -68,7 +69,8 @@ function getData(id,nameStation,coords)
             console.error('error:', error);
             logger.error('U4: Impossbile to contact api endpoint about the station '+id);
             console.log('U4')
-            response.end()
+            if(error=='ECONNRESET'||error.code=='ECONNRESET')
+                return
             reject(error)
            
         }else
