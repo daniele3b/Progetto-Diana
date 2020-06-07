@@ -61,7 +61,7 @@ function updateMeteo(){
         creaMeteo();
         
         }else{
-           
+            response.end()
             console.error('error:', error);
             logger.error('M1: Impossibile to get meteo report data')
             console.log('M1')
