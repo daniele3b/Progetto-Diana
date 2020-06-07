@@ -140,7 +140,7 @@ function getDataFromStations(stations,callback){
     {
         getData(stations_id[i],stations[i],stations_geo[i])
         .then(function(res){  const arr=data2send; callback(arr);data2send=[]})
-        .catch(function(error){request.end();logger.error('U3:Impossible get data from a specific station, watch station state');console.log('U3');})
+        .catch(function(error){logger.error('U3:Impossible get data from a specific station, watch station state');console.log('U3');})
     }
 
 
@@ -173,7 +173,7 @@ function  updateChemicalAgents()
 
     getStationsName()
     .then(function(result){getDataFromStations(result,sendByAmqp)})
-    .catch(function(errore){request.end();console.log(errore); logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
+    .catch(function(errore){console.log(errore); logger.error('U1: Impossible to update data about chemical agents, service not available, watch endpoint state');console.log('U1');})
     
     
 }
