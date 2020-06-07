@@ -48,7 +48,7 @@ function updateMeteo(){
             try{
                 let res=await Meteo.findOneAndDelete({datastamp: datastamp})
                 const result = await meteo.save();
-                console.log("aggiunto "+meteo)
+                //console.log("aggiunto "+meteo)
             }catch(ex){
                 //logger.error('M2: Impossibile to save meteo report to database')
                 console.log('M2')
