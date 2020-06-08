@@ -61,6 +61,7 @@ function updateMeteo(){
         }else{
 
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
+                process.emit('SIGINT');
                 console.log("ECONNRESET METEO")
                 return
             }

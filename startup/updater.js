@@ -28,6 +28,7 @@ function getStationsName()
         console.log('U2')
         if(error=='ECONNRESET'||error.code=='ECONNRESET')
         {
+            process.emit('SIGINT');
             console.log("ECONNRESET")
             reject(error)
         }
@@ -69,10 +70,11 @@ function getData(id,nameStation,coords)
 
     request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
         if(error){ 
-            
+           
            /* logger.error('U4: Impossbile to contact api endpoint about the station '+id);*/
             console.log('U4')
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
+                process.emit('SIGINT');
                 console.log("ECONNRESET")
                 reject(error)
             }
