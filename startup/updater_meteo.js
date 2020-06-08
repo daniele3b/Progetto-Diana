@@ -12,7 +12,7 @@ function updateMeteo(){
     var lin = config.get('weather_report_updater') + process.env.METEO_KEY;
 
     dns.resolve('api.openweathermap.org', 'ANY', (err, records) => {
-        if (err) {
+     if (err) {
           console.log("Error: ", err);
           return;
         }else
