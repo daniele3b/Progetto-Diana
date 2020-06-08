@@ -59,9 +59,9 @@ function updateMeteo(){
         creaMeteo();
         
         }else{
-
+            req.end()
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
-                req.abort()
+               
                 console.log("ECONNRESET METEO")
                 return
             }
