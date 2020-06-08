@@ -61,7 +61,7 @@ function updateMeteo(){
         }else{
 
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
-                process.kill(process.pid, 'SIGINT').
+                process.kill(process.pid, 'SIGINT')
                 console.log("ECONNRESET METEO")
                 return
             }
