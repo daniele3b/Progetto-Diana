@@ -59,12 +59,13 @@ function updateMeteo(){
         creaMeteo();
         
         }else{
+            /*
             req.end()
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
                
                 console.log("ECONNRESET METEO")
                 return
-            }
+            }*/
             //logger.error('M1: Impossibile to get meteo report data')
             console.log('M1')
            return
