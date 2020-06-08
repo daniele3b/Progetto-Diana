@@ -21,14 +21,14 @@ function getStationsName()
    
     return new Promise(function(resolve,reject){
 
-    request(aqi_url+"/search/?keyword="+config.get('aqi_loc')+"&token="+process.env.AQI_TOKEN, function (error, response, body) {
+    var req=request(aqi_url+"/search/?keyword="+config.get('aqi_loc')+"&token="+process.env.AQI_TOKEN, function (error, response, body) {
     if(error){  
         
         //logger.error('U2: Impossible to obtain data about stations of the zone: '+config.get('aqi_loc'))
         console.log('U2')
         if(error=='ECONNRESET'||error.code=='ECONNRESET')
         {
-            process.kill(process.pid, 'SIGINT')
+            req.abort()
             console.log("ECONNRESET")
             reject(error)
         }
@@ -68,13 +68,13 @@ function getData(id,nameStation,coords)
 {
     return new Promise( function(resolve,reject){
 
-    request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
+    var req=request(aqi_url+"/feed/@"+id+"/?token="+process.env.AQI_TOKEN, async function (error, response, body) {
         if(error){ 
            
            /* logger.error('U4: Impossbile to contact api endpoint about the station '+id);*/
             console.log('U4')
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
-                process.kill(process.pid, 'SIGINT')
+                req.abort()
                 console.log("ECONNRESET")
                 reject(error)
             }

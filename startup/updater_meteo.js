@@ -20,7 +20,7 @@ function updateMeteo(){
       });
 
 
-    request.get(lin, (error, response, body) => {
+  var req=  request.get(lin, (error, response, body) => {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body); 
 
@@ -61,7 +61,7 @@ function updateMeteo(){
         }else{
 
             if(error=='ECONNRESET'||error.code=='ECONNRESET'){
-                process.kill(process.pid, 'SIGINT')
+                req.abort()
                 console.log("ECONNRESET METEO")
                 return
             }
