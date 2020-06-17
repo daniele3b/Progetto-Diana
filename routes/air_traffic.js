@@ -53,6 +53,9 @@ require('dotenv').config()
 */
 
 router.get('/', [auth, operator], async (req, res) => {
+
+    if(process.env.PRESENTAZIONE == 'SI') return res.status(404).send("There are no flights in the specified area")
+
     // "https://USERNAME:PASSWORD@opensky-network.org/api/states/all" 
     const url = 'https://'+process.env.OPEN_SKY_USERNAME+':'+process.env.OPEN_SKY_PASSWORD+'@'+config.get('open_sky_end')
                 +'/states/all?lamin='+config.get('LAT_MIN')+'&lomin='+config.get('LON_MIN')+'&lamax='+config.get('LAT_MAX')
