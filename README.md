@@ -1,30 +1,29 @@
-# Progetto-Diana
+# Project-Diana
+Diana is a monitoring platform for chemical agents to be provided to the competent authorities to safeguard the territory. Through the stations located in the area it is possible to analyze the data concerning chemical agents in real time and study their relationship with complementary factors such as:
 
-Diana è una piattaforma di monitoring degli agenti chimici da fornire alle autorità competenti per salvaguardare il territorio. Attraverso le stazioni dislocate nel territorio è possibile analizzare i dati riguardanti gli agenti chimici in tempo reale e studiarne la relazione con fattori complementari come:
+* Air traffic
+* Weathering
+* Land traffic
+* UV rays
 
-* Traffico aereo
-* Agenti atmosferici
-* Traffico terrestre
-* Raggi UV
+The ability to download and analyze data is provided to make analyzing complex data easier.
+We are strongly convinced that environmental protection cannot take place without the active participation of citizens, which is why a mechanism for reporting events that can harm the health of the area has been introduced. Finally, the authorities will have a broadcasting tool available to send important announcements to all users of the system.
  
-Viene fornita la possibilità di effettuare il download e l'analisi dei dati per rendere più facile l'analisi di dati complessi.
-Siamo fortemente convinti che la tutela dell'ambiente non può avvenire senza la partecipazione attiva dei cittadini, per questo è stato introdotto un meccanismo di segnalazione di eventi che possono nuocere alla salute del territorio. Infine, le autorità avranno a disposizione uno strumento di broadcasting per inviare degli annunci importanti a tutti gli utenti del sistema.
- 
-# Tecnologie usate
+# Technologies used
 
-Diana è strutturato principalmente in due moduli:
+Diana is mainly structured in two modules:
 
 * frontend
 * backend
 
-Il frontend è stato realizzato con Vue.js, Javascript, CSS e diverse librerie:
+The frontend was built with Vue.js, Javascript, CSS and several libraries:
 
 * Bootstrap
 * Axios
 * vue2-google-maps
 * Chart-js
 
-Il backend è stato realizzato con Nodejs e diverse librerie:
+The backend was built with Nodejs and several libraries:
 
 * Bcrypt
 * Mongoose
@@ -37,34 +36,32 @@ Il backend è stato realizzato con Nodejs e diverse librerie:
 * Nodemailer
 * Amqplib
 
-La comunicazione tra frontend e backend avviene tramite chiamate REST (Axios), il backend è suddiviso in due moduli comunicanti tramite AMQP. Il secondo modulo ha implementato anche una websocket che verrà utilizzata per scopi futuri.
+The communication between frontend and backend takes place through REST calls (Axios), the backend is divided into two modules communicating through AMQP. The second module has also implemented a websocket which will be used for future purposes.
 
-# Come installare Diana
-
-I requisiti per eseguire Diana sono aver installato sul proprio dispositivo:
+# How to install Diana
+The requirements to run Diana are to have installed on your device:
 
 * MongoDB
 * RabbitMQ
 * Nodejs
+* Vue
 
-Seguire i passi indicati nei vari read me dei moduli:
+Follow the steps indicated in the various read me modules:
 
-* Diana-app(frontend): https://github.com/daniele3b/diana_app
-* Diana-threshold(backend modulo 2): https://github.com/daniele3b/diana-threshold
+* Diana-app (frontend): https://github.com/daniele3b/diana_app
+* Diana-threshold (module 2 backend): https://github.com/daniele3b/diana-threshold
 
-Infine quest'ultimo modulo, per installarlo bisogna seguire i seguenti passi:
+Finally this last module, to install it you have to follow the following steps:
 
 * npm install
-* verificare i parametri presenti nel config
-* richiedere il .env
-* Eseguire con **nodemon** oppure **node index.js**
-* Avviare gli altri moduli come indicato nei readme.md
+* check the parameters present in the config
+* request the .env
+* Run with ** nodemon ** or ** node index.js **
+* Start the other modules as indicated in the readme.md
 
-Di default Diana (modulo 1) metterà a disposizione le sue api nella porta 8081, il frontend sarà accessibile sulla porta 8080.
-Per visualizzare la documentazione interattiva dopo aver lanciato Diana (modulo 1) fare richiesta alla risorsa 8081/diana-docs/
-
-# Eseguire i test
-
-Per eseguire i test bisogna eseguire **npm test** verrano eseguite tutte le suite di test (sia di integrazione che di unità)
+By default Diana (module 1) will make her bees available on port 8081, the frontend will be accessible on port 8080.
+To view the interactive documentation after launching Diana (module 1), request the resource 8081 / diana-docs /
 
 
+# Run the tests
+To run the tests you need to run ** npm test ** all test suites will be run (both integration and unit)
